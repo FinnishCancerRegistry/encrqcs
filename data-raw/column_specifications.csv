@@ -1,0 +1,57 @@
+name,description,format,maximum_length,core,missing_or_unknown_values,coding
+1_Flag,Check flag,F,1,Y,Not allowed,0 -> Not checked; 1 -> Checked
+2_Patient_ID,Patient identification code,A,50,Y,Not allowed,According to registry coding
+3_Tumour_ID,Tumour identification,A,50,Y,Not allowed,According to registry coding
+4_Day_DoB,Day of birth,F,2,Y,99,Range of allowed values: From 1 to 31
+5_Month_DoB,Month of birth,F,2,Y,99,Range of allowed values: From 1 to 12
+6_Year_DoB,Year of birth,F,4,Y,9999,Range of allowed values: > 1842 and <= the current year
+7_Sex,Sex,F,1,Y,9,1 -> Male; 2 -> Female; 3 -> Other
+8_Day_DoI,Day: date of incidence,F,2,Y,99,Range of allowed values: From 1 to 31
+9_Month_DoI,Month: date of incidence,F,2,Y,99,Range of allowed values: From 1 to 12
+10_Year_DoI,Year: date of incidence,F,4,Y,Not allowed,Range of allowed values: > 1941 and <= the current year
+11_Age,"Age at diagnosis (incidence date); in years; core if complete date of birth and/or date of incidence are missing or unknown",F,3,Y,999,Range of allowed values: >= 0 and < 121
+12_BoD,Basis of diagnosis,F,1,Y,9,0-> Death certificate only (DCO) 1-> Clinical; 2-> Clinical investigation 4-> Specific tumour markers 5-> Cytology; 6-> Histology of a metastasis 7-> Histology of a primary; tumour
+13_Topo,Topography (topography of the metastasis is not; admitted),A,4,Y,Not allowed,Valid code in ICD-O-3
+14_Morpho,Morphology,F,4,Y,Not allowed,Valid code in ICD-O-3
+15_Beh,ICD-O-3 behaviour,F,1,Y,Not allowed,0-> Benign neoplasm; 1-> Neoplasm of uncertain and unknown behaviour; 2-> In-situ neoplasm 3-> Malignant neoplasm stated; or presumed to be primary
+16_Grade,Grade(ICD-O-3),F,1,Y,9,"1-> Well differentiated, 2-> Moderately differentiated 3 -> Poorly differentiated; 4-> Undifferentiated, anaplastic 5-> T-cell; T-precursor; 6-> B-Cell; Pre-B; B-precursor; 7-> Null cell; Non T-non B 8-> NK cell (natural killer cell)"
+17_Autopsy,Incidental finding of cancer at autopsy,F,1,Y,9,0-> No 1-> Yes
+18_Vital_status,The last known vital status,F,1,Y,9,1-> Alive; 2-> Dead
+19_Day_FU,Day of last known vital status,F,2,Y,99,Range of allowed values: From 1 to 31
+20_Month_FU,Month of last known vital status,F,2,Y,99,Range of allowed values: From 1 to 12
+21_Year_FU,Year of last known vital status,F,4,Y,9999,Range of allowed values: > 1941 and <= the current year
+22_Survival,"Duration of survival in days; core if complete date of incidence and/or date of end of follow-up are missing or unknown",F,5,Y,99999,>= 0
+23_Laterality,Laterality of paired organs,F,1,N,9,0-> Not applicable 1-> Right; 2-> Left 3-> Unilateral NOS; 4-> Bilateral
+24_Day_DoR,Day of case registration,F,2,N,99,Range of allowed values: From 1 to 31
+25_Month_DoR,Month of case registration,F,2,N,99,Range of allowed values: From 1 to 12
+26_Year_DoR,Year of case registration,F,4,N,9999,Range of allowed values: > 1941 and <= the current year
+27_Cause_death,Official underlying cause of death,A,5,N,99999,International Classification of Diseases
+28_ICD_edition,ICD edition used for coding cause of death,F,2,N,99,Range of allowed values: >= 7 and <= 10
+29_TNM_prefix,Additional descriptor for TNM,A,1,N,Blank,Prefix modifiers will be considered: y: stage assessed after neo-adjuvant therapy; a: stage determined at autopsy
+30_pT,"TNM stage, pathological primary site (pT)",A,10,N,9,"TNM Classification of Malignant Tumours, 5th, 6th or 7thedition"
+31_pN,"TNM stage, pathological lymph; nodes (pN)",A,10,N,9,"TNM Classification of Malignant Tumours, 5th, 6th or 7thedition"
+32_pM,"TNM stage, pathological metastases (pM)",A,10,N,9,"TNM Classification of Malignant Tumours, 5th, 6th or 7thedition"
+33_cT,"TNM stage, clinical primary site (cT)",A,10,N,9,"TNM Classification of Malignant Tumours, 5th, 6th or 7thedition"
+34_cN,"TNM stage, clinical lymph; nodes (cN)",A,10,N,9,"TNM Classification of Malignant Tumours, 5th, 6th or 7thedition"
+35_cM,"TNM stage, clinical metastases (cM)",A,10,N,9,"TNM Classification of Malignant Tumours, 5th, 6th or 7thedition"
+36_Stage,TNM stage grouping,A,4,N,9,"TNM Classification of Malignant Tumours, 5th, 6th or 7th edition"
+37_TNM_edition,TNM edition,F,2,N,99,"Allowed values: 5, 6 and 7"
+38_Cond_T,"Condensed TNM, T",A,2,N,9,TL-> Localised TA-> Advanced; TX-> Unknown
+39_Cond_N,"Condensed TNM, N",A,2,N,9,N0-> No regional nodes N1-> Regional nodes; NX-> Unknown
+40_Cond_M,"Condensed TNM, M",A,2,N,9,M0-> No distant metastasis M1-> Distant metastasis; MX-> Unknown
+41_Dukes,Dukes' stage,A,1,N,9,A-> Dukes' stage A B-> Dukes' stage B C-> Dukes' stage C D-> Dukes' stage D; 8-> not applicable
+42_FIGO,FIGO stage,A,5,N,9,0 -> FIGO stage 0 I -> FIGO stage I; IA -> FIGO stage IA IA1 -> FIGO stage IA1 IA2 -> FIGO stage IA2 IB -> FIGO stage IB IB1 -> FIGO stage IB1 IB2 -> FIGO stage IB2 IC -> FIGO stage IC; II -> FIGO stage II IIA -> FIGO stage IIA; IIA1 -> FIGO stage IIA1 IIA2 -> FIGO stage IIA2 IIB-> FIGO stage IIB IIB1-> FIGO stage IIB1 IIB2-> FIGO stage IIB2 IIC-> FIGO stage IIC; III -> FIGO stage III IIIA -> FIGO stage IIIA IIIB-> FIGO stage IIIB IIIC-> FIGO stage IIIC; IIIC1-> FIGO stage IIIC1 IIIC2-> FIGO stage IIIC2 IVA-> FIGO stage IVA IVB -> FIGO stage IVB; 8-> not applicable
+43_AArbor,ANN ARBOR; stage,A,4,N,9,"Allowed values: I,II,III,IV and; suffixes 1,2 (for stage III) suffixes 2-9 (for stage II); 8-> not applicable"
+44_Gleason,GLEASON; grading,F,2,N,9,Range of valid values: 1 -> Gleason <= 6; 2-> Gleason =7; 3 -> Gleason 8-10
+45_Breslow,BRESLOW; thickness,F,6,N,"999,99",Tumour size in mm.; >0.00-900.99
+46_EoD,Summary extent of disease,F,1,N,9,"1-> Confined; 2-> Adjacent tissues, and/or regional lymph-nodes; 3-> Distant organs; 4-> Not confined but not specified whether code 2 or 3 applies; 5-> Not distant metastasis but not specified whether code 1 or 2; applies"
+47_Tsize,Tumour size in mm,F,3,N,999,Range of allowed values: > 0 or 999
+48_N_exam_nodes,Number examined nodes,F,2,N,99,Range of allowed values: From 0 to 99
+49_N_met_nodes,Number metastatic nodes,F,2,N,99,Range of allowed values: From 0 to number of examined nodes
+50_Sent_nodes,Sentinel nodes,F,1,N,9,1 -> Done; 2 -> Not done; 3 -> Not applicable
+51_Met_sent_nodes,Metastatic in sentinel nodes,F,1,N,9,1 -> Yes; 2 -> No; 3 -> Not applicable
+52_Cfactor,C factor,F,1,N,9,"1-> C1 Evidence from standard diagnostic methods only; 2-> C2 Evidence obtained by special diagnostic means; 3-> C3 Evidence from surgical exploration, including biopsy and cytology; 4-> C4 Evidence following definitive surgery and pathological examination of the resected specimen; 5-> C5 Evidence from; autopsy"
+53_Surgery,Surgery,F,1,N,9,1-> Yes 2-> No
+54_Systemic_th,Systemic therapy,F,1,N,9,1-> Yes 2-> No
+55_Radiotherapy,Radiotherapy,F,1,N,9,1-> Yes 2-> No
+56_BMtransp,Bone marrow transplantation,F,1,N,9,1-> Yes 2-> No

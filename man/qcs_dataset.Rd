@@ -10,6 +10,13 @@ qcs_dataset(dataset, dataset_name)
 \item{dataset}{\verb{[data.frame]} (mandatory, no default)
 
 dataset to form into the standard QCS format}
+
+\item{dataset_name}{\verb{[character]} (mandatory, no default)
+
+one of the following:
+\itemize{
+\item "incidence"
+}}
 }
 \description{
 Collect a QCS dataset. Optional columns can be omitted and will be populated

@@ -11,6 +11,13 @@ write_qcs_file(dataset, dataset_name = "incidence", file_path, ...)
 
 e.g. incidence (cancer record) dataset}
 
+\item{dataset_name}{\verb{[character]} (mandatory, no default)
+
+one of the following:
+\itemize{
+\item "incidence"
+}}
+
 \item{file_path}{\verb{[character]} (mandatory, no default)
 
 path to write file to}

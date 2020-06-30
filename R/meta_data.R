@@ -8,12 +8,13 @@ qcs_dataset_names <- function() {
   c("incidence")
 }
 
-
+#' @importFrom dbc assert_is_character_nonNA_atom assert_atom_is_in_set
 assert_is_qcs_dataset_name <- function(dataset_name) {
   dbc::assert_is_character_nonNA_atom(dataset_name)
   dbc::assert_atom_is_in_set(dataset_name, set = qcs_dataset_names())
 }
 
+#' @importFrom dbc assert_is_data.frame_with_required_names
 assert_is_qcs_dataset <- function(dataset, dataset_name) {
   assert_is_qcs_dataset_name(dataset_name)
   dbc::assert_is_data.frame_with_required_names(
@@ -23,8 +24,7 @@ assert_is_qcs_dataset <- function(dataset, dataset_name) {
   )
 }
 
-
-
+#' @importFrom dbc assert_is_logical_atom
 qcs_column_names <- function(dataset_name = "incidence", core = NA) {
   assert_is_qcs_dataset_name(dataset_name)
   dbc::assert_is_logical_atom(core)

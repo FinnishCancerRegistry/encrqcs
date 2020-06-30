@@ -6,6 +6,14 @@
 \usage{
 qcs_column_specifications(dataset_name = "incidence")
 }
+\arguments{
+\item{dataset_name}{\verb{[character]} (mandatory, no default)
+
+one of the following:
+\itemize{
+\item "incidence"
+}}
+}
 \description{
 Retrieve a table of column specifications for the reqested dataset name.
 }

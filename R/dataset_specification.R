@@ -12,6 +12,7 @@
 #' dataset to form into the standard QCS format
 #' @template param_dataset_name
 #' @export
+#' @importFrom dbc assert_is_data.frame_with_required_names
 qcs_dataset <- function(
   dataset,
   dataset_name

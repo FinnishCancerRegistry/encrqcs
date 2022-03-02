@@ -14,6 +14,7 @@
 #' @param fwrite_arg_list `[NULL, list]` (default `NULL`)
 #'
 #' additional arguments passed to [data.table::fwrite]
+#' @template param_assertion_type
 #' @export
 qcs_write_dataset <- function(
   dataset,

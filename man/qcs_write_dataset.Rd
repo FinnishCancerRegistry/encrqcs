@@ -35,6 +35,8 @@ path to write file to}
 \item{fwrite_arg_list}{\verb{[NULL, list]} (default \code{NULL})
 
 additional arguments passed to \link[data.table:fwrite]{data.table::fwrite}}
+
+\item{assertion_type}{See e.g. \verb{[dbc::report_to_assertion]}.}
 }
 \description{
 Read and write .csv files for / created by the JRC-ENCR QCS.

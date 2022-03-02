@@ -3,3 +3,5 @@
 ^data-raw$
 ^LICENSE\.md$
 ^man\-roxygen$
+^appveyor\.yml$
+^\.github$

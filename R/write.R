@@ -23,7 +23,8 @@ qcs_write_dataset <- function(
   assertion_type = "input"
 ) {
   assert_is_qcs_dataset_name(dataset_name, assertion_type = assertion_type)
-  assert_is_qcs_dataset(dataset, dataset_name, assertion_type = assertion_type)
+  assert_is_qcs_dataset(dataset, assertion_type = assertion_type,
+                        dataset_name = dataset_name)
   dbc::assert_is_one_of(
     fwrite_arg_list,
     funs = list(dbc::report_is_NULL, dbc::report_is_list)

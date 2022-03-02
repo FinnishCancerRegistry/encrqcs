@@ -23,11 +23,12 @@ qcs_script_lines <- function(
   input_file_path
 ) {
   cmd <- paste0("java -jar -Xmx2g jrc-qcs-%QCS_VERSION%.jar",
-                " -v %QCS_PROTOCOL_ID% %INPUT_FILE_PATH%")
+                " -v %QCS_PROTOCOL_ID%",
+                " %INPUT_FILE_PATH%")
   replacements <- c(
     "%QCS_VERSION%"     = qcs_version,
     "%QCS_PROTOCOL_ID%" = qcs_protocol_id,
-    "%INPUT_FILE_PATH%" = input_file_path
+    "%INPUT_FILE_PATH%" = normalizePath(input_file_path, winslash = "/")
   )
   for (i in seq_along(replacements)) {
     cmd <- gsub(names(replacements)[i], replacements[i], cmd)
@@ -60,11 +61,15 @@ qcs_script_lines <- function(
 }
 
 qcs_run <- function(
+  input_file_path,
   qcs_dir_path,
   qcs_version = "2.0",
   qcs_protocol_id = 11L,
+  system2_arg_list = NULL,
   assertion_type = "input"
 ) {
+  dbc::assert_file_exists(input_file_path, assertion_type = assertion_type)
+  input_file_path <- normalizePath(input_file_path, winslash = "/")
   dbc::assert_dir_exists(qcs_dir_path, assertion_type = assertion_type)
   dbc::assert_has_length(qcs_dir_path, expected_length = 1L,
                          assertion_type = assertion_type)
@@ -74,15 +79,29 @@ qcs_run <- function(
   dbc::assert_is_integer_nonNA_atom(
     qcs_protocol_id, assertion_type = assertion_type
   )
+  dbc::assert_is_one_of(
+    system2_arg_list,
+    funs = list(dbc::report_is_NULL, dbc::report_is_list)
+  )
 
-  script_path <- qcs_script_path()
-  writeLines(script_lines, script_file_path)
-  on.exit(unlink(script_file_path))
+  script_lines <- qcs_script_lines(
+    qcs_version = qcs_version,
+    qcs_protocol_id = qcs_protocol_id,
+    input_file_path = input_file_path
+  )
+  script_path <- qcs_script_path(qcs_dir_path = qcs_dir_path)
+  writeLines(script_lines, script_path)
+  on.exit(unlink(script_path))
 
   old_wd <- getwd()
   on.exit(setwd(old_wd), add = TRUE)
   setwd(qcs_dir_path)
-  system2(qcs_script_name())
-
+  message("encrqcs::qcs_run: executing this:\n",
+          paste0("  ", script_lines, collapse = "\n"))
+  system2_arg_list <- as.list(system2_arg_list)
+  system2_arg_list[["command"]] <- qcs_script_name()
+  out <- do.call(system2, system2_arg_list, quote = TRUE)
+  message("encrqcs::qcs_run: done.")
+  return(out)
 }
 

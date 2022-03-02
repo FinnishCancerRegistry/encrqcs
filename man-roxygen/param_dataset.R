@@ -1,3 +1,4 @@
-#' @param dataset `[data.frame]` (mandatory, no default)
+#' @param dataset `[data.frame]` (mandatory)
 #'
-#' e.g. incidence (cancer record) dataset
+#' Column requirements vary depending on `dataset_name`.
+#' Refer to the JRC-ENCR QCS User Compendium.

@@ -3,7 +3,6 @@
 
 
 
-#' @importFrom utils data maintainer
 get_exported_dataset <- function(dataset_name) {
   stopifnot(
     length(dataset_name) == 1,
@@ -29,8 +28,6 @@ get_exported_dataset <- function(dataset_name) {
 
 
 
-#' @importFrom data.table copy
-#' @importFrom utils maintainer
 get_internal_dataset <- function(dataset_name) {
   stopifnot(
     length(dataset_name) == 1,
@@ -55,5 +52,24 @@ get_internal_dataset <- function(dataset_name) {
 
   data.table::copy(pkg_env[[dataset_name]])
 }
+
+
+# source: https://www.r-bloggers.com/identifying-the-os-from-r/
+get_os <- function() {
+  sysinf <- Sys.info()
+  if (!is.null(sysinf)){
+    os <- sysinf['sysname']
+    if (os == 'Darwin')
+      os <- "osx"
+  } else { ## mystery machine
+    os <- .Platform$OS.type
+    if (grepl("^darwin", R.version$os))
+      os <- "osx"
+    if (grepl("linux-gnu", R.version$os))
+      os <- "linux"
+  }
+  unname(tolower(os))
+}
+
 
 

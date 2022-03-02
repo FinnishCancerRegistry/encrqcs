@@ -1,57 +1,62 @@
 
 
-
-
-
-
 qcs_dataset_names <- function() {
-  c("incidence")
+  c("incidence", "mortality", "population", "lifetable")
 }
-
-#' @importFrom dbc assert_is_character_nonNA_atom assert_atom_is_in_set
-assert_is_qcs_dataset_name <- function(dataset_name) {
-  dbc::assert_is_character_nonNA_atom(dataset_name)
-  dbc::assert_atom_is_in_set(dataset_name, set = qcs_dataset_names())
-}
-
-#' @importFrom dbc assert_is_data.frame_with_required_names
-assert_is_qcs_dataset <- function(dataset, dataset_name) {
-  assert_is_qcs_dataset_name(dataset_name)
-  dbc::assert_is_data.frame_with_required_names(
-    x = dataset,
-    x_nm = "dataset",
-    required_names = qcs_column_names(dataset_name)
+qcs_dataset_column_names <- function(dataset_name) {
+  # taken from JRC-ECNR QCS User Compendium 2.0
+  switch(
+    dataset_name,
+    stop("Internal error: No column names defined for dataset_name = ",
+         deparse(dataset_name)),
+    incidence = c(
+      "PAT", "MoB", "YoB", "Age", "Sex", "Geo_Code", "Geo_Label",
+      "TUM", "MoI", "YoI", "BoD", "Topo", "Morpho", "Beh", "Grade",
+      "Autopsy", "Vit_stat", "MoF", "YoF", "Surv_time",
+      "ICD", "CoD", "TNM_ed",
+      "cT", "cN", "cM", "pT", "pN", "pM", "ToS", "Stage",
+      "Surgery", "Rt", "Cht", "Tt", "It", "Ht", "Ot", "SCT"
+    ),
+    mortality = c(
+      "Calendar_Year", "Sex", "Age unit", "Cause of death", "Number of deaths"
+    ),
+    population = c(
+      "Calendar Year", "Sex", "Age unit", "Geo_code", "Number of residents"
+    ),
+    lifetable = c(
+      "Calendar Year", "Sex", "Annual age", "Geo_code", "All causes death probability"
+    )
   )
 }
 
-#' @importFrom dbc assert_is_logical_atom
-qcs_column_names <- function(dataset_name = "incidence", core = NA) {
-  assert_is_qcs_dataset_name(dataset_name)
-  dbc::assert_is_logical_atom(core)
-  core_values <- "Y"
-  if (identical(core, FALSE)) {
-    core_values <- "N"
-  } else if (identical(core, NA)) {
-    core_values <- c("Y", "N")
-  }
-
-  dt <- get_internal_dataset("column_specifications")
-  dt[["name"]][dt[["core"]] %in% core_values]
+assert_is_qcs_dataset_name <- function(
+  x,
+  x_nm = NULL,
+  call = NULL,
+  assertion_type = "input"
+) {
+  x_nm <- dbc::handle_arg_x_nm(x_nm)
+  call <- dbC::handle_arg_call(call)
+  dbc::assert_is_character_nonNA_atom(x, x_nm = x_nm, call = call)
+  dbc::assert_atom_is_in_set(x, set = qcs_dataset_names(),
+                             x_nm = x_nm, call = call)
 }
 
-
-
-#' @title Column Specifications
-#' @description
-#' Retrieve a table of column specifications for the reqested dataset name.
-#' @template param_dataset_name
-#' @export
-qcs_column_specifications <- function(dataset_name = "incidence") {
-  assert_is_qcs_dataset_name(dataset_name)
-  switch(
-    dataset_name,
-    stop("no specs defined for dataset_name = ", deparse(dataset_name)),
-    incidence = get_internal_dataset("column_specifications")
+assert_is_qcs_dataset <- function(
+  x,
+  x_nm = NULL,
+  call = NULL,
+  assertion_type = "input",
+  dataset_name
+) {
+  x_nm <- dbc::handle_arg_x_nm(x_nm)
+  call <- dbC::handle_arg_call(call)
+  dbc::assert_is_data.frame_with_required_names(
+    x = x,
+    x_nm = x_nm,
+    call = call,
+    assertion_type = assertion_type,
+    required_names = qcs_dataset_column_names(dataset_name)
   )
 }
 

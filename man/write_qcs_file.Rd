@@ -4,25 +4,27 @@
 \alias{write_qcs_file}
 \title{JRC-ENCR QCS Input and Output}
 \usage{
-write_qcs_file(dataset, dataset_name = "incidence", file_path, ...)
+write_qcs_file(
+  dataset,
+  dataset_name,
+  file_path,
+  fwrite_arg_list = NULL,
+  assertion_type = "input"
+)
 }
 \arguments{
-\item{dataset}{\verb{[data.frame]} (mandatory, no default)
+\item{dataset}{\verb{[data.frame]} (mandatory)
 
-e.g. incidence (cancer record) dataset}
+Column requirements vary depending on \code{dataset_name}.
+Refer to the JRC-ENCR QCS User Compendium.}
 
-\item{dataset_name}{\verb{[character]} (mandatory, no default)
-
-one of the following:
-\itemize{
-\item "incidence"
-}}
-
-\item{file_path}{\verb{[character]} (mandatory, no default)
+\item{file_path}{\verb{[character]} (no default)
 
 path to write file to}
 
-\item{...}{additional arguments passed to \link[data.table:fwrite]{data.table::fwrite}}
+\item{fwrite_arg_list}{\verb{[NULL, list]} (default \code{NULL})
+
+additional arguments passed to \link[data.table:fwrite]{data.table::fwrite}}
 }
 \description{
 Read and write .csv files for / created by the JRC-ENCR QCS.

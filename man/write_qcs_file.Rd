@@ -18,6 +18,16 @@ write_qcs_file(
 Column requirements vary depending on \code{dataset_name}.
 Refer to the JRC-ENCR QCS User Compendium.}
 
+\item{dataset_name}{\verb{[character]} (no default)
+
+one of the following:
+\itemize{
+\item "incidence"
+\item "mortality"
+\item "population"
+\item "lifetable"
+}}
+
 \item{file_path}{\verb{[character]} (no default)
 
 path to write file to}
@@ -28,4 +38,7 @@ additional arguments passed to \link[data.table:fwrite]{data.table::fwrite}}
 }
 \description{
 Read and write .csv files for / created by the JRC-ENCR QCS.
+}
+\examples{
+fake_incidence <-
 }

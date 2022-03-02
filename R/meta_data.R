@@ -1,92 +1,138 @@
 
+#' @title JRC-ENCR QCS Metadata
+#' @description
+#' Tools to access metadata such as dataset names and column names of a dataset.
+#' @name metadata
+#' @eval c(
+#'   "@details",
+#'   codedoc::codedoc_lines("encrqcs::", text_file_paths = "R/meta_data.R")
+#' )
+NULL
 
+#' @rdname metadata
+#' @export
 qcs_dataset_names <- function() {
-  c("incidence", "mortality", "population", "lifetable")
+  # @codedoc_comment_block encrqcs::qcs_dataset_names
+  # `[ecnrqcs::qcs_dataset_names]` returns the set of allowed dataset names
+  # as a character string vector.
+  # @codedoc_comment_block encrqcs::qcs_dataset_names
+  names(.__QCS_FAKE_DATASETS)
 }
 
-qcs_fake_dataset <- function(dataset_name) {
-  assert_is_qcs_dataset_name(dataset_name, assertion_type = "prod_input")
-
-  # Column names and classes taken from JRC-ENCR User Compendium 2.0
-  switch(
-    dataset,
-    stop("Internal error: No fake dataset defined for dataset_name = ",
-         deparse(dataset_name)),
-    incidence = data.frame(
-      PAT = 1L,
-      MoB = 1L,
-      YoB = 1950L,
-      Age = 70L,
-      Sex = 1L,
-      Geo_Code = "FI1B",
-      Geo_Label = "Helsinki-Uusimaa",
-
-      TUM = 1L,
-      MoI = 1L,
-      YoI = 2000L,
-
-      BoD = 1L,
-      Topo = "C001",
-      Morpho = "8070",
-      Beh = 3L,
-      Grade = 2L,
-
-      Autopsy = 0L,
-      Vit_stat = 1L,
-      MoF = 1L,
-      YoF = 2020L,
-      Surv_time = 7305L,
-      ICD = 10L,
-      CoD = NA_character_,
-
-      TNM_ed = 8L,
-      cT = NA_integer_,
-      cN = NA_integer_,
-      cM = NA_integer_,
-      pT = NA_integer_,
-      pN = NA_integer_,
-      pM = NA_integer_,
-      ToS = "cpS",
-      Stage = 2L,
-
-      Surgery = 0L,
-      Rt = 0L,
-      Cht = 0L,
-      Tt = 0L,
-      It = 0L,
-      Ht = 0L,
-      Ot = 0L,
-      SCT = 0L
-    ),
-    mortality = data.frame(
-      "Calendar_Year" = 2000L,
-      "Sex" = 1L,
-      "Age unit" = 1L,
-      "Cause of death" = "C50",
-      "Number of deaths" = 0L
-    ),
-    population = data.frame(
-      "Calendar Year" = 2000L,
-      "Sex" = 1L,
-      "Age unit" = 1L,
-      "Geo_code" = "FI1B",
-      "Number of residents" = 100L
-    ),
-    lifetable = data.frame(
-      "Calendar Year" = 2000L,
-      "Sex" = 1L,
-      "Annual age" = 1L,
-      "Geo_code" = "FI1B",
-      "All causes death probability" = 0.01
-    )
+arg_dataset_name_docs <- function() {
+  lines <- c(
+    "@param dataset_name `[character]` (no default)",
+    "",
+    "one of the following:",
+    paste0(" - \"", qcs_dataset_names(), "\"")
   )
+  return(lines)
 }
 
-qcs_dataset_column_names <- function(dataset_name) {
-  assert_is_qcs_dataset_name(dataset_name, assertion_type = "prod_input")
+.__QCS_FAKE_DATASETS <- list(
+  incidence = data.frame(
+    PAT = 1L,
+    MoB = 1L,
+    YoB = 1950L,
+    Age = 70L,
+    Sex = 1L,
+    Geo_Code = "FI1B",
+    Geo_Label = "Helsinki-Uusimaa",
+
+    TUM = 1L,
+    MoI = 1L,
+    YoI = 2000L,
+
+    BoD = 1L,
+    Topo = "C001",
+    Morpho = "8070",
+    Beh = 3L,
+    Grade = 2L,
+
+    Autopsy = 0L,
+    Vit_stat = 1L,
+    MoF = 1L,
+    YoF = 2020L,
+    Surv_time = 7305L,
+    ICD = 10L,
+    CoD = NA_character_,
+
+    TNM_ed = 8L,
+    cT = NA_integer_,
+    cN = NA_integer_,
+    cM = NA_integer_,
+    pT = NA_integer_,
+    pN = NA_integer_,
+    pM = NA_integer_,
+    ToS = "cpS",
+    Stage = 2L,
+
+    Surgery = 0L,
+    Rt = 0L,
+    Cht = 0L,
+    Tt = 0L,
+    It = 0L,
+    Ht = 0L,
+    Ot = 0L,
+    SCT = 0L
+  ),
+  mortality = data.frame(
+    "Calendar_Year" = 2000L,
+    "Sex" = 1L,
+    "Age unit" = 1L,
+    "Cause of death" = "C50",
+    "Number of deaths" = 0L
+  ),
+  population = data.frame(
+    "Calendar Year" = 2000L,
+    "Sex" = 1L,
+    "Age unit" = 1L,
+    "Geo_code" = "FI1B",
+    "Number of residents" = 100L
+  ),
+  lifetable = data.frame(
+    "Calendar Year" = 2000L,
+    "Sex" = 1L,
+    "Annual age" = 1L,
+    "Geo_code" = "FI1B",
+    "All causes death probability" = 0.01
+  )
+)
+
+
+#' @rdname metadata
+#' @export
+#' @template param_assertion_type
+#' @eval arg_dataset_name_docs()
+qcs_fake_dataset <- function(dataset_name, assertion_type = "input") {
+  assert_is_qcs_dataset_name(dataset_name, assertion_type = assertion_type)
+
+  # @codedoc_comment_block encrqcs::qcs_fake_dataset
+  # `[ecnrqcs::qcs_fake_dataset]` returns a `data.frame` with one row which
+  # has the required columns in their required format for the given
+  # `dataset_name`. Column names and classes taken from JRC-ENCR User
+  # Compendium 2.0.
+  # @codedoc_comment_block encrqcs::qcs_fake_dataset
+  .__QCS_FAKE_DATASETS[[dataset_name]]
+}
+
+#' @rdname metadata
+#' @export
+qcs_dataset_column_names <- function(dataset_name, assertion_type = "input") {
+  # @codedoc_comment_block encrqcs::qcs_dataset_column_names
+  # `[ecnrqcs::qcs_dataset_column_names]` returns a character string vector
+  # of column names for the given `dataset_name`. This function wraps
+  # `[ecnrqcs::qcs_fake_dataset]`.
+  # @codedoc_comment_block encrqcs::qcs_dataset_column_names
+  assert_is_qcs_dataset_name(dataset_name, assertion_type = assertion_type)
   return(names(qcs_fake_dataset(dataset_name)))
 }
 
+#' @rdname metadata
+#' @export
+#' @param x Assertion is performed on this object.
+#' @param x_nm See e.g. `[dbc::dbc::assert_is_integer]`.
+#' @param call See e.g. `[dbc::dbc::assert_is_integer]`.
 assert_is_qcs_dataset_name <- function(
   x,
   x_nm = NULL,
@@ -94,12 +140,14 @@ assert_is_qcs_dataset_name <- function(
   assertion_type = "input"
 ) {
   x_nm <- dbc::handle_arg_x_nm(x_nm)
-  call <- dbC::handle_arg_call(call)
+  call <- dbc::handle_arg_call(call)
   dbc::assert_is_character_nonNA_atom(x, x_nm = x_nm, call = call)
   dbc::assert_atom_is_in_set(x, set = qcs_dataset_names(),
                              x_nm = x_nm, call = call)
 }
 
+#' @rdname metadata
+#' @export
 assert_is_qcs_dataset <- function(
   x,
   x_nm = NULL,

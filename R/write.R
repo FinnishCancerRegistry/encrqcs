@@ -15,6 +15,8 @@
 #'
 #' additional arguments passed to [data.table::fwrite]
 #' @export
+#' @examples
+#' fake_incidence <-
 write_qcs_file <- function(
   dataset,
   dataset_name,

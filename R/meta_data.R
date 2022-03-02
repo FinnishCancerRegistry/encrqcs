@@ -3,30 +3,88 @@
 qcs_dataset_names <- function() {
   c("incidence", "mortality", "population", "lifetable")
 }
-qcs_dataset_column_names <- function(dataset_name) {
-  # taken from JRC-ECNR QCS User Compendium 2.0
+
+qcs_fake_dataset <- function(dataset_name) {
+  assert_is_qcs_dataset_name(dataset_name, assertion_type = "prod_input")
+
+  # Column names and classes taken from JRC-ENCR User Compendium 2.0
   switch(
-    dataset_name,
-    stop("Internal error: No column names defined for dataset_name = ",
+    dataset,
+    stop("Internal error: No fake dataset defined for dataset_name = ",
          deparse(dataset_name)),
-    incidence = c(
-      "PAT", "MoB", "YoB", "Age", "Sex", "Geo_Code", "Geo_Label",
-      "TUM", "MoI", "YoI", "BoD", "Topo", "Morpho", "Beh", "Grade",
-      "Autopsy", "Vit_stat", "MoF", "YoF", "Surv_time",
-      "ICD", "CoD", "TNM_ed",
-      "cT", "cN", "cM", "pT", "pN", "pM", "ToS", "Stage",
-      "Surgery", "Rt", "Cht", "Tt", "It", "Ht", "Ot", "SCT"
+    incidence = data.frame(
+      PAT = 1L,
+      MoB = 1L,
+      YoB = 1950L,
+      Age = 70L,
+      Sex = 1L,
+      Geo_Code = "FI1B",
+      Geo_Label = "Helsinki-Uusimaa",
+
+      TUM = 1L,
+      MoI = 1L,
+      YoI = 2000L,
+
+      BoD = 1L,
+      Topo = "C001",
+      Morpho = "8070",
+      Beh = 3L,
+      Grade = 2L,
+
+      Autopsy = 0L,
+      Vit_stat = 1L,
+      MoF = 1L,
+      YoF = 2020L,
+      Surv_time = 7305L,
+      ICD = 10L,
+      CoD = NA_character_,
+
+      TNM_ed = 8L,
+      cT = NA_integer_,
+      cN = NA_integer_,
+      cM = NA_integer_,
+      pT = NA_integer_,
+      pN = NA_integer_,
+      pM = NA_integer_,
+      ToS = "cpS",
+      Stage = 2L,
+
+      Surgery = 0L,
+      Rt = 0L,
+      Cht = 0L,
+      Tt = 0L,
+      It = 0L,
+      Ht = 0L,
+      Ot = 0L,
+      SCT = 0L
     ),
-    mortality = c(
-      "Calendar_Year", "Sex", "Age unit", "Cause of death", "Number of deaths"
+    mortality = data.frame(
+      "Calendar_Year" = 2000L,
+      "Sex" = 1L,
+      "Age unit" = 1L,
+      "Cause of death" = "C50",
+      "Number of deaths" = 0L
     ),
-    population = c(
-      "Calendar Year", "Sex", "Age unit", "Geo_code", "Number of residents"
+    population = data.frame(
+      "Calendar Year" = 2000L,
+      "Sex" = 1L,
+      "Age unit" = 1L,
+      "Geo_code" = "FI1B",
+      "Number of residents" = 100L
     ),
-    lifetable = c(
-      "Calendar Year", "Sex", "Annual age", "Geo_code", "All causes death probability"
+    lifetable = data.frame(
+      "Calendar Year" = 2000L,
+      "Sex" = 1L,
+      "Annual age" = 1L,
+      "Geo_code" = "FI1B",
+      "All causes death probability" = 0.01
     )
   )
+}
+
+qcs_dataset_column_names <- function(dataset_name) {
+  assert_is_qcs_dataset_name(dataset_name, assertion_type = "prod_input")
+  return(names(qcs_fake_dataset(dataset_name)))
 }
 
 assert_is_qcs_dataset_name <- function(
@@ -58,6 +116,13 @@ assert_is_qcs_dataset <- function(
     assertion_type = assertion_type,
     required_names = qcs_dataset_column_names(dataset_name)
   )
+  fake_dataset <- qcs_fake_dataset(dataset_name)
+  lapply(qcs_dataset_column_names(dataset_name), function(col_nm) {
+    dbc::assert_inherits(x = x[[col_nm]], x_nm = paste0(x_nm, "$", col_nm),
+                         call = call,
+                         required_class = class(fake_dataset[[col_nm]])[1L])
+  })
+  invisible(NULL)
 }
 
 

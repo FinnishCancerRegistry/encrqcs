@@ -18,17 +18,22 @@ qcs_script_path <- function(qcs_dir_path) {
 }
 
 qcs_script_lines <- function(
-  qcs_version,
   qcs_protocol_id,
-  input_file_path
+  dataset_file_path,
+  qcs_dir_path
 ) {
-  cmd <- paste0("java -jar -Xmx2g jrc-qcs-%QCS_VERSION%.jar",
+  jar_file_name <- dir(qcs_dir_path, pattern = "jrc-qcs[0-9.-]+.jar")
+  if (length(jar_file_name) != 1L) {
+    stop("Could not detect jrc-qcs-%VERSION%.jar in qcs_dir_path = ",
+         deparse(qcs_dir_path), ". Either the dir you have supplied is not ",
+         "the correct one or R package encrqcs needs to be fixed.")
+  }
+  cmd <- paste0("java -jar -Xmx2g ", jar_file_name,
                 " -v %QCS_PROTOCOL_ID%",
-                " %INPUT_FILE_PATH%")
+                " %dataset_file_path%")
   replacements <- c(
-    "%QCS_VERSION%"     = qcs_version,
     "%QCS_PROTOCOL_ID%" = qcs_protocol_id,
-    "%INPUT_FILE_PATH%" = normalizePath(input_file_path, winslash = "/")
+    "%dataset_file_path%" = normalizePath(dataset_file_path, winslash = "/")
   )
   for (i in seq_along(replacements)) {
     cmd <- gsub(names(replacements)[i], replacements[i], cmd)
@@ -60,22 +65,33 @@ qcs_script_lines <- function(
   return(script_lines)
 }
 
+#' @title Run JRC-ENCR QCS
+#' @description
+#' Run JRC-ENCR QCS on a file on-disk.
+#' @param dataset_file_path `[character]` (no default)
+#'
+#' Path to an existing file. This should be the dataset you want to use.
+#' @template param_qcs_dir_path
+#' @param qcs_protocol_id `[integer]` (default `11L`)
+#'
+#' See the JRC-ENCR QCS User Compendium.
+#' @param system2_arg_list `[NULL, list]` (default `NULL`)
+#'
+#' Optional, additional arguments passed to `[system2]` if a list.
+#' @template param_assertion_type
+#' @export
 qcs_run <- function(
-  input_file_path,
+  dataset_file_path,
   qcs_dir_path,
-  qcs_version = "2.0",
   qcs_protocol_id = 11L,
   system2_arg_list = NULL,
   assertion_type = "input"
 ) {
-  dbc::assert_file_exists(input_file_path, assertion_type = assertion_type)
-  input_file_path <- normalizePath(input_file_path, winslash = "/")
+  dbc::assert_file_exists(dataset_file_path, assertion_type = assertion_type)
+  dataset_file_path <- normalizePath(dataset_file_path, winslash = "/")
   dbc::assert_dir_exists(qcs_dir_path, assertion_type = assertion_type)
   dbc::assert_has_length(qcs_dir_path, expected_length = 1L,
                          assertion_type = assertion_type)
-  dbc::assert_is_character_nonNA_atom(
-    qcs_version, assertion_type = assertion_type
-  )
   dbc::assert_is_integer_nonNA_atom(
     qcs_protocol_id, assertion_type = assertion_type
   )
@@ -85,9 +101,9 @@ qcs_run <- function(
   )
 
   script_lines <- qcs_script_lines(
-    qcs_version = qcs_version,
     qcs_protocol_id = qcs_protocol_id,
-    input_file_path = input_file_path
+    dataset_file_path = dataset_file_path,
+    qcs_dir_path = qcs_dir_path
   )
   script_path <- qcs_script_path(qcs_dir_path = qcs_dir_path)
   writeLines(script_lines, script_path)

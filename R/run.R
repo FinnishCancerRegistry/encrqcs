@@ -8,11 +8,13 @@
 #' @template param_dataset
 #' @eval c(
 #'   arg_dataset_name_docs(),
-#'   codedoc::codedoc_lines("^encrqcs::qcs_run::", "R/run.R"),
+#'   codedoc::codedoc_roxygen_news_by_version("encrqcs::qcs_run", "R/run.R"),
 #'   "@details",
 #'   codedoc::codedoc_lines("^\\Qdetails(encrqcs::qcs_run)\\E$", "R/run.R"),
 #'   "@return",
-#'   codedoc::codedoc_lines("^\\Qreturn(encrqcs::qcs_run)\\E$", "R/run.R")
+#'   codedoc::codedoc_lines("^\\Qreturn(encrqcs::qcs_run)\\E$", "R/run.R"),
+#'
+#'   codedoc::codedoc_lines("^encrqcs::qcs_run::", "R/run.R")
 #' )
 #' @template param_qcs_dir_path
 #' @template param_assertion_type
@@ -28,6 +30,12 @@ qcs_run <- function(
     read_arg_list     = NULL,
     assertion_type    = "input"
 ) {
+  # @codedoc_comment_block news("encrqcs::qcs_run", "2022-03-03", "0.2.2")
+  # `[encrqcs::qcs_run]` works for the incidence dataset, but the Java
+  # programme seems to fail for the other datasets at this time.
+  # Potentially a protocol id problem.
+  # @codedoc_comment_block news("encrqcs::qcs_run", "2022-03-03", "0.2.2")
+
   # assertions -----------------------------------------------------------------
   encrqcs::assert_is_qcs_dataset(dataset, dataset_name = dataset_name,
                                  assertion_type = assertion_type)

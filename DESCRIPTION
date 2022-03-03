@@ -5,7 +5,7 @@ Version: 0.2.2
 Author: Joonas Miettinen <joonas.miettinen@cancer.fi>
 Maintainer: Joonas Miettinen <joonas.miettinen@cancer.fi>
 Imports: data.table, dbc
-Description: Makes life a bit easier for JRC-ENCR QCS users.
+Description: Tools to use JRC-ENCR QCS from the comfort of your R session.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

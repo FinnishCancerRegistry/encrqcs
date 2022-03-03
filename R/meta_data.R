@@ -16,7 +16,7 @@ qcs_dataset_names <- function() {
   # `[ecnrqcs::qcs_dataset_names]` returns the set of allowed dataset names
   # as a character string vector.
   # @codedoc_comment_block encrqcs::qcs_run_dataset_names
-  names(.__QCS_FAKE_DATASETS)
+  names(.__QCS_DATASET_TEMPLATES)
 }
 
 arg_dataset_name_docs <- function() {
@@ -29,8 +29,8 @@ arg_dataset_name_docs <- function() {
   return(lines)
 }
 
-.__QCS_FAKE_DATASETS <- list(
-  incidence = data.frame(
+.__QCS_DATASET_TEMPLATES <- list(
+  incidence = data.table::data.table(
     PAT = 1L,
     MoB = 1L,
     YoB = 1950L,
@@ -76,25 +76,25 @@ arg_dataset_name_docs <- function() {
     Ot = 0L,
     SCT = 0L
   ),
-  mortality = data.frame(
-    "Calendar_Year" = 2000L,
+  mortality = data.table::data.table(
+    "Calendar_year" = 2000L,
     "Sex" = 1L,
     "Age unit" = 1L,
     "Cause of death" = "C50",
     "Number of deaths" = 0L
   ),
-  population = data.frame(
-    "Calendar Year" = 2000L,
+  population = data.table::data.table(
+    "Calendar year" = 2000L,
     "Sex" = 1L,
-    "Age unit" = 1L,
-    "Geo_code" = "FI1B",
+    "Age Unit" = 1L,
+    # "Geo_code" = "FI1B",
     "Number of residents" = 100L
   ),
-  lifetable = data.frame(
-    "Calendar Year" = 2000L,
+  lifetable = data.table::data.table(
+    "Calendar year" = 2000L,
     "Sex" = 1L,
-    "Annual age" = 1L,
-    "Geo_code" = "FI1B",
+    "Age_Unit" = 1L,
+    # "Geo_code" = "FI1B",
     "All causes death probability" = 0.01
   )
 )
@@ -108,12 +108,12 @@ qcs_dataset_template <- function(dataset_name, assertion_type = "input") {
   assert_is_qcs_dataset_name(dataset_name, assertion_type = assertion_type)
 
   # @codedoc_comment_block encrqcs::qcs_run_dataset_template
-  # `[ecnrqcs::qcs_dataset_template]` returns a `data.frame` with one row which
+  # `[ecnrqcs::qcs_dataset_template]` returns a `data.table` with one row which
   # has the required columns in their required format for the given
   # `dataset_name`. Column names and classes taken from JRC-ENCR User
   # Compendium 2.0.
   # @codedoc_comment_block encrqcs::qcs_run_dataset_template
-  .__QCS_FAKE_DATASETS[[dataset_name]]
+  .__QCS_DATASET_TEMPLATES[[dataset_name]]
 }
 
 #' @rdname metadata

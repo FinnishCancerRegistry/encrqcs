@@ -34,10 +34,19 @@ path to write file to}
 
 \item{fwrite_arg_list}{\verb{[NULL, list]} (default \code{NULL})
 
-additional arguments passed to \link[data.table:fwrite]{data.table::fwrite}}
+Additional arguments passed to \verb{[data.table::fwrite]} if a list. Arguments
+\code{x}, \code{file}, and \code{sep} are determined internally and cannot be changed.}
 
 \item{assertion_type}{See e.g. \verb{[dbc::report_to_assertion]}.}
 }
+\value{
+\verb{[encrqcs::qcs_write_dataset]} always returns \code{NULL} invisibly. As a
+side effect it writes \code{dataset} to disk.
+}
 \description{
 Read and write .csv files for / created by the JRC-ENCR QCS.
+}
+\details{
+\verb{[encrqcs::qcs_write_dataset]} performs simple checks on its input and
+writes \code{dataset} on the disk using \verb{[data.table::fwrite]}.
 }

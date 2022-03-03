@@ -8,7 +8,11 @@
 #' @template param_dataset
 #' @eval c(
 #'   arg_dataset_name_docs(),
-#'   codedoc::codedoc_lines("^encrqcs::qcs_run", "R/run.R")
+#'   codedoc::codedoc_lines("^encrqcs::qcs_run::", "R/run.R"),
+#'   "@details",
+#'   codedoc::codedoc_lines("^\\Qdetails(encrqcs::qcs_run)\\E$", "R/run.R"),
+#'   "@return",
+#'   codedoc::codedoc_lines("^\\Qreturn(encrqcs::qcs_run)\\E$", "R/run.R")
 #' )
 #' @template param_qcs_dir_path
 #' @template param_assertion_type
@@ -20,7 +24,7 @@ qcs_run <- function(
     dataset_file_path = NULL,
     clean             = NULL,
     write_arg_list    = NULL,
-    run_arg_list      = NULL,
+    call_arg_list     = NULL,
     read_arg_list     = NULL,
     assertion_type    = "input"
 ) {
@@ -109,38 +113,39 @@ qcs_run <- function(
   }
 
   # run ------------------------------------------------------------------------
-  # @codedoc_comment_block encrqcs::qcs_run::run_arg_list
-  # @param run_arg_list `[NULL, list]` (default `NULL`)
+  # @codedoc_comment_block encrqcs::qcs_run::call_arg_list
+  # @param call_arg_list `[NULL, list]` (default `NULL`)
   #
   # Optional, additional arguments passed to `[encrqcs::qcs_run_call]`
   # if a list. Arguments `dataset_file_path`, `qcs_dir_path`,
   # `assertion_type`, and `system2_arg_list` are determined internally and
   # cannot be changed.
-  # @codedoc_comment_block encrqcs::qcs_run::run_arg_list
-  overriding_run_arg_list <- list(
+  # @codedoc_comment_block encrqcs::qcs_run::call_arg_list
+  overriding_call_arg_list <- list(
     dataset_file_path = dataset_file_path,
     qcs_dir_path = qcs_dir_path,
     assertion_type = assertion_type,
-    system2_arg_list = list(stdout = TRUE, stderr = TRUE)
+    system2_arg_list = list(stdout = TRUE, stderr = TRUE),
+    qcs_protocol_id = dataset_name
   )
-  run_arg_list <- as.list(run_arg_list)
-  run_arg_list[names(overriding_run_arg_list)] <- overriding_run_arg_list
+  call_arg_list <- as.list(call_arg_list)
+  call_arg_list[names(overriding_call_arg_list)] <- overriding_call_arg_list
   # @codedoc_comment_block details(encrqcs::qcs_run)
   # 2. `[encrqcs::qcs_run_call]` is called to run checks on the on-disk dataset
-  #    (see arg `run_arg_list`). Any messages that JRC-ENCR QCS emits are
+  #    (see arg `call_arg_list`). Any messages that JRC-ENCR QCS emits are
   #    captured into acharacter string vector which will be included in
   #    the ouptut of `[encrqcs::qcs_run]`.
   # @codedoc_comment_block details(encrqcs::qcs_run)
-  run_log <- do.call(encrqcs::qcs_call, run_arg_list, quote = TRUE)
+  run_log <- do.call(encrqcs::qcs_call, call_arg_list, quote = TRUE)
 
   # read -----------------------------------------------------------------------
-  # @codedoc_comment_block encrqcs::qcs::read_arg_list
+  # @codedoc_comment_block encrqcs::qcs_run::read_arg_list
   # @param read_arg_list `[NULL, list]` (default `NULL`)
   # Optional, additional arguments passed to `[encrqcs::qcs_read_results]`
   # if a list. Arguments `qcs_dir_path`, `dataset_name`, and
   # `assertion_type` are determined internally and
   # cannot be changed.
-  # @codedoc_comment_block encrqcs::qcs::read_arg_list
+  # @codedoc_comment_block encrqcs::qcs_run::read_arg_list
   overriding_read_arg_list <- list(
     qcs_dir_path = qcs_dir_path,
     dataset_name = dataset_name,
@@ -148,25 +153,32 @@ qcs_run <- function(
   )
   read_arg_list <- as.list(read_arg_list)
   read_arg_list[names(overriding_read_arg_list)] <- overriding_read_arg_list
-  # @codedoc_comment_block details(encrqcs::qcs)
+  # @codedoc_comment_block details(encrqcs::qcs_run)
   # 3. `[encrqcs::qcs_read_results]` is called to read results back into R.
-  # @codedoc_comment_block details(encrqcs::qcs)
+  # @codedoc_comment_block details(encrqcs::qcs_run)
   output <- do.call(encrqcs::qcs_read_results, read_arg_list, quote = TRUE)
 
   # finishing touches ----------------------------------------------------------
-  # @codedoc_comment_block details(encrqcs::qcs)
+  # @codedoc_comment_block return(encrqcs::qcs_run)
+  #    The output of `[encrqcs::qcs_run]` is a list as returned by
+  #    `[encrqcs::qcs_read_results]`
+  #    with the additional element `run_log`.
+  # @codedoc_comment_block return(encrqcs::qcs_run)
+
+  # @codedoc_comment_block details(encrqcs::qcs_run)
   # 4. The captured messages alluded to in step 2 are included in the output
   #    as element named `run_log`.
-  # @codedoc_comment_block details(encrqcs::qcs)
+  # @codedoc_insert_comment_block return(encrqcs::qcs_run)
+  # @codedoc_comment_block details(encrqcs::qcs_run)
   output[["run_log"]] <- run_log
   if (clean %in% c("output", "both")) {
     output_dir_path <- qcs_read_dir_path(
       qcs_dir_path = qcs_dir_path, dataset_name = dataset_name
     )
-    # @codedoc_comment_block details(encrqcs::qcs)
+    # @codedoc_comment_block details(encrqcs::qcs_run)
     # 5. Input / output files are removed on exit (whether successful or not)
-    #    of `[encrqcs::qcs]` depending on arg `clean`.
-    # @codedoc_comment_block details(encrqcs::qcs)
+    #    of `[encrqcs::qcs_run]` depending on arg `clean`.
+    # @codedoc_comment_block details(encrqcs::qcs_run)
     on.exit(unlink(output_dir_path, force = TRUE, recursive = TRUE),
             add = TRUE)
   }

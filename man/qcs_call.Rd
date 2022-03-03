@@ -7,7 +7,7 @@
 qcs_call(
   dataset_file_path,
   qcs_dir_path,
-  qcs_protocol_id = 11L,
+  qcs_protocol_id,
   system2_arg_list = NULL,
   assertion_type = "input"
 )
@@ -20,10 +20,6 @@ Path to an existing file. This should be the dataset you want to use.}
 \item{qcs_dir_path}{\verb{[character]} (no default)
 
 Path to root directory of the JRC-ENCR QCS.}
-
-\item{qcs_protocol_id}{\verb{[integer]} (default \code{11L})
-
-See the JRC-ENCR QCS User Compendium.}
 
 \item{system2_arg_list}{\verb{[NULL, list]} (default \code{NULL})
 

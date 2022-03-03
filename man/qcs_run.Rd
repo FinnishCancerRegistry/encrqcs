@@ -11,7 +11,7 @@ qcs_run(
   dataset_file_path = NULL,
   clean = NULL,
   write_arg_list = NULL,
-  run_arg_list = NULL,
+  call_arg_list = NULL,
   read_arg_list = NULL,
   assertion_type = "input"
 )
@@ -68,15 +68,45 @@ Optional, additional arguments passed to \verb{[encrqcs::qcs_write_dataset]}
 if a list. Arguments \code{dataset}, \code{dataset_name}, \code{file_path}, and
 \code{assertion} type are determined internally and cannot be changed.}
 
-\item{run_arg_list}{\verb{[NULL, list]} (default \code{NULL})
+\item{call_arg_list}{\verb{[NULL, list]} (default \code{NULL})
 
 Optional, additional arguments passed to \verb{[encrqcs::qcs_run_call]}
 if a list. Arguments \code{dataset_file_path}, \code{qcs_dir_path},
 \code{assertion_type}, and \code{system2_arg_list} are determined internally and
 cannot be changed.}
 
+\item{read_arg_list}{\verb{[NULL, list]} (default \code{NULL})
+Optional, additional arguments passed to \verb{[encrqcs::qcs_read_results]}
+if a list. Arguments \code{qcs_dir_path}, \code{dataset_name}, and
+\code{assertion_type} are determined internally and
+cannot be changed.}
+
 \item{assertion_type}{See e.g. \verb{[dbc::report_to_assertion]}.}
+}
+\value{
+The output of \verb{[encrqcs::qcs_run]} is a list as returned by
+\verb{[encrqcs::qcs_read_results]}
+with the additional element \code{run_log}.
 }
 \description{
 Run JRC-ENCR QCS and read results into R.
+}
+\details{
+\verb{[encrqcs::qcs_run]} performs the following steps:
+\enumerate{
+\item \verb{[encrqcs::qcs_write_dataset]} is called to write \code{dataset} to disk
+(see arg \code{write_arg_list}).
+\item \verb{[encrqcs::qcs_run_call]} is called to run checks on the on-disk dataset
+(see arg \code{call_arg_list}). Any messages that JRC-ENCR QCS emits are
+captured into acharacter string vector which will be included in
+the ouptut of \verb{[encrqcs::qcs_run]}.
+\item \verb{[encrqcs::qcs_read_results]} is called to read results back into R.
+\item The captured messages alluded to in step 2 are included in the output
+as element named \code{run_log}.
+The output of \verb{[encrqcs::qcs_run]} is a list as returned by
+\verb{[encrqcs::qcs_read_results]}
+with the additional element \code{run_log}.
+\item Input / output files are removed on exit (whether successful or not)
+of \verb{[encrqcs::qcs_run]} depending on arg \code{clean}.
+}
 }

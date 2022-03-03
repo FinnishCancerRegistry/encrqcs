@@ -2,7 +2,7 @@
 % Please edit documentation in R/read.R
 \name{qcs_read_results}
 \alias{qcs_read_results}
-\title{JRC-ENCR Results}
+\title{JRC-ENCR QCS Results}
 \usage{
 qcs_read_results(
   qcs_dir_path,
@@ -29,14 +29,37 @@ one of the following:
 
 \item{fread_arg_list}{\verb{[NULL, list]} (default \code{NULL})
 
-Additional arguments passed to \verb{[data.table::fread]} if a \code{list}.}
+Additional arguments passed to \verb{[data.table::fread]} if a \code{list}.
+Argument \code{file} is determined internally and cannot be changed.}
 
 \item{readlines_arg_list}{\verb{[NULL, list]} (default \code{NULL})
 
-Additional arguments passed to \verb{[readLines]} if a \code{list}.}
+Additional arguments passed to \verb{[readLines]} if a \code{list}.
+Argument \code{con} is determined internally and cannot be changed.}
 
 \item{assertion_type}{See e.g. \verb{[dbc::report_to_assertion]}.}
 }
+\value{
+The output will be a list with one
+element for each result file. The name of the element is the name of
+the file in the results dir.
+}
 \description{
-Read JRC-ENCR results into R.
+Read JRC-ENCR QCS results into R.
+}
+\details{
+\verb{[encrqcs::qcs_read_results]} performs the following steps:
+\enumerate{
+\item Directory containing results is assumed to look like e.g.
+\verb{C:/path/to/qcs/output/incidence} for
+\code{qcs_dir_path = "C:/path/to/qcs/"}, \code{dataset_name = "incidence"}.
+\item Result files in the results dir are those that match case-insensitive
+regex \code{"output([.]txt)|([.]csv)"}.
+\item Each results file is read separately into R. Those ending in
+\code{.txt} are read using \verb{[readLines]}. Those ending in \code{.csv} are read
+using \verb{[data.table::fread]}.
+The output will be a list with one
+element for each result file. The name of the element is the name of
+the file in the results dir.
+}
 }

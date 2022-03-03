@@ -5,7 +5,7 @@
 #' @docType package
 #' @title `encrqcs`: JRC-ENCR QCS Tools
 #' @eval c(
-#'   codedoc::codedoc_R_package_description("encrqcs")[-(2:12)],
+#'   codedoc::codedoc_R_package_description("encrqcs")[-(2:9)],
 #'   codedoc::codedoc_news_for_R_package()
 #' )
 NULL

@@ -12,10 +12,10 @@ NULL
 #' @rdname metadata
 #' @export
 qcs_dataset_names <- function() {
-  # @codedoc_comment_block encrqcs::qcs_dataset_names
+  # @codedoc_comment_block encrqcs::qcs_run_dataset_names
   # `[ecnrqcs::qcs_dataset_names]` returns the set of allowed dataset names
   # as a character string vector.
-  # @codedoc_comment_block encrqcs::qcs_dataset_names
+  # @codedoc_comment_block encrqcs::qcs_run_dataset_names
   names(.__QCS_FAKE_DATASETS)
 }
 
@@ -107,23 +107,23 @@ arg_dataset_name_docs <- function() {
 qcs_dataset_template <- function(dataset_name, assertion_type = "input") {
   assert_is_qcs_dataset_name(dataset_name, assertion_type = assertion_type)
 
-  # @codedoc_comment_block encrqcs::qcs_dataset_template
+  # @codedoc_comment_block encrqcs::qcs_run_dataset_template
   # `[ecnrqcs::qcs_dataset_template]` returns a `data.frame` with one row which
   # has the required columns in their required format for the given
   # `dataset_name`. Column names and classes taken from JRC-ENCR User
   # Compendium 2.0.
-  # @codedoc_comment_block encrqcs::qcs_dataset_template
+  # @codedoc_comment_block encrqcs::qcs_run_dataset_template
   .__QCS_FAKE_DATASETS[[dataset_name]]
 }
 
 #' @rdname metadata
 #' @export
 qcs_dataset_column_names <- function(dataset_name, assertion_type = "input") {
-  # @codedoc_comment_block encrqcs::qcs_dataset_column_names
+  # @codedoc_comment_block encrqcs::qcs_run_dataset_column_names
   # `[ecnrqcs::qcs_dataset_column_names]` returns a character string vector
   # of column names for the given `dataset_name`. This function wraps
   # `[ecnrqcs::qcs_dataset_template]`.
-  # @codedoc_comment_block encrqcs::qcs_dataset_column_names
+  # @codedoc_comment_block encrqcs::qcs_run_dataset_column_names
   assert_is_qcs_dataset_name(dataset_name, assertion_type = assertion_type)
   return(names(qcs_dataset_template(dataset_name)))
 }

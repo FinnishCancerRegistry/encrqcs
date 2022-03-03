@@ -1,123 +1,176 @@
 
-qcs_script_extension <- function() {
-  script_extension <- switch(
-    get_os(), windows = ".bat", linux = ".sh", osx = ".sh"
-  )
-  return(script_extension)
-}
 
-qcs_script_name <- function() {
-  paste0("R_package_encrqcs_temporary_script",
-         qcs_script_extension())
-}
 
-qcs_script_path <- function(qcs_dir_path) {
-  script_name <- qcs_script_name()
-  script_path <- paste0(qcs_dir_path, "/", script_name)
-  script_path <- normalizePath(script_path, mustWork = FALSE)
-}
 
-qcs_script_lines <- function(
-  qcs_protocol_id,
-  dataset_file_path,
-  qcs_dir_path
-) {
-  jar_file_name <- dir(qcs_dir_path, pattern = "jrc-qcs[0-9.-]+.jar")
-  if (length(jar_file_name) != 1L) {
-    stop("Could not detect jrc-qcs-%VERSION%.jar in qcs_dir_path = ",
-         deparse(qcs_dir_path), ". Either the dir you have supplied is not ",
-         "the correct one or R package encrqcs needs to be fixed.")
-  }
-  cmd <- paste0("java -jar -Xmx2g ", jar_file_name,
-                " -v %QCS_PROTOCOL_ID%",
-                " %dataset_file_path%")
-  replacements <- c(
-    "%QCS_PROTOCOL_ID%" = qcs_protocol_id,
-    "%dataset_file_path%" = normalizePath(dataset_file_path, winslash = "/")
-  )
-  for (i in seq_along(replacements)) {
-    cmd <- gsub(names(replacements)[i], replacements[i], cmd)
-  }
-
-  script_head_tail <- switch(
-    qcs_script_extension(),
-    .bat = list(
-      head = c(
-        "@ECHO off",
-        "",
-        "REM this script written by R package encrqcs.",
-        "REM it should be automatically deleted after execution finishes.",
-        "SET OUTPUT_DIR=\\output"
-      ),
-      tail = c(":END", "")
-    ),
-    .sh = list(
-      head = c(
-        "#!/usr/bin/env bash",
-        "",
-        "# this script written by R package encrqcs.",
-        "# it should be automatically deleted after execution finishes."
-      ),
-      tail = ""
-    )
-  )
-  script_lines <- c(script_head_tail[["head"]], cmd, script_head_tail[["tail"]])
-  return(script_lines)
-}
-
-#' @title Run JRC-ENCR QCS
+#' @title JRC-ENCR QCS
 #' @description
-#' Run JRC-ENCR QCS on a file on-disk.
-#' @param dataset_file_path `[character]` (no default)
-#'
-#' Path to an existing file. This should be the dataset you want to use.
+#' Run JRC-ENCR QCS and read results into R.
+#' @template param_dataset
+#' @eval c(
+#'   arg_dataset_name_docs(),
+#'   codedoc::codedoc_lines("^encrqcs::qcs_run", "R/run.R")
+#' )
 #' @template param_qcs_dir_path
-#' @param qcs_protocol_id `[integer]` (default `11L`)
-#'
-#' See the JRC-ENCR QCS User Compendium.
-#' @param system2_arg_list `[NULL, list]` (default `NULL`)
-#'
-#' Optional, additional arguments passed to `[system2]` if a list.
 #' @template param_assertion_type
 #' @export
 qcs_run <- function(
-  dataset_file_path,
-  qcs_dir_path,
-  qcs_protocol_id = 11L,
-  system2_arg_list = NULL,
-  assertion_type = "input"
+    dataset,
+    dataset_name,
+    qcs_dir_path,
+    dataset_file_path = NULL,
+    clean             = NULL,
+    write_arg_list    = NULL,
+    run_arg_list      = NULL,
+    read_arg_list     = NULL,
+    assertion_type    = "input"
 ) {
-  dbc::assert_file_exists(dataset_file_path, assertion_type = assertion_type)
-  dataset_file_path <- normalizePath(dataset_file_path, winslash = "/")
-  dbc::assert_dir_exists(qcs_dir_path, assertion_type = assertion_type)
-  dbc::assert_has_length(qcs_dir_path, expected_length = 1L,
+  # assertions -----------------------------------------------------------------
+  encrqcs::assert_is_qcs_dataset(dataset, dataset_name = dataset_name,
+                                 assertion_type = assertion_type)
+  encrqcs::assert_is_qcs_dataset_name(dataset_name,
+                                      assertion_type = assertion_type)
+  dbc::assert_dir_exists(qcs_dir_path,
                          assertion_type = assertion_type)
-  dbc::assert_is_integer_nonNA_atom(
-    qcs_protocol_id, assertion_type = assertion_type
-  )
   dbc::assert_is_one_of(
-    system2_arg_list,
-    funs = list(dbc::report_is_NULL, dbc::report_is_list)
+    dataset_file_path,
+    funs = list(
+      dbc::report_is_NULL,
+      dbc::report_is_character_nonNA_atom
+    ),
+    assertion_type = assertion_type
+  )
+  # @codedoc_comment_block encrqcs::qcs_run::clean
+  # @param clean `[NULL, logical]` (default `NULL`)
+  #
+  # One of the following:
+  # - `NULL`     : Use `"both"`.
+  # - `"input"`  : Delete the file in `dataset_file_path` when this function
+  #                no longer needs it.
+  # - `"output"` : Delete output files when this function no longer need them.
+  #                Specifically, the whole output directory for the given
+  #                `dataset_name` is removed, e.g. `output/incidence`,
+  #                in `qcs_dir_path`.
+  # - `"both"`   : Delete both input and output files/dirs.
+  # - `"neither"`: Don't delete anything.
+  # @codedoc_comment_block encrqcs::qcs_run::clean
+  dbc::assert_is_one_of(
+    clean,
+    funs = list(dbc::report_is_NULL, dbc::report_is_character_nonNA_atom),
+    assertion_type = assertion_type
+  )
+  if (is.null(clean)) {
+    clean <- "both"
+  }
+  dbc::assert_atom_is_in_set(
+    clean, set = c("input", "output", "both", "neither"),
+    assertion_type = assertion_type
   )
 
-  script_lines <- qcs_script_lines(
-    qcs_protocol_id = qcs_protocol_id,
+  # write ----------------------------------------------------------------------
+  # @codedoc_comment_block encrqcs::qcs_run::write_arg_list
+  # @param write_arg_list `[NULL, list]` (default `NULL`)
+  #
+  # Optional, additional arguments passed to `[encrqcs::qcs_write_dataset]`
+  # if a list. Arguments `dataset`, `dataset_name`, `file_path`, and
+  # `assertion` type are determined internally and cannot be changed.
+  # @codedoc_comment_block encrqcs::qcs_run::write_arg_list
+
+  # @codedoc_comment_block encrqcs::qcs_run::dataset_file_path
+  # @param dataset_file_path `[NULL, character]` (default `NULL`)
+  #
+  # `dataset` needs to be written to hard drive for use by JRC-ENCR QCS.
+  # You can (optionally) specify the path where to write `dataset` via this
+  # arg.
+  #
+  # - `NULL`: `dataset` will be written into a temporary file given by
+  #   `tempfile(fileext = ".csv")`.
+  # - `character`: `dataset` will be written here.
+  # @codedoc_comment_block encrqcs::qcs_run::dataset_file_path
+  if (is.null(dataset_file_path)) {
+    dataset_file_path <- tempfile(fileext = ".csv")
+  }
+  overriding_write_arg_list <- list(
+    dataset = dataset,
+    dataset_name = dataset_name,
+    file_path = dataset_file_path,
+    assertion_type = assertion_type
+  )
+  write_arg_list <- as.list(write_arg_list)
+  write_arg_list[names(overriding_write_arg_list)] <- overriding_write_arg_list
+  # @codedoc_comment_block details(encrqcs::qcs_run)
+  # `[encrqcs::qcs_run]` performs the following steps:
+  #
+  # 1. `[encrqcs::qcs_write_dataset]` is called to write `dataset` to disk
+  #    (see arg `write_arg_list`).
+  # @codedoc_comment_block details(encrqcs::qcs_run)
+  do.call(encrqcs::qcs_write_dataset, write_arg_list, quote = TRUE)
+  if (clean %in% c("input", "both")) {
+    on.exit(unlink(dataset_file_path, force = TRUE))
+  }
+
+  # run ------------------------------------------------------------------------
+  # @codedoc_comment_block encrqcs::qcs_run::run_arg_list
+  # @param run_arg_list `[NULL, list]` (default `NULL`)
+  #
+  # Optional, additional arguments passed to `[encrqcs::qcs_run_call]`
+  # if a list. Arguments `dataset_file_path`, `qcs_dir_path`,
+  # `assertion_type`, and `system2_arg_list` are determined internally and
+  # cannot be changed.
+  # @codedoc_comment_block encrqcs::qcs_run::run_arg_list
+  overriding_run_arg_list <- list(
     dataset_file_path = dataset_file_path,
-    qcs_dir_path = qcs_dir_path
+    qcs_dir_path = qcs_dir_path,
+    assertion_type = assertion_type,
+    system2_arg_list = list(stdout = TRUE, stderr = TRUE)
   )
-  script_path <- qcs_script_path(qcs_dir_path = qcs_dir_path)
-  writeLines(script_lines, script_path)
-  on.exit(unlink(script_path))
+  run_arg_list <- as.list(run_arg_list)
+  run_arg_list[names(overriding_run_arg_list)] <- overriding_run_arg_list
+  # @codedoc_comment_block details(encrqcs::qcs_run)
+  # 2. `[encrqcs::qcs_run_call]` is called to run checks on the on-disk dataset
+  #    (see arg `run_arg_list`). Any messages that JRC-ENCR QCS emits are
+  #    captured into acharacter string vector which will be included in
+  #    the ouptut of `[encrqcs::qcs_run]`.
+  # @codedoc_comment_block details(encrqcs::qcs_run)
+  run_log <- do.call(encrqcs::qcs_call, run_arg_list, quote = TRUE)
 
-  old_wd <- getwd()
-  on.exit(setwd(old_wd), add = TRUE)
-  setwd(qcs_dir_path)
-  message("encrqcs::qcs_run: executing this:\n",
-          paste0("  ", script_lines, collapse = "\n"))
-  system2_arg_list <- as.list(system2_arg_list)
-  system2_arg_list[["command"]] <- qcs_script_name()
-  out <- do.call(system2, system2_arg_list, quote = TRUE)
-  message("encrqcs::qcs_run: done.")
-  return(out)
+  # read -----------------------------------------------------------------------
+  # @codedoc_comment_block encrqcs::qcs::read_arg_list
+  # @param read_arg_list `[NULL, list]` (default `NULL`)
+  # Optional, additional arguments passed to `[encrqcs::qcs_read_results]`
+  # if a list. Arguments `qcs_dir_path`, `dataset_name`, and
+  # `assertion_type` are determined internally and
+  # cannot be changed.
+  # @codedoc_comment_block encrqcs::qcs::read_arg_list
+  overriding_read_arg_list <- list(
+    qcs_dir_path = qcs_dir_path,
+    dataset_name = dataset_name,
+    assertion_type = assertion_type
+  )
+  read_arg_list <- as.list(read_arg_list)
+  read_arg_list[names(overriding_read_arg_list)] <- overriding_read_arg_list
+  # @codedoc_comment_block details(encrqcs::qcs)
+  # 3. `[encrqcs::qcs_read_results]` is called to read results back into R.
+  # @codedoc_comment_block details(encrqcs::qcs)
+  output <- do.call(encrqcs::qcs_read_results, read_arg_list, quote = TRUE)
+
+  # finishing touches ----------------------------------------------------------
+  # @codedoc_comment_block details(encrqcs::qcs)
+  # 4. The captured messages alluded to in step 2 are included in the output
+  #    as element named `run_log`.
+  # @codedoc_comment_block details(encrqcs::qcs)
+  output[["run_log"]] <- run_log
+  if (clean %in% c("output", "both")) {
+    output_dir_path <- qcs_read_dir_path(
+      qcs_dir_path = qcs_dir_path, dataset_name = dataset_name
+    )
+    # @codedoc_comment_block details(encrqcs::qcs)
+    # 5. Input / output files are removed on exit (whether successful or not)
+    #    of `[encrqcs::qcs]` depending on arg `clean`.
+    # @codedoc_comment_block details(encrqcs::qcs)
+    on.exit(unlink(output_dir_path, force = TRUE, recursive = TRUE),
+            add = TRUE)
+  }
+
+  return(output)
 }
 

@@ -2,35 +2,81 @@
 % Please edit documentation in R/run.R
 \name{qcs_run}
 \alias{qcs_run}
-\title{Run JRC-ENCR QCS}
+\title{JRC-ENCR QCS}
 \usage{
 qcs_run(
-  dataset_file_path,
+  dataset,
+  dataset_name,
   qcs_dir_path,
-  qcs_protocol_id = 11L,
-  system2_arg_list = NULL,
+  dataset_file_path = NULL,
+  clean = NULL,
+  write_arg_list = NULL,
+  run_arg_list = NULL,
+  read_arg_list = NULL,
   assertion_type = "input"
 )
 }
 \arguments{
-\item{dataset_file_path}{\verb{[character]} (no default)
+\item{dataset}{\verb{[data.frame]} (mandatory)
 
-Path to an existing file. This should be the dataset you want to use.}
+Column requirements vary depending on \code{dataset_name}.
+Refer to the JRC-ENCR QCS User Compendium.}
+
+\item{dataset_name}{\verb{[character]} (no default)
+
+one of the following:
+\itemize{
+\item "incidence"
+\item "mortality"
+\item "population"
+\item "lifetable"
+}}
 
 \item{qcs_dir_path}{\verb{[character]} (no default)
 
 Path to root directory of the JRC-ENCR QCS.}
 
-\item{qcs_protocol_id}{\verb{[integer]} (default \code{11L})
+\item{dataset_file_path}{\verb{[NULL, character]} (default \code{NULL})
 
-See the JRC-ENCR QCS User Compendium.}
+\code{dataset} needs to be written to hard drive for use by JRC-ENCR QCS.
+You can (optionally) specify the path where to write \code{dataset} via this
+arg.
+\itemize{
+\item \code{NULL}: \code{dataset} will be written into a temporary file given by
+\code{tempfile(fileext = ".csv")}.
+\item \code{character}: \code{dataset} will be written here.
+}}
 
-\item{system2_arg_list}{\verb{[NULL, list]} (default \code{NULL})
+\item{clean}{\verb{[NULL, logical]} (default \code{NULL})
 
-Optional, additional arguments passed to \verb{[system2]} if a list.}
+One of the following:
+\itemize{
+\item \code{NULL}     : Use \code{"both"}.
+\item \code{"input"}  : Delete the file in \code{dataset_file_path} when this function
+no longer needs it.
+\item \code{"output"} : Delete output files when this function no longer need them.
+Specifically, the whole output directory for the given
+\code{dataset_name} is removed, e.g. \code{output/incidence},
+in \code{qcs_dir_path}.
+\item \code{"both"}   : Delete both input and output files/dirs.
+\item \code{"neither"}: Don't delete anything.
+}}
+
+\item{write_arg_list}{\verb{[NULL, list]} (default \code{NULL})
+
+Optional, additional arguments passed to \verb{[encrqcs::qcs_write_dataset]}
+if a list. Arguments \code{dataset}, \code{dataset_name}, \code{file_path}, and
+\code{assertion} type are determined internally and cannot be changed.}
+
+\item{run_arg_list}{\verb{[NULL, list]} (default \code{NULL})
+
+Optional, additional arguments passed to \verb{[encrqcs::qcs_run_call]}
+if a list. Arguments \code{dataset_file_path}, \code{qcs_dir_path},
+\code{assertion_type}, and \code{system2_arg_list} are determined internally and
+cannot be changed.}
 
 \item{assertion_type}{See e.g. \verb{[dbc::report_to_assertion]}.}
 }
 \description{
-Run JRC-ENCR QCS on a file on-disk.
+Run JRC-ENCR QCS and read results into R.
 }

@@ -104,15 +104,15 @@ arg_dataset_name_docs <- function() {
 #' @export
 #' @template param_assertion_type
 #' @eval arg_dataset_name_docs()
-qcs_fake_dataset <- function(dataset_name, assertion_type = "input") {
+qcs_dataset_template <- function(dataset_name, assertion_type = "input") {
   assert_is_qcs_dataset_name(dataset_name, assertion_type = assertion_type)
 
-  # @codedoc_comment_block encrqcs::qcs_fake_dataset
-  # `[ecnrqcs::qcs_fake_dataset]` returns a `data.frame` with one row which
+  # @codedoc_comment_block encrqcs::qcs_dataset_template
+  # `[ecnrqcs::qcs_dataset_template]` returns a `data.frame` with one row which
   # has the required columns in their required format for the given
   # `dataset_name`. Column names and classes taken from JRC-ENCR User
   # Compendium 2.0.
-  # @codedoc_comment_block encrqcs::qcs_fake_dataset
+  # @codedoc_comment_block encrqcs::qcs_dataset_template
   .__QCS_FAKE_DATASETS[[dataset_name]]
 }
 
@@ -122,10 +122,10 @@ qcs_dataset_column_names <- function(dataset_name, assertion_type = "input") {
   # @codedoc_comment_block encrqcs::qcs_dataset_column_names
   # `[ecnrqcs::qcs_dataset_column_names]` returns a character string vector
   # of column names for the given `dataset_name`. This function wraps
-  # `[ecnrqcs::qcs_fake_dataset]`.
+  # `[ecnrqcs::qcs_dataset_template]`.
   # @codedoc_comment_block encrqcs::qcs_dataset_column_names
   assert_is_qcs_dataset_name(dataset_name, assertion_type = assertion_type)
-  return(names(qcs_fake_dataset(dataset_name)))
+  return(names(qcs_dataset_template(dataset_name)))
 }
 
 #' @rdname metadata
@@ -164,11 +164,11 @@ assert_is_qcs_dataset <- function(
     assertion_type = assertion_type,
     required_names = qcs_dataset_column_names(dataset_name)
   )
-  fake_dataset <- qcs_fake_dataset(dataset_name)
+  dataset_template <- qcs_dataset_template(dataset_name)
   lapply(qcs_dataset_column_names(dataset_name), function(col_nm) {
     dbc::assert_inherits(x = x[[col_nm]], x_nm = paste0(x_nm, "$", col_nm),
                          call = call,
-                         required_class = class(fake_dataset[[col_nm]])[1L])
+                         required_class = class(dataset_template[[col_nm]])[1L])
   })
   invisible(NULL)
 }

@@ -3,7 +3,7 @@
 \name{metadata}
 \alias{metadata}
 \alias{qcs_dataset_names}
-\alias{qcs_fake_dataset}
+\alias{qcs_dataset_template}
 \alias{qcs_dataset_column_names}
 \alias{assert_is_qcs_dataset_name}
 \alias{assert_is_qcs_dataset}
@@ -11,7 +11,7 @@
 \usage{
 qcs_dataset_names()
 
-qcs_fake_dataset(dataset_name, assertion_type = "input")
+qcs_dataset_template(dataset_name, assertion_type = "input")
 
 qcs_dataset_column_names(dataset_name, assertion_type = "input")
 
@@ -56,12 +56,12 @@ Tools to access metadata such as dataset names and column names of a dataset.
 \verb{[ecnrqcs::qcs_dataset_names]} returns the set of allowed dataset names
 as a character string vector.
 
-\verb{[ecnrqcs::qcs_fake_dataset]} returns a \code{data.frame} with one row which
+\verb{[ecnrqcs::qcs_dataset_template]} returns a \code{data.frame} with one row which
 has the required columns in their required format for the given
 \code{dataset_name}. Column names and classes taken from JRC-ENCR User
 Compendium 2.0.
 
 \verb{[ecnrqcs::qcs_dataset_column_names]} returns a character string vector
 of column names for the given \code{dataset_name}. This function wraps
-\verb{[ecnrqcs::qcs_fake_dataset]}.
+\verb{[ecnrqcs::qcs_dataset_template]}.
 }

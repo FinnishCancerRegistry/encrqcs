@@ -74,6 +74,13 @@ qcs_script_lines <- function(
 #'
 #' Optional, additional arguments passed to `[system2]` if a list.
 #' @template param_assertion_type
+#' @eval c(
+#'   codedoc::codedoc_lines("^encrqcs::qcs_call::"),
+#'   "@details",
+#'   codedoc::codedoc_lines("^\\Qdetails(encrqcs::qcs_call)\\E$"),
+#'   "@return",
+#'   codedoc::codedoc_lines("^\\Qreturn(encrqcs::qcs_call)\\E$")
+#' )
 #' @export
 qcs_call <- function(
   dataset_file_path,
@@ -93,7 +100,7 @@ qcs_call <- function(
   # @param qcs_protocol_id `[character, integer]` (no default)
   #
   # - `integer`: Used as-is. You have to study what the `.jar` does with that.
-  # - `character`: Take 11, 3, 5, or 7 for `"incidence"`, `"mortality"`,
+  # - `character`: Take 11, 13, 15, or 17 for `"incidence"`, `"mortality"`,
   #   `"population"`, and `"lifetable"`, respectively.
   # @codedoc_comment_block encrqcs::qcs_call::qcs_protocol_id
   dbc::assert_is_one_of(
@@ -123,6 +130,14 @@ qcs_call <- function(
   )
 
   # write script ---------------------------------------------------------------
+  # @codedoc_comment_block details(encrqcs::qcs_call)
+  # `[encrqcs::qcs_call]` performs the following steps:
+  #
+  #  1. A temporary script is written to `qcs_dir_path` for calling the `.jar`
+  #     executable. It's contents depend on the operating system and
+  #     arguments supplied to `[encrqcs::qcs_call]`. This script is
+  #     automatically deleted whether the call succeeds or not.
+  # @codedoc_comment_block details(encrqcs::qcs_call)
   script_lines <- qcs_script_lines(
     qcs_protocol_id = qcs_protocol_id,
     dataset_file_path = dataset_file_path,
@@ -133,6 +148,11 @@ qcs_call <- function(
   on.exit(unlink(script_path))
 
   # system2 --------------------------------------------------------------------
+  # @codedoc_comment_block details(encrqcs::qcs_call)
+  #  2. R working directory is temporarily set via `[setwd]` to `qcs_dir_path`.
+  #     Your original working directory is always restored whether the call
+  #     succeeds or not.
+  # @codedoc_comment_block details(encrqcs::qcs_call)
   old_wd <- getwd()
   on.exit(setwd(old_wd), add = TRUE)
   setwd(qcs_dir_path)
@@ -140,10 +160,19 @@ qcs_call <- function(
           paste0("  ", script_lines, collapse = "\n"))
   system2_arg_list <- as.list(system2_arg_list)
   system2_arg_list[["command"]] <- qcs_script_name()
+  # @codedoc_comment_block details(encrqcs::qcs_call)
+  #  3. The temporary script is called using `[system2]`.
+  #     See arg `system2_arg_list`.
+  # @codedoc_comment_block details(encrqcs::qcs_call)
   out <- suppressWarnings(withCallingHandlers(
     do.call(system2, system2_arg_list, quote = TRUE),
     warning = function(w) w
   ))
+  # @codedoc_comment_block details(encrqcs::qcs_call)
+  #  4. If status code other than zero is reported, a warning is emitted by R.
+  #     E.g. status code 1 is "generic exit code" and means that the call
+  #     failed.
+  # @codedoc_comment_block details(encrqcs::qcs_call)
   status <- 0L
   if (is.integer(out)) {
     status <- out
@@ -171,6 +200,14 @@ qcs_call <- function(
       message(msg_txt)
     }
   }
+  # @codedoc_comment_block details(encrqcs::qcs_call)
+  #  5. Finally,
+  # @codedoc_insert_comment_block return(encrqcs::qcs_call)
+  # @codedoc_comment_block details(encrqcs::qcs_call)
+
+  # @codedoc_comment_block return(encrqcs::qcs_call)
+  #     The output of the `[system2]` call is returned as-is.
+  # @codedoc_comment_block return(encrqcs::qcs_call)
   message("encrqcs::qcs_call: done.")
   return(out)
 }

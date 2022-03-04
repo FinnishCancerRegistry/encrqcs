@@ -24,7 +24,7 @@ arg_dataset_name_docs <- function() {
     "@param dataset_name `[character]` (no default)",
     "",
     "one of the following:",
-    paste0(" - \"", qcs_dataset_names(), "\"")
+    paste0(" - \"", encrqcs::qcs_dataset_names(), "\"")
   )
   return(lines)
 }
@@ -105,7 +105,7 @@ arg_dataset_name_docs <- function() {
 #' @template param_assertion_type
 #' @eval arg_dataset_name_docs()
 qcs_dataset_template <- function(dataset_name, assertion_type = "input") {
-  assert_is_qcs_dataset_name(dataset_name, assertion_type = assertion_type)
+  encrqcs::assert_is_qcs_dataset_name(dataset_name, assertion_type = assertion_type)
 
   # @codedoc_comment_block encrqcs::qcs_run_dataset_template
   # `[ecnrqcs::qcs_dataset_template]` returns a `data.table` with one row which
@@ -124,8 +124,8 @@ qcs_dataset_column_names <- function(dataset_name, assertion_type = "input") {
   # of column names for the given `dataset_name`. This function wraps
   # `[ecnrqcs::qcs_dataset_template]`.
   # @codedoc_comment_block encrqcs::qcs_run_dataset_column_names
-  assert_is_qcs_dataset_name(dataset_name, assertion_type = assertion_type)
-  return(names(qcs_dataset_template(dataset_name)))
+  encrqcs::assert_is_qcs_dataset_name(dataset_name, assertion_type = assertion_type)
+  return(names(encrqcs::qcs_dataset_template(dataset_name)))
 }
 
 #' @rdname metadata
@@ -142,7 +142,7 @@ assert_is_qcs_dataset_name <- function(
   x_nm <- dbc::handle_arg_x_nm(x_nm)
   call <- dbc::handle_arg_call(call)
   dbc::assert_is_character_nonNA_atom(x, x_nm = x_nm, call = call)
-  dbc::assert_atom_is_in_set(x, set = qcs_dataset_names(),
+  dbc::assert_atom_is_in_set(x, set = encrqcs::qcs_dataset_names(),
                              x_nm = x_nm, call = call)
 }
 
@@ -162,10 +162,10 @@ assert_is_qcs_dataset <- function(
     x_nm = x_nm,
     call = call,
     assertion_type = assertion_type,
-    required_names = qcs_dataset_column_names(dataset_name)
+    required_names = encrqcs::qcs_dataset_column_names(dataset_name)
   )
-  dataset_template <- qcs_dataset_template(dataset_name)
-  lapply(qcs_dataset_column_names(dataset_name), function(col_nm) {
+  dataset_template <- encrqcs::qcs_dataset_template(dataset_name)
+  lapply(encrqcs::qcs_dataset_column_names(dataset_name), function(col_nm) {
     dbc::assert_inherits(x = x[[col_nm]], x_nm = paste0(x_nm, "$", col_nm),
                          call = call,
                          required_class = class(dataset_template[[col_nm]])[1L])

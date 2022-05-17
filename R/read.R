@@ -36,7 +36,7 @@ qcs_read_results <- function(
   # `[encrqcs::qcs_read_results]` performs the following steps:
   #
   # 1. Directory containing results is assumed to look like e.g.
-  #    `${qcs_read_dir_path("C:/path/to/qcs/", "incidence")}` for
+  #    `${encrqcs:::qcs_read_dir_path("C:/path/to/qcs/", "incidence")}` for
   #    `qcs_dir_path = "C:/path/to/qcs/"`, `dataset_name = "incidence"`.
   # @codedoc_comment_block details(encrqcs::qcs_read_results)
   output_dir_path <- qcs_read_dir_path(qcs_dir_path, dataset_name)

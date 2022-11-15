@@ -10,14 +10,18 @@ encrqcs
 \subsection{Installation}{
 
 You can install the development version of encrqcs from
-\href{https://github.com/}{GitHub} with:\if{html}{\out{<div class="sourceCode r">}}\preformatted{# install.packages("devtools")
+\href{https://github.com/}{GitHub} with:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{# install.packages("devtools")
 devtools::install_github("finnishcancerregistry/encrqcs")
 }\if{html}{\out{</div>}}
 }
 
 \subsection{Example}{
 
-Run incidence checks using JRC-ENCR QCS:\if{html}{\out{<div class="sourceCode r">}}\preformatted{results <- encrqcs::qcs_run(
+Run incidence checks using JRC-ENCR QCS:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{results <- encrqcs::qcs_run(
 my_incidence, "incidence", "path/to/qcs/root/dir/"
 )
 }\if{html}{\out{</div>}}

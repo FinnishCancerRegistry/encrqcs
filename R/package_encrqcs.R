@@ -13,7 +13,7 @@ NULL
 # @codedoc_comment_block R_package_description(encrqcs)
 #
 # <!-- badges: start -->
-# [![R-CMD-check](https://github.com/finnishcancerregistry/encrqcs/workflows/R-CMD-check/badge.svg)](https://github.com/finnishcancerregistry/encrqcs/actions)
+# [![R-CMD-check](https://github.com/finnishcancerregistry/encrqcs/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/finnishcancerregistry/encrqcs/actions/workflows/R-CMD-check.yaml)
 # <!-- badges: end -->
 #
 # Use JRC-ENCR QCS (https://encr.eu/tools-for-registries) from the

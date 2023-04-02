@@ -22,7 +22,7 @@ devtools::install_github("finnishcancerregistry/encrqcs")
 Run incidence checks using JRC-ENCR QCS:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{results <- encrqcs::qcs_run(
-my_incidence, "incidence", "path/to/qcs/root/dir/"
+  my_incidence, "incidence", "path/to/qcs/root/dir/"
 )
 }\if{html}{\out{</div>}}
 }

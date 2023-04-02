@@ -6,7 +6,7 @@
 
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/finnishcancerregistry/encrqcs/workflows/R-CMD-check/badge.svg)](https://github.com/finnishcancerregistry/encrqcs/actions)
+[![R-CMD-check](https://github.com/finnishcancerregistry/encrqcs/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/finnishcancerregistry/encrqcs/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 Use JRC-ENCR QCS (https://encr.eu/tools-for-registries) from the
@@ -17,7 +17,7 @@ comfort of your R session.
 You can install the development version of encrqcs from
 [GitHub](https://github.com/) with:
 
-``` r
+  ``` r
 # install.packages("devtools")
 devtools::install_github("finnishcancerregistry/encrqcs")
 ```
@@ -28,7 +28,7 @@ Run incidence checks using JRC-ENCR QCS:
 
 ``` r
 results <- encrqcs::qcs_run(
-my_incidence, "incidence", "path/to/qcs/root/dir/"
+  my_incidence, "incidence", "path/to/qcs/root/dir/"
 )
 ```
 

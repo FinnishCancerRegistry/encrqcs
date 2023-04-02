@@ -35,7 +35,8 @@ Optional, additional arguments passed to \verb{[system2]} if a list.}
 \item{assertion_type}{See e.g. \verb{[dbc::report_to_assertion]}.}
 }
 \value{
-The output of the \verb{[system2]} call is returned as-is.
+\if{html}{\out{<div class="sourceCode">}}\preformatted{The output of the `[system2]` call is returned as-is.
+}\if{html}{\out{</div>}}
 }
 \description{
 Run JRC-ENCR QCS on a file on-disk.

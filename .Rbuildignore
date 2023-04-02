@@ -1,9 +1,11 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^data-raw$
 ^LICENSE\.md$
-^man\-roxygen$
-^appveyor\.yml$
+^\.travis\.yml$
+^data-raw$
+^generate_functions\.R$
+^.github$
+^man-roxygen$
 ^\.github$
 ^dev$
-^tmp$
+^.*\.code-workspace$

@@ -30,7 +30,7 @@ Run incidence checks using JRC-ENCR QCS:
 \section{News}{
 
 \subsection{News for version 0.2.2}{
-\subsection{Object encrqcs::qcs_run news:}{
+\subsection{encrqcs::qcs_run}{
 
 \verb{[encrqcs::qcs_run]} works for the incidence dataset, but the Java
 programme seems to fail for the other datasets at this time.

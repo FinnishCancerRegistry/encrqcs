@@ -31,7 +31,7 @@ qcs_read_results <- function(
   # assertions -----------------------------------------------------------------
   encrqcs::assert_is_qcs_dataset_name(dataset_name,
                                       assertion_type = assertion_type)
-  dbc::assert_dir_exists(qcs_dir_path)
+  dbc::assert_dir_exists(qcs_dir_path, assertion_type = assertion_type)
   # @codedoc_comment_block details(encrqcs::qcs_read_results)
   # `[encrqcs::qcs_read_results]` performs the following steps:
   #

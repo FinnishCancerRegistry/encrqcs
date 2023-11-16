@@ -10,3 +10,4 @@
 ^dev$
 ^.*\.code-workspace$
 ^tmp$
+^sandbox\.R$

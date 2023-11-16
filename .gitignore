@@ -5,3 +5,4 @@
 *.code-workspace
 *.Rproj
 tmp/
+sandbox.R

@@ -77,7 +77,7 @@ arg_dataset_name_docs <- function() {
     SCT = 0L
   ),
   mortality = data.table::data.table(
-    "Calendar_year" = 2000L,
+    "Calendar year" = 2000L,
     "Sex" = 1L,
     "Age unit" = 1L,
     "Cause of death" = "C50",

@@ -6,3 +6,4 @@
 *.Rproj
 tmp/
 sandbox.R
+.radian_history

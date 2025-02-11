@@ -1,22 +1,22 @@
-Package: encrqcs
 Type: Package
+Package: encrqcs
 Title: JRC-ENCR QCS Tools
 Version: 0.2.4
 Author: Joonas Miettinen <joonas.miettinen@cancer.fi>
 Maintainer: Joonas Miettinen <joonas.miettinen@cancer.fi>
-Imports: 
-    data.table, 
-    dbc (>= 0.4.1)
 Description: Tools to use JRC-ENCR QCS from the comfort of your R session.
 License: MIT + file LICENSE
-Encoding: UTF-8
-LazyData: true
 Depends: 
     R (>= 2.10)
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+Imports: 
+    data.table,
+    dbc (>= 0.4.1)
 Suggests:
     codedoc (>= 0.3.1)
 Remotes:
-    github::FinnishCancerRegistry/dbc,
-    github::FinnishCancerRegistry/codedoc
+    github::FinnishCancerRegistry/codedoc,
+    github::FinnishCancerRegistry/dbc
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3

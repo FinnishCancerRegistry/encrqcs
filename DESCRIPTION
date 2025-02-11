@@ -9,7 +9,7 @@ License: MIT + file LICENSE
 Depends: 
     R (>= 2.10)
 Imports: 
-    data.table,
+    data.table (>= 1.10.0),
     dbc (>= 0.7.0)
 Suggests:
     codedoc (>= 0.5.0)

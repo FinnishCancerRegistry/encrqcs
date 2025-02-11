@@ -30,6 +30,14 @@ Run incidence checks using JRC-ENCR QCS:
 }
 \section{News}{
 
+\subsection{News for version 0.3.0}{
+\subsection{encrqcs}{
+
+Bump dependencies.
+}
+
+}
+
 \subsection{News for version 0.2.2}{
 \subsection{encrqcs::qcs_run}{
 

@@ -40,3 +40,6 @@
 #
 # @codedoc_comment_block R_package_description(encrqcs)
 
+# @codedoc_comment_block news("encrqcs", "2025-02-11", "0.3.0")
+# Bump dependencies.
+# @codedoc_comment_block news("encrqcs", "2025-02-11", "0.3.0")

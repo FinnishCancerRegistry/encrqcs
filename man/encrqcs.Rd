@@ -2,6 +2,7 @@
 % Please edit documentation in R/package_encrqcs.R
 \docType{package}
 \name{encrqcs}
+\alias{encrqcs-package}
 \alias{encrqcs}
 \title{\code{encrqcs}: JRC-ENCR QCS Tools}
 \description{

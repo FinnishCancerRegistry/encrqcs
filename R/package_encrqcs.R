@@ -2,13 +2,12 @@
 #' encrqcs
 #'
 #' @name encrqcs
-#' @docType package
 #' @title `encrqcs`: JRC-ENCR QCS Tools
 #' @eval c(
 #'   codedoc::codedoc_R_package_description("encrqcs")[-(2:9)],
 #'   codedoc::codedoc_news_for_R_package()
 #' )
-NULL
+"_PACKAGE"
 
 # @codedoc_comment_block R_package_description(encrqcs)
 #

@@ -1,68 +1,3 @@
-
-qcs_script_extension <- function() {
-  script_extension <- switch(
-    get_os(), windows = ".bat", linux = ".sh", osx = ".sh"
-  )
-  return(script_extension)
-}
-
-qcs_script_name <- function() {
-  paste0("R_package_encrqcs_temporary_script",
-         qcs_script_extension())
-}
-
-qcs_script_path <- function(qcs_dir_path) {
-  script_name <- qcs_script_name()
-  script_path <- paste0(qcs_dir_path, "/", script_name)
-  script_path <- normalizePath(script_path, mustWork = FALSE)
-}
-
-qcs_script_lines <- function(
-  qcs_protocol_id,
-  dataset_file_path,
-  qcs_dir_path
-) {
-  jar_file_name <- dir(qcs_dir_path, pattern = "jrc-qcs[0-9.-]+.jar")
-  if (length(jar_file_name) != 1L) {
-    stop("Could not detect jrc-qcs-%VERSION%.jar in qcs_dir_path = ",
-         deparse(qcs_dir_path), ". Either the dir you have supplied is not ",
-         "the correct one or R package encrqcs needs to be fixed.")
-  }
-  cmd <- paste0("java -jar -Xmx2g ", jar_file_name,
-                " -v %QCS_PROTOCOL_ID%",
-                " %dataset_file_path%")
-  replacements <- c(
-    "%QCS_PROTOCOL_ID%" = qcs_protocol_id,
-    "%dataset_file_path%" = normalizePath(dataset_file_path, winslash = "/")
-  )
-  for (i in seq_along(replacements)) {
-    cmd <- gsub(names(replacements)[i], replacements[i], cmd)
-  }
-
-  script_head_tail <- switch(
-    qcs_script_extension(),
-    .bat = list(
-      head = c(
-        "REM This script written by R package encrqcs.",
-        "REM It should be automatically deleted after execution finishes.",
-        "SET OUTPUT_DIR=\\output"
-      ),
-      tail = c(":END", "")
-    ),
-    .sh = list(
-      head = c(
-        "#!/usr/bin/env bash",
-        "",
-        "# This script written by R package encrqcs.",
-        "# It should be automatically deleted after execution finishes."
-      ),
-      tail = ""
-    )
-  )
-  script_lines <- c(script_head_tail[["head"]], cmd, script_head_tail[["tail"]])
-  return(script_lines)
-}
-
 #' @title Run JRC-ENCR QCS
 #' @description
 #' Run JRC-ENCR QCS on a file on-disk.
@@ -129,49 +64,57 @@ qcs_call <- function(
     funs = list(dbc::report_is_NULL, dbc::report_is_list)
   )
 
-  # write script ---------------------------------------------------------------
-  # @codedoc_comment_block details(encrqcs::qcs_call)
-  # `[encrqcs::qcs_call]` performs the following steps:
-  #
-  #  1. A temporary script is written to `qcs_dir_path` for calling the `.jar`
-  #     executable. It's contents depend on the operating system and
-  #     arguments supplied to `[encrqcs::qcs_call]`. This script is
-  #     automatically deleted whether the call succeeds or not.
-  # @codedoc_comment_block details(encrqcs::qcs_call)
-  script_lines <- qcs_script_lines(
-    qcs_protocol_id = qcs_protocol_id,
-    dataset_file_path = dataset_file_path,
-    qcs_dir_path = qcs_dir_path
-  )
-  script_path <- qcs_script_path(qcs_dir_path = qcs_dir_path)
-  writeLines(script_lines, script_path)
-  on.exit(unlink(script_path))
-
   # system2 --------------------------------------------------------------------
   # @codedoc_comment_block details(encrqcs::qcs_call)
-  #  2. R working directory is temporarily set via `[setwd]` to `qcs_dir_path`.
-  #     Your original working directory is always restored whether the call
-  #     succeeds or not.
+  #  - R working directory is temporarily set via `[setwd]` to `qcs_dir_path`.
+  #    Your original working directory is always restored whether the call
+  #    succeeds or not.
   # @codedoc_comment_block details(encrqcs::qcs_call)
   old_wd <- getwd()
   on.exit(setwd(old_wd), add = TRUE)
   setwd(qcs_dir_path)
-  message("encrqcs::qcs_call: executing script with these contents:\n",
-          paste0("  ", script_lines, collapse = "\n"))
-  system2_arg_list <- as.list(system2_arg_list)
-  system2_arg_list[["command"]] <- qcs_script_name()
+  # @codedoc_comment_block news("encrqcs::qcs_run", "2025-02-11", "0.4.0")
+  # `encrqcs::qcs_call` simplified. Instead of writing a .bit / .sh and
+  # running that, it now directly calls Java via `system2`.
+  # @codedoc_comment_block news("encrqcs::qcs_run", "2025-02-11", "0.4.0")
   # @codedoc_comment_block details(encrqcs::qcs_call)
-  #  3. The temporary script is called using `[system2]`.
-  #     See arg `system2_arg_list`.
+  #  - The Java programme is called via a `system2` call. You may supply
+  #    arguments to it via `system2_arg_list` and you can even override
+  #    arguments determined by `encrqcs::qcs_call` --- any settings you pass
+  #    that way overwrite the defaults determine by `encrqcs::qcs_call`.
+  #    For instance, if you don't have the dir containing `java.exe` in your
+  #    system `PATH` environment variables, the default call will fail,
+  #    because it uses `command = "java"` --- but you can replace that with
+  #    a direct path to your `java.exe` via `system2_arg_list`.
   # @codedoc_comment_block details(encrqcs::qcs_call)
+  jar_file_name <- dir(qcs_dir_path, pattern = "jrc-qcs[0-9.-]+.jar")
+  default_system2_arg_list <- list(
+    command = "java",
+    args = c(
+      "-jar",
+      "-Xmx2g",
+      jar_file_name,
+      "-v", as.character(qcs_protocol_id),
+      dataset_file_path
+    )
+  )
+  user_system2_arg_list <- as.list(system2_arg_list)
+  system2_arg_list <- default_system2_arg_list
+  system2_arg_list[names(user_system2_arg_list)] <- user_system2_arg_list
+  if (identical(system2_arg_list[["command"]], "java") && !has_java_cmd()) {
+    stop("Command `java` not available on your system. ",
+         "Either add it to your PATH or refer to the java executable directly ",
+         "using argument `system2_arg_list`. See ?encrqcs::qcs_call and ",
+         "?system2.")
+  }
   out <- suppressWarnings(withCallingHandlers(
     do.call(system2, system2_arg_list, quote = TRUE),
     warning = function(w) w
   ))
   # @codedoc_comment_block details(encrqcs::qcs_call)
-  #  4. If status code other than zero is reported, a warning is emitted by R.
-  #     E.g. status code 1 is "generic exit code" and means that the call
-  #     failed.
+  #  - If status code other than zero is reported, a warning is emitted by R.
+  #    E.g. status code 1 is "generic exit code" and means that the call
+  #    failed.
   # @codedoc_comment_block details(encrqcs::qcs_call)
   status <- 0L
   if (is.integer(out)) {
@@ -184,14 +127,14 @@ qcs_call <- function(
     grepl("had status 1", out[["message"]])
   if (had_status_1) {
     warn_txt <- paste0(
-      "system2 had status ", status, ". ",
+      "system2 returneds status ", status, ". ",
       "Looks like the JRC-ENCR QCS Java ",
       "programme failed."
     )
     warning(warn_txt)
     if (is.character(out)) {
       msg_txt <- paste0(
-        "system2 had status ", status, ". ",
+        "system2 returned status ", status, ". ",
         "Looks like the JRC-ENCR QCS Java ",
         "programme failed. ",
         "Got this from system2:\n",
@@ -201,14 +144,19 @@ qcs_call <- function(
     }
   }
   # @codedoc_comment_block details(encrqcs::qcs_call)
-  #  5. Finally,
+  #  - Finally,
   # @codedoc_insert_comment_block return(encrqcs::qcs_call)
   # @codedoc_comment_block details(encrqcs::qcs_call)
 
   # @codedoc_comment_block return(encrqcs::qcs_call)
-  #     The output of the `[system2]` call is returned as-is.
+  #    The output of the `[system2]` call is returned as-is.
   # @codedoc_comment_block return(encrqcs::qcs_call)
   message("encrqcs::qcs_call: done.")
   return(out)
 }
 
+has_java_cmd <- function() {
+  suppressWarnings(
+    system2("java", "-version", stdout = FALSE, stderr = FALSE) == 0L
+  )
+}

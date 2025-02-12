@@ -20,15 +20,15 @@
 #' @template param_assertion_type
 #' @export
 qcs_run <- function(
-    dataset,
-    dataset_name,
-    qcs_dir_path,
-    dataset_file_path = NULL,
-    clean             = NULL,
-    write_arg_list    = NULL,
-    call_arg_list     = NULL,
-    read_arg_list     = NULL,
-    assertion_type    = "input"
+  dataset,
+  dataset_name,
+  qcs_dir_path,
+  dataset_file_path = NULL,
+  clean             = NULL,
+  write_arg_list    = NULL,
+  call_arg_list     = NULL,
+  read_arg_list     = NULL,
+  assertion_type    = "input"
 ) {
   # @codedoc_comment_block news("encrqcs::qcs_run", "2022-03-03", "0.2.2")
   # `[encrqcs::qcs_run]` works for the incidence dataset, but the Java
@@ -193,4 +193,3 @@ qcs_run <- function(
 
   return(output)
 }
-

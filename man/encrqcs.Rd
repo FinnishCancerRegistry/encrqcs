@@ -30,6 +30,15 @@ Run incidence checks using JRC-ENCR QCS:
 }
 \section{News}{
 
+\subsection{News for version 0.4.0}{
+\subsection{encrqcs::qcs_run}{
+
+\code{encrqcs::qcs_call} simplified. Instead of writing a .bit / .sh and
+running that, it now directly calls Java via \code{system2}.
+}
+
+}
+
 \subsection{News for version 0.3.0}{
 \subsection{encrqcs}{
 

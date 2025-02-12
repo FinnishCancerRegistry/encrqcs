@@ -35,24 +35,24 @@ Optional, additional arguments passed to \verb{[system2]} if a list.}
 \item{assertion_type}{See e.g. \verb{[dbc::report_to_assertion]}.}
 }
 \value{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{The output of the `[system2]` call is returned as-is.
-}\if{html}{\out{</div>}}
+The output of the \verb{[system2]} call is returned as-is.
 }
 \description{
 Run JRC-ENCR QCS on a file on-disk.
 }
 \details{
-\verb{[encrqcs::qcs_call]} performs the following steps:
-\enumerate{
-\item A temporary script is written to \code{qcs_dir_path} for calling the \code{.jar}
-executable. It's contents depend on the operating system and
-arguments supplied to \verb{[encrqcs::qcs_call]}. This script is
-automatically deleted whether the call succeeds or not.
+\itemize{
 \item R working directory is temporarily set via \verb{[setwd]} to \code{qcs_dir_path}.
 Your original working directory is always restored whether the call
 succeeds or not.
-\item The temporary script is called using \verb{[system2]}.
-See arg \code{system2_arg_list}.
+\item The Java programme is called via a \code{system2} call. You may supply
+arguments to it via \code{system2_arg_list} and you can even override
+arguments determined by \code{encrqcs::qcs_call} --- any settings you pass
+that way overwrite the defaults determine by \code{encrqcs::qcs_call}.
+For instance, if you don't have the dir containing \code{java.exe} in your
+system \code{PATH} environment variables, the default call will fail,
+because it uses \code{command = "java"} --- but you can replace that with
+a direct path to your \code{java.exe} via \code{system2_arg_list}.
 \item If status code other than zero is reported, a warning is emitted by R.
 E.g. status code 1 is "generic exit code" and means that the call
 failed.

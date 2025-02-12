@@ -9,7 +9,7 @@ qcs_call(
   qcs_dir_path,
   qcs_protocol_id,
   system2_arg_list = NULL,
-  assertion_type = "input"
+  assertion_type = NULL
 )
 }
 \arguments{

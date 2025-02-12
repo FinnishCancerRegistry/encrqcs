@@ -104,7 +104,7 @@ arg_dataset_name_docs <- function() {
 #' @export
 #' @template param_assertion_type
 #' @eval arg_dataset_name_docs()
-qcs_dataset_template <- function(dataset_name, assertion_type = "input") {
+qcs_dataset_template <- function(dataset_name, assertion_type = NULL) {
   encrqcs::assert_is_qcs_dataset_name(dataset_name, assertion_type = assertion_type)
 
   # @codedoc_comment_block encrqcs::qcs_run_dataset_template
@@ -118,7 +118,7 @@ qcs_dataset_template <- function(dataset_name, assertion_type = "input") {
 
 #' @rdname metadata
 #' @export
-qcs_dataset_column_names <- function(dataset_name, assertion_type = "input") {
+qcs_dataset_column_names <- function(dataset_name, assertion_type = NULL) {
   # @codedoc_comment_block encrqcs::qcs_run_dataset_column_names
   # `[ecnrqcs::qcs_dataset_column_names]` returns a character string vector
   # of column names for the given `dataset_name`. This function wraps
@@ -137,7 +137,7 @@ assert_is_qcs_dataset_name <- function(
   x,
   x_nm = NULL,
   call = NULL,
-  assertion_type = "input"
+  assertion_type = NULL
 ) {
   x_nm <- dbc::handle_arg_x_nm(x_nm)
   call <- dbc::handle_arg_call(call)
@@ -152,7 +152,7 @@ assert_is_qcs_dataset <- function(
   x,
   x_nm = NULL,
   call = NULL,
-  assertion_type = "input",
+  assertion_type = NULL,
   dataset_name
 ) {
   x_nm <- dbc::handle_arg_x_nm(x_nm)

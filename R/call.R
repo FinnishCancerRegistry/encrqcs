@@ -87,7 +87,7 @@ qcs_call <- function(
   qcs_dir_path,
   qcs_protocol_id,
   system2_arg_list = NULL,
-  assertion_type = "input"
+  assertion_type = NULL
 ) {
   # assertions -----------------------------------------------------------------
   dbc::assert_file_exists(dataset_file_path, assertion_type = assertion_type)

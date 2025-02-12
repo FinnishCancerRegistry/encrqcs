@@ -9,7 +9,7 @@ qcs_read_results(
   dataset_name,
   fread_arg_list = NULL,
   readlines_arg_list = NULL,
-  assertion_type = "input"
+  assertion_type = NULL
 )
 }
 \arguments{

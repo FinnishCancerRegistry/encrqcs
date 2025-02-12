@@ -9,7 +9,7 @@ qcs_write_dataset(
   dataset_name,
   file_path,
   fwrite_arg_list = NULL,
-  assertion_type = "input"
+  assertion_type = NULL
 )
 }
 \arguments{

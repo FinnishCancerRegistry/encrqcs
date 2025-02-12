@@ -11,22 +11,17 @@
 \usage{
 qcs_dataset_names()
 
-qcs_dataset_template(dataset_name, assertion_type = "input")
+qcs_dataset_template(dataset_name, assertion_type = NULL)
 
-qcs_dataset_column_names(dataset_name, assertion_type = "input")
+qcs_dataset_column_names(dataset_name, assertion_type = NULL)
 
-assert_is_qcs_dataset_name(
-  x,
-  x_nm = NULL,
-  call = NULL,
-  assertion_type = "input"
-)
+assert_is_qcs_dataset_name(x, x_nm = NULL, call = NULL, assertion_type = NULL)
 
 assert_is_qcs_dataset(
   x,
   x_nm = NULL,
   call = NULL,
-  assertion_type = "input",
+  assertion_type = NULL,
   dataset_name
 )
 }

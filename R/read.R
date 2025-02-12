@@ -26,7 +26,7 @@ qcs_read_results <- function(
     dataset_name,
     fread_arg_list = NULL,
     readlines_arg_list = NULL,
-    assertion_type = "input"
+    assertion_type = NULL
 ) {
   # assertions -----------------------------------------------------------------
   encrqcs::assert_is_qcs_dataset_name(dataset_name,

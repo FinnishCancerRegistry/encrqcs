@@ -157,7 +157,7 @@ assert_is_qcs_dataset <- function(
 ) {
   x_nm <- dbc::handle_arg_x_nm(x_nm)
   call <- dbc::handle_arg_call(call)
-  dbc::assert_is_data.frame_with_required_names(
+  dbc::assert_is_data_frame_with_required_names(
     x = x,
     x_nm = x_nm,
     call = call,

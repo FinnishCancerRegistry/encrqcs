@@ -1,7 +1,7 @@
 Type: Package
 Package: encrqcs
 Title: JRC-ENCR QCS Tools
-Version: 0.3.0
+Version: 0.4.0
 Author: Joonas Miettinen <joonas.miettinen@cancer.fi>
 Maintainer: Joonas Miettinen <joonas.miettinen@cancer.fi>
 Description: Tools to use JRC-ENCR QCS from the comfort of your R session.

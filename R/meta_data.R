@@ -105,7 +105,10 @@ arg_dataset_name_docs <- function() {
 #' @template param_assertion_type
 #' @eval arg_dataset_name_docs()
 qcs_dataset_template <- function(dataset_name, assertion_type = NULL) {
-  encrqcs::assert_is_qcs_dataset_name(dataset_name, assertion_type = assertion_type)
+  encrqcs::assert_is_qcs_dataset_name(
+    dataset_name,
+    assertion_type = assertion_type
+  )
 
   # @codedoc_comment_block encrqcs::qcs_run_dataset_template
   # `[ecnrqcs::qcs_dataset_template]` returns a `data.table` with one row which
@@ -124,7 +127,10 @@ qcs_dataset_column_names <- function(dataset_name, assertion_type = NULL) {
   # of column names for the given `dataset_name`. This function wraps
   # `[ecnrqcs::qcs_dataset_template]`.
   # @codedoc_comment_block encrqcs::qcs_run_dataset_column_names
-  encrqcs::assert_is_qcs_dataset_name(dataset_name, assertion_type = assertion_type)
+  encrqcs::assert_is_qcs_dataset_name(
+    dataset_name,
+    assertion_type = assertion_type
+  )
   return(names(encrqcs::qcs_dataset_template(dataset_name)))
 }
 

@@ -22,11 +22,11 @@ qcs_read_dir_path <- function(qcs_dir_path, dataset_name) {
 #' @template param_assertion_type
 #' @export
 qcs_read_results <- function(
-    qcs_dir_path,
-    dataset_name,
-    fread_arg_list = NULL,
-    readlines_arg_list = NULL,
-    assertion_type = NULL
+  qcs_dir_path,
+  dataset_name,
+  fread_arg_list = NULL,
+  readlines_arg_list = NULL,
+  assertion_type = NULL
 ) {
   # assertions -----------------------------------------------------------------
   encrqcs::assert_is_qcs_dataset_name(dataset_name,
@@ -96,4 +96,3 @@ qcs_read_results <- function(
     }
   })
 }
-

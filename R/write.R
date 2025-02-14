@@ -28,9 +28,14 @@ qcs_write_dataset <- function(
   assertion_type = NULL
 ) {
   # assertions -----------------------------------------------------------------
-  encrqcs::assert_is_qcs_dataset_name(dataset_name, assertion_type = assertion_type)
-  encrqcs::assert_is_qcs_dataset(dataset, assertion_type = assertion_type,
-                        dataset_name = dataset_name)
+  encrqcs::assert_is_qcs_dataset_name(
+    dataset_name,
+    assertion_type = assertion_type
+  )
+  encrqcs::assert_is_qcs_dataset(
+    dataset, assertion_type = assertion_type,
+    dataset_name = dataset_name
+  )
   dbc::assert_is_one_of(
     fwrite_arg_list,
     funs = list(dbc::report_is_NULL, dbc::report_is_list)
@@ -59,9 +64,3 @@ qcs_write_dataset <- function(
   # @codedoc_comment_block return(encrqcs::qcs_write_dataset)
   return(NULL)
 }
-
-
-
-
-
-

@@ -57,9 +57,9 @@ get_internal_dataset <- function(dataset_name) {
 # source: https://www.r-bloggers.com/identifying-the-os-from-r/
 get_os <- function() {
   sysinf <- Sys.info()
-  if (!is.null(sysinf)){
-    os <- sysinf['sysname']
-    if (os == 'Darwin')
+  if (!is.null(sysinf)) {
+    os <- sysinf["sysname"]
+    if (os == "Darwin")
       os <- "osx"
   } else { ## mystery machine
     os <- .Platform$OS.type
@@ -70,6 +70,3 @@ get_os <- function() {
   }
   unname(tolower(os))
 }
-
-
-

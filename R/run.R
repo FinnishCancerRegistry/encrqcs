@@ -133,7 +133,6 @@ qcs_run <- function(
     dataset_file_path = dataset_file_path,
     qcs_dir_path = qcs_dir_path,
     assertion_type = assertion_type,
-    system2_arg_list = list(stdout = TRUE, stderr = TRUE),
     qcs_protocol_id = dataset_name
   )
   call_arg_list <- as.list(call_arg_list)

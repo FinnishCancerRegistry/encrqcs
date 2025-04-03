@@ -47,6 +47,11 @@ Replace output element \code{run_log} with \code{qcs_call_output}, the whole out
 object of \code{encrqcs::qcs_call}.
 }
 
+\subsection{encrqcs::qcs_write_dataset}{
+
+\code{encrqcs::qcs_write} now enforces the correct order of columns in \code{dataset}.
+}
+
 }
 
 \subsection{News for version 0.5.0}{

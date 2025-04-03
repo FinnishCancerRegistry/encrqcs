@@ -36,6 +36,14 @@ qcs_write_dataset <- function(
     dataset, assertion_type = assertion_type,
     dataset_name = dataset_name
   )
+  # @codedoc_comment_block news("encrqcs::qcs_write_dataset", "2025-04-03", "0.6.0")
+  # `encrqcs::qcs_write` now enforces the correct order of columns in `dataset`.
+  # @codedoc_comment_block news("encrqcs::qcs_write_dataset", "2025-04-03", "0.6.0")
+  dataset <- data.table::setDT(as.list(dataset))
+  data.table::setcolorder(
+    dataset,
+    qcs_dataset_column_names(dataset_name = dataset_name)
+  )
   dbc::assert_is_one_of(
     fwrite_arg_list,
     funs = list(dbc::report_is_NULL, dbc::report_is_list)

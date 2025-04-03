@@ -15,6 +15,10 @@
 Replace output element `run_log` with `qcs_call_output`, the whole output
 object of `encrqcs::qcs_call`.
 
+### encrqcs::qcs_write_dataset
+
+`encrqcs::qcs_write` now enforces the correct order of columns in `dataset`.
+
 
 ## News for version 0.5.0
 

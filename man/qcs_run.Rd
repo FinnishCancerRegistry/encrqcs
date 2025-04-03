@@ -70,7 +70,7 @@ if a list. Arguments \code{dataset}, \code{dataset_name}, \code{file_path}, and
 
 \item{call_arg_list}{\verb{[NULL, list]} (default \code{NULL})
 
-Optional, additional arguments passed to \verb{[encrqcs::qcs_run_call]}
+Optional, additional arguments passed to \verb{[encrqcs::qcs_call]}
 if a list. Arguments \code{dataset_file_path}, \code{qcs_dir_path}, and
 \code{assertion_type} are determined internally and
 cannot be changed. \code{system2_arg_list} has a default which can be overridden.}
@@ -86,7 +86,7 @@ cannot be changed.}
 \value{
 The output of \verb{[encrqcs::qcs_run]} is a list as returned by
 \verb{[encrqcs::qcs_read_results]}
-with the additional element \code{run_log}.
+with the additional element \code{qcs_call_output}.
 }
 \description{
 Run JRC-ENCR QCS and read results into R.
@@ -96,20 +96,26 @@ Run JRC-ENCR QCS and read results into R.
 \enumerate{
 \item \verb{[encrqcs::qcs_write_dataset]} is called to write \code{dataset} to disk
 (see arg \code{write_arg_list}).
-\item \verb{[encrqcs::qcs_run_call]} is called to run checks on the on-disk dataset
-(see arg \code{call_arg_list}). Any messages that JRC-ENCR QCS emits are
-captured into acharacter string vector which will be included in
-the ouptut of \verb{[encrqcs::qcs_run]}.
+\item \verb{[encrqcs::qcs_call]} is called to run checks on the on-disk dataset
+(see arg \code{call_arg_list}). Its output will be included in the output of
+\code{encrqcs::qcs_run}.
 \item \verb{[encrqcs::qcs_read_results]} is called to read results back into R.
 \item The captured messages alluded to in step 2 are included in the output
-as element named \code{run_log}.
+as element named \code{qcs_call_output}.
 The output of \verb{[encrqcs::qcs_run]} is a list as returned by
 \verb{[encrqcs::qcs_read_results]}
-with the additional element \code{run_log}.
+with the additional element \code{qcs_call_output}.
 \item Input / output files are removed on exit (whether successful or not)
 of \verb{[encrqcs::qcs_run]} depending on arg \code{clean}.
 }
 }
+\section{News for version 0.6.0}{
+
+
+Replace output element \code{run_log} with \code{qcs_call_output}, the whole output
+object of \code{encrqcs::qcs_call}.
+}
+
 \section{News for version 0.5.0}{
 
 

@@ -6,6 +6,11 @@
 
 `encrqcs::qcs_call` gains argument `optional_steps`.
 
+### encrqcs::qcs_run
+
+Replace output element `run_log` with `qcs_call_output`, the whole output
+object of `encrqcs::qcs_call`.
+
 
 ## News for version 0.5.0
 

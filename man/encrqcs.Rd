@@ -36,6 +36,12 @@ Run incidence checks using JRC-ENCR QCS:
 \code{encrqcs::qcs_call} gains argument \code{optional_steps}.
 }
 
+\subsection{encrqcs::qcs_run}{
+
+Replace output element \code{run_log} with \code{qcs_call_output}, the whole output
+object of \code{encrqcs::qcs_call}.
+}
+
 }
 
 \subsection{News for version 0.5.0}{

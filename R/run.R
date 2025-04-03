@@ -132,7 +132,7 @@ qcs_run <- function(
   # @codedoc_comment_block encrqcs::qcs_run::call_arg_list
   # @param call_arg_list `[NULL, list]` (default `NULL`)
   #
-  # Optional, additional arguments passed to `[encrqcs::qcs_run_call]`
+  # Optional, additional arguments passed to `[encrqcs::qcs_call]`
   # if a list. Arguments `dataset_file_path`, `qcs_dir_path`, and
   # `assertion_type` are determined internally and
   # cannot be changed. `system2_arg_list` has a default which can be overridden.
@@ -146,12 +146,11 @@ qcs_run <- function(
   call_arg_list <- as.list(call_arg_list)
   call_arg_list[names(overriding_call_arg_list)] <- overriding_call_arg_list
   # @codedoc_comment_block details(encrqcs::qcs_run)
-  # 2. `[encrqcs::qcs_run_call]` is called to run checks on the on-disk dataset
-  #    (see arg `call_arg_list`). Any messages that JRC-ENCR QCS emits are
-  #    captured into acharacter string vector which will be included in
-  #    the ouptut of `[encrqcs::qcs_run]`.
+  # 2. `[encrqcs::qcs_call]` is called to run checks on the on-disk dataset
+  #    (see arg `call_arg_list`). Its output will be included in the output of
+  #    `encrqcs::qcs_run`.
   # @codedoc_comment_block details(encrqcs::qcs_run)
-  run_log <- do.call(encrqcs::qcs_call, call_arg_list, quote = TRUE)
+  qcs_call_output <- do.call(encrqcs::qcs_call, call_arg_list, quote = TRUE)
 
   # read -----------------------------------------------------------------------
   # @codedoc_comment_block encrqcs::qcs_run::read_arg_list
@@ -174,18 +173,22 @@ qcs_run <- function(
   output <- do.call(encrqcs::qcs_read_results, read_arg_list, quote = TRUE)
 
   # finishing touches ----------------------------------------------------------
+  # @codedoc_comment_block news("encrqcs::qcs_run", "2025-04-03", "0.6.0")
+  # Replace output element `run_log` with `qcs_call_output`, the whole output
+  # object of `encrqcs::qcs_call`.
+  # @codedoc_comment_block news("encrqcs::qcs_run", "2025-04-03", "0.6.0")
   # @codedoc_comment_block return(encrqcs::qcs_run)
   #    The output of `[encrqcs::qcs_run]` is a list as returned by
   #    `[encrqcs::qcs_read_results]`
-  #    with the additional element `run_log`.
+  #    with the additional element `qcs_call_output`.
   # @codedoc_comment_block return(encrqcs::qcs_run)
 
   # @codedoc_comment_block details(encrqcs::qcs_run)
   # 4. The captured messages alluded to in step 2 are included in the output
-  #    as element named `run_log`.
+  #    as element named `qcs_call_output`.
   # @codedoc_insert_comment_block return(encrqcs::qcs_run)
   # @codedoc_comment_block details(encrqcs::qcs_run)
-  output[["run_log"]] <- run_log
+  output[["qcs_call_output"]] <- qcs_call_output
   if (clean %in% c("output", "both")) {
     output_dir_path <- qcs_read_dir_path(
       qcs_dir_path = qcs_dir_path, dataset_name = dataset_name

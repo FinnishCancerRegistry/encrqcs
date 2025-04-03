@@ -125,17 +125,18 @@ qcs_call <- function(
   #    system `PATH` environment variables, the default call will fail,
   #    because it uses `command = "java"` --- but you can replace that with
   #    a direct path to your `java.exe` via `system2_arg_list`.
+  #    The exact default for `system2_arg_list` is
+  #    `${deparse1(encrqcs:::qcs_call_default_system2_arg_list_expr__())}`.
   # @codedoc_comment_block encrqcs::qcs_call
   jar_file_name <- dir(qcs_dir_path, pattern = "jrc-qcs[0-9.-]+.jar")
-  default_system2_arg_list <- list(
-    command = "java",
-    args = c(
-      "-jar",
-      "-Xmx8g",
-      jar_file_name,
-      "-v", as.character(qcs_protocol_id),
-      dataset_file_path
-    )
+  default_system2_arg_list <- eval(
+    qcs_call_default_system2_arg_list_expr__(),
+    envir = list(
+      jar_file_name = jar_file_name,
+      qcs_protocol_id = qcs_protocol_id,
+      dataset_file_path = dataset_file_path
+    ),
+    enclos = eval_env
   )
   user_system2_arg_list <- as.list(system2_arg_list)
   system2_arg_list <- default_system2_arg_list
@@ -187,4 +188,17 @@ has_java_cmd <- function() {
   suppressWarnings(
     system2("java", "-version", stdout = FALSE, stderr = FALSE) == 0L
   )
+}
+
+qcs_call_default_system2_arg_list_expr__ <- function() {
+  quote(list(
+    command = "java",
+    args = c(
+      "-jar",
+      "-Xmx8g",
+      jar_file_name,
+      "-v", as.character(qcs_protocol_id),
+      dataset_file_path
+    )
+  ))
 }

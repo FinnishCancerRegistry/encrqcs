@@ -153,7 +153,6 @@ qcs_call <- function(
   # @codedoc_comment_block return(encrqcs::qcs_call)
   #    The output of the `[system2]` call is returned as-is.
   # @codedoc_comment_block return(encrqcs::qcs_call)
-  message("encrqcs::qcs_call: done.")
   return(out)
 }
 

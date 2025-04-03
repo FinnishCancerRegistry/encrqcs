@@ -31,7 +31,7 @@ arg_dataset_name_docs <- function() {
 
 .__QCS_DATASET_TEMPLATES <- list(
   incidence = data.table::data.table(
-    PAT = 1L,
+    PAT = "pat0000001",
     MoB = 1L,
     YoB = 1950L,
     Age = 70L,
@@ -39,13 +39,13 @@ arg_dataset_name_docs <- function() {
     Geo_Code = "FI1B",
     Geo_Label = "Helsinki-Uusimaa",
 
-    TUM = 1L,
+    TUM = "tum0000001",
     MoI = 1L,
     YoI = 2000L,
 
     BoD = 1L,
     Topo = "C001",
-    Morpho = "8070",
+    Morpho = 8070,
     Beh = 3L,
     Grade = 2L,
 
@@ -58,12 +58,12 @@ arg_dataset_name_docs <- function() {
     CoD = NA_character_,
 
     TNM_ed = 8L,
-    cT = NA_integer_,
-    cN = NA_integer_,
-    cM = NA_integer_,
-    pT = NA_integer_,
-    pN = NA_integer_,
-    pM = NA_integer_,
+    cT = NA_character_,
+    cN = NA_character_,
+    cM = NA_character_,
+    pT = NA_character_,
+    pN = NA_character_,
+    pM = NA_character_,
     ToS = "cpS",
     Stage = 2L,
 

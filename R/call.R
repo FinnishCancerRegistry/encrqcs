@@ -21,6 +21,16 @@ qcs_call <- function(
   assertion_type = NULL,
   optional_steps = NULL
 ) {
+  # @codedoc_comment_block encrqcs::qcs_call
+  # Performs the following steps:
+  #
+  # - Run `optional_steps[["on_entry"]](env = eval_env)` if that element of
+  #   `optional_steps` exists. `eval_env` is the evaluation environment of
+  #   `encrqcs::qcs_call`.
+  # @codedoc_comment_block encrqcs::qcs_call
+  if ("on_entry" %in% names(optional_steps)) {
+    optional_steps[["on_entry"]](env = eval_env)
+  }
   # assertions -----------------------------------------------------------------
   dbc::assert_file_exists(dataset_file_path, assertion_type = assertion_type)
   dataset_file_path <- normalizePath(dataset_file_path, winslash = "/")
@@ -38,7 +48,9 @@ qcs_call <- function(
   #'
   #' - `NULL`: No additional steps will be performed.
   #' - `list`: These will be performed. Each must be function with argument
-  #'   `env`. See section **Functions** for details.
+  #'   `env`. The output of these functions is not used for anything --- but you
+  #'   make changes to `env` directly.
+  #'   See section **Functions** for the functions.
   dbc::assert_is_one_of(
     optional_steps,
     funs = list(dbc::report_is_NULL,
@@ -46,19 +58,13 @@ qcs_call <- function(
   )
   eval_env <- environment()
   # @codedoc_comment_block encrqcs::qcs_call
-  # Performs the following steps:
-  #
-  # - Run `optional_steps[["on_entry"]](env = eval_env)` if that element of
-  #   `optional_steps` exists. `eval_env` is the evaluation environment of
-  #   `encrqcs::qcs_call`.
-  # @codedoc_comment_block encrqcs::qcs_call
-  if ("on_entry" %in% names(optional_steps)) {
-    optional_steps[["on_entry"]](env = eval_env)
-  }
-  # @codedoc_comment_block encrqcs::qcs_call
   # - Run `on.exit(optional_steps[["on_exit"]](env = eval_env), add = TRUE)`
   #   if that element of
-  #   `optional_steps` exists.
+  #   `optional_steps` exists. E.g.
+  #   have
+  #   `optional_steps[["on_entry"]] = function(env) env$t <- proc.time()`
+  #   and
+  #   `optional_steps[["on_entry"]] = message(data.table::timetaken(env$t))`.
   # @codedoc_comment_block encrqcs::qcs_call
   if ("on_exit" %in% names(optional_steps)) {
     on.exit(optional_steps[["on_exit"]](env = eval_env), add = TRUE)
@@ -143,7 +149,10 @@ qcs_call <- function(
   # @codedoc_comment_block encrqcs::qcs_call
   # - Run `optional_steps[["pre_system2_call"]](env = eval_env)`
   #   if that element of
-  #   `optional_steps` exists.
+  #   `optional_steps` exists. E.g. to increase memory use for java to 10GB you
+  #    can have
+  #   `optional_steps[["pre_system2_call"]] =`
+  #   `function(env) env$system2_arg_list$args[2] <- "-Xmx10g"`
   # @codedoc_comment_block encrqcs::qcs_call
   if ("pre_system2_call" %in% names(optional_steps)) {
     optional_steps[["pre_system2_call"]](env = eval_env)

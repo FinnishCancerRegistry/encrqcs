@@ -41,7 +41,9 @@ Optional steps to perform during run.
 \itemize{
 \item \code{NULL}: No additional steps will be performed.
 \item \code{list}: These will be performed. Each must be function with argument
-\code{env}. See section \strong{Functions} for details.
+\code{env}. The output of these functions is not used for anything --- but you
+make changes to \code{env} directly.
+See section \strong{Functions} for the functions.
 }}
 }
 \value{
@@ -58,7 +60,11 @@ Performs the following steps:
 \code{encrqcs::qcs_call}.
 \item Run \code{on.exit(optional_steps[["on_exit"]](env = eval_env), add = TRUE)}
 if that element of
-\code{optional_steps} exists.
+\code{optional_steps} exists. E.g.
+have
+\code{optional_steps[["on_entry"]] = function(env) env$t <- proc.time()}
+and
+\code{optional_steps[["on_entry"]] = message(data.table::timetaken(env$t))}.
 \item R working directory is temporarily set via \verb{[setwd]} to \code{qcs_dir_path}.
 Your original working directory is always restored whether the call
 succeeds or not.
@@ -72,7 +78,10 @@ because it uses \code{command = "java"} --- but you can replace that with
 a direct path to your \code{java.exe} via \code{system2_arg_list}.
 \item Run \code{optional_steps[["pre_system2_call"]](env = eval_env)}
 if that element of
-\code{optional_steps} exists.
+\code{optional_steps} exists. E.g. to increase memory use for java to 10GB you
+can have
+\verb{optional_steps[["pre_system2_call"]] =}
+\code{function(env) env$system2_arg_list$args[2] <- "-Xmx10g"}
 \item Call \verb{[system2]}.
 If status code other than zero is returned, an error is raised by R.
 E.g. status code 1 is "generic exit code" and means that the call

@@ -1,3 +1,5 @@
+
+
 #' @title Run JRC-ENCR QCS
 #' @description
 #' Run JRC-ENCR QCS on a file on-disk.
@@ -9,13 +11,7 @@
 #'
 #' Optional, additional arguments passed to `[system2]` if a list.
 #' @template param_assertion_type
-#' @eval c(
-#'   codedoc::codedoc_lines("^encrqcs::qcs_call::"),
-#'   "@details",
-#'   codedoc::codedoc_lines("^\\Qdetails(encrqcs::qcs_call)\\E$"),
-#'   "@return",
-#'   codedoc::codedoc_lines("^\\Qreturn(encrqcs::qcs_call)\\E$")
-#' )
+#' @eval codedoc::pkg_doc_fun("encrqcs::qcs_call")
 #' @export
 qcs_call <- function(
   dataset_file_path,
@@ -96,7 +92,13 @@ qcs_call <- function(
       jar_file_name,
       "-v", as.character(qcs_protocol_id),
       dataset_file_path
-    )
+    ),
+    # @codedoc_comment_block news("encrqcs::qcs_run", "2025-04-03", "0.5.0")
+    # `encrqcs::qcs_call` default for `system2_arg_list` gains
+    # `stdout = TRUE` and `stderr = TRUE`.
+    # @codedoc_comment_block news("encrqcs::qcs_run", "2025-04-03", "0.5.0")
+    stdout = TRUE,
+    stderr = TRUE
   )
   user_system2_arg_list <- as.list(system2_arg_list)
   system2_arg_list <- default_system2_arg_list

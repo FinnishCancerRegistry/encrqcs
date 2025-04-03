@@ -71,9 +71,9 @@ if a list. Arguments \code{dataset}, \code{dataset_name}, \code{file_path}, and
 \item{call_arg_list}{\verb{[NULL, list]} (default \code{NULL})
 
 Optional, additional arguments passed to \verb{[encrqcs::qcs_run_call]}
-if a list. Arguments \code{dataset_file_path}, \code{qcs_dir_path},
-\code{assertion_type}, and \code{system2_arg_list} are determined internally and
-cannot be changed.}
+if a list. Arguments \code{dataset_file_path}, \code{qcs_dir_path}, and
+\code{assertion_type} are determined internally and
+cannot be changed. \code{system2_arg_list} has a default which can be overridden.}
 
 \item{read_arg_list}{\verb{[NULL, list]} (default \code{NULL})
 Optional, additional arguments passed to \verb{[encrqcs::qcs_read_results]}
@@ -110,6 +110,13 @@ with the additional element \code{run_log}.
 of \verb{[encrqcs::qcs_run]} depending on arg \code{clean}.
 }
 }
+\section{News for version 0.5.0}{
+
+
+Removed override of \code{system2_arg_list} within \code{encrqcs::qcs_run}. So now
+the user can pass \code{system2_arg_list} to the call of \code{encrqcs::qcs_call}.
+}
+
 \section{News for version 0.2.2}{
 
 

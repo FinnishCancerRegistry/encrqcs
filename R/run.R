@@ -121,13 +121,17 @@ qcs_run <- function(
   }
 
   # run ------------------------------------------------------------------------
+  # @codedoc_comment_block news("encrqcs::qcs_run", "2025-04-03", "0.5.0")
+  # Removed override of `system2_arg_list` within `encrqcs::qcs_run`. So now
+  # the user can pass `system2_arg_list` to the call of `encrqcs::qcs_call`.
+  # @codedoc_comment_block news("encrqcs::qcs_run", "2025-04-03", "0.5.0")
   # @codedoc_comment_block encrqcs::qcs_run::call_arg_list
   # @param call_arg_list `[NULL, list]` (default `NULL`)
   #
   # Optional, additional arguments passed to `[encrqcs::qcs_run_call]`
-  # if a list. Arguments `dataset_file_path`, `qcs_dir_path`,
-  # `assertion_type`, and `system2_arg_list` are determined internally and
-  # cannot be changed.
+  # if a list. Arguments `dataset_file_path`, `qcs_dir_path`, and
+  # `assertion_type` are determined internally and
+  # cannot be changed. `system2_arg_list` has a default which can be overridden.
   # @codedoc_comment_block encrqcs::qcs_run::call_arg_list
   overriding_call_arg_list <- list(
     dataset_file_path = dataset_file_path,

@@ -43,6 +43,10 @@ qcs_run <- function(
                                       assertion_type = assertion_type)
   dbc::assert_dir_exists(qcs_dir_path,
                          assertion_type = assertion_type)
+  dbc::assert_has_length(qcs_dir_path,
+                         assertion_type = assertion_type,
+                         expected_length = 1L)
+  qcs_dir_path <- normalizePath(path = qcs_dir_path, winslash = "/")
   dbc::assert_is_one_of(
     dataset_file_path,
     funs = list(

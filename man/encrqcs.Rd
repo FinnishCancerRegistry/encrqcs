@@ -10,11 +10,11 @@ encrqcs
 
 \subsection{Installation}{
 
-You can install the development version of encrqcs from
-\href{https://github.com/}{GitHub} with:
+You can install the release of encrqcs from
+\href{https://github.com/FinnishCancerRegistry/encrqcs}{GitHub} with:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{# install.packages("devtools")
-devtools::install_github("finnishcancerregistry/encrqcs")
+devtools::install_github("finnishcancerregistry/encrqcs@release")
 }\if{html}{\out{</div>}}
 }
 

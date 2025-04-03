@@ -20,12 +20,12 @@
 #
 # ## Installation
 #
-# You can install the development version of encrqcs from
-# [GitHub](https://github.com/) with:
+# You can install the release of encrqcs from
+# [GitHub](https://github.com/FinnishCancerRegistry/encrqcs) with:
 #
 #   ``` r
 # # install.packages("devtools")
-# devtools::install_github("finnishcancerregistry/encrqcs")
+# devtools::install_github("finnishcancerregistry/encrqcs@release")
 # ```
 #
 # ## Example

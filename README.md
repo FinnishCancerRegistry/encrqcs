@@ -7,7 +7,6 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/finnishcancerregistry/encrqcs/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/finnishcancerregistry/encrqcs/actions/workflows/R-CMD-check.yaml)
-[![R-CMD-check](https://github.com/FinnishCancerRegistry/encrqcs/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/FinnishCancerRegistry/encrqcs/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 Use JRC-ENCR QCS (https://encr.eu/tools-for-registries) from the
@@ -15,12 +14,12 @@ comfort of your R session.
 
 ## Installation
 
-You can install the development version of encrqcs from
-[GitHub](https://github.com/) with:
+You can install the release of encrqcs from
+[GitHub](https://github.com/FinnishCancerRegistry/encrqcs) with:
 
   ``` r
 # install.packages("devtools")
-devtools::install_github("finnishcancerregistry/encrqcs")
+devtools::install_github("finnishcancerregistry/encrqcs@release")
 ```
 
 ## Example

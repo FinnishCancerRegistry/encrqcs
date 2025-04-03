@@ -18,7 +18,8 @@ qcs_call <- function(
   qcs_dir_path,
   qcs_protocol_id,
   system2_arg_list = NULL,
-  assertion_type = NULL
+  assertion_type = NULL,
+  optional_steps = NULL
 ) {
   # assertions -----------------------------------------------------------------
   dbc::assert_file_exists(dataset_file_path, assertion_type = assertion_type)
@@ -27,6 +28,41 @@ qcs_call <- function(
   dbc::assert_has_length(qcs_dir_path, expected_length = 1L,
                          assertion_type = assertion_type)
   qcs_dir_path <- normalizePath(path = qcs_dir_path, winslash = "/")
+
+  # @codedoc_comment_block news("encrqcs::qcs_run", "2025-04-03", "0.6.0")
+  # `encrqcs::qcs_call` gains argument `optional_steps`.
+  # @codedoc_comment_block news("encrqcs::qcs_run", "2025-04-03", "0.6.0")
+  #' @param optional_steps `[NULL, list]` (default `NULL`)
+  #'
+  #' Optional steps to perform during run.
+  #'
+  #' - `NULL`: No additional steps will be performed.
+  #' - `list`: These will be performed. Each must be function with argument
+  #'   `env`. See section **Functions** for details.
+  dbc::assert_is_one_of(
+    optional_steps,
+    funs = list(dbc::report_is_NULL,
+                dbc::report_is_uniquely_named_list)
+  )
+  eval_env <- environment()
+  # @codedoc_comment_block encrqcs::qcs_call
+  # Performs the following steps:
+  #
+  # - Run `optional_steps[["on_entry"]](env = eval_env)` if that element of
+  #   `optional_steps` exists. `eval_env` is the evaluation environment of
+  #   `encrqcs::qcs_call`.
+  # @codedoc_comment_block encrqcs::qcs_call
+  if ("on_entry" %in% names(optional_steps)) {
+    optional_steps[["on_entry"]](env = eval_env)
+  }
+  # @codedoc_comment_block encrqcs::qcs_call
+  # - Run `on.exit(optional_steps[["on_exit"]](env = eval_env), add = TRUE)`
+  #   if that element of
+  #   `optional_steps` exists.
+  # @codedoc_comment_block encrqcs::qcs_call
+  if ("on_exit" %in% names(optional_steps)) {
+    on.exit(optional_steps[["on_exit"]](env = eval_env), add = TRUE)
+  }
 
   # @codedoc_comment_block encrqcs::qcs_call::qcs_protocol_id
   # @param qcs_protocol_id `[character, integer]` (no default)
@@ -62,11 +98,11 @@ qcs_call <- function(
   )
 
   # system2 --------------------------------------------------------------------
-  # @codedoc_comment_block details(encrqcs::qcs_call)
+  # @codedoc_comment_block encrqcs::qcs_call
   #  - R working directory is temporarily set via `[setwd]` to `qcs_dir_path`.
   #    Your original working directory is always restored whether the call
   #    succeeds or not.
-  # @codedoc_comment_block details(encrqcs::qcs_call)
+  # @codedoc_comment_block encrqcs::qcs_call
   old_wd <- getwd()
   on.exit(setwd(old_wd), add = TRUE)
   setwd(qcs_dir_path)
@@ -74,8 +110,8 @@ qcs_call <- function(
   # `encrqcs::qcs_call` simplified. Instead of writing a .bit / .sh and
   # running that, it now directly calls Java via `system2`.
   # @codedoc_comment_block news("encrqcs::qcs_run", "2025-02-11", "0.4.0")
-  # @codedoc_comment_block details(encrqcs::qcs_call)
-  #  - The Java programme is called via a `system2` call. You may supply
+  # @codedoc_comment_block encrqcs::qcs_call
+  #  - Determine arguments for the `[system2]` call. You may supply
   #    arguments to it via `system2_arg_list` and you can even override
   #    arguments determined by `encrqcs::qcs_call` --- any settings you pass
   #    that way overwrite the defaults determine by `encrqcs::qcs_call`.
@@ -83,10 +119,7 @@ qcs_call <- function(
   #    system `PATH` environment variables, the default call will fail,
   #    because it uses `command = "java"` --- but you can replace that with
   #    a direct path to your `java.exe` via `system2_arg_list`.
-  #  - If status code other than zero is reported, a warning is emitted by R.
-  #    E.g. status code 1 is "generic exit code" and means that the call
-  #    failed.
-  # @codedoc_comment_block details(encrqcs::qcs_call)
+  # @codedoc_comment_block encrqcs::qcs_call
   jar_file_name <- dir(qcs_dir_path, pattern = "jrc-qcs[0-9.-]+.jar")
   default_system2_arg_list <- list(
     command = "java",
@@ -107,14 +140,36 @@ qcs_call <- function(
          "using argument `system2_arg_list`. See ?encrqcs::qcs_call and ",
          "?system2.")
   }
+  # @codedoc_comment_block encrqcs::qcs_call
+  # - Run `optional_steps[["pre_system2_call"]](env = eval_env)`
+  #   if that element of
+  #   `optional_steps` exists.
+  # @codedoc_comment_block encrqcs::qcs_call
+  if ("pre_system2_call" %in% names(optional_steps)) {
+    optional_steps[["pre_system2_call"]](env = eval_env)
+  }
+  # @codedoc_comment_block encrqcs::qcs_call
+  # - Call `[system2]`.
+  #   If status code other than zero is returned, an error is raised by R.
+  #   E.g. status code 1 is "generic exit code" and means that the call
+  #   failed.
+  # @codedoc_comment_block encrqcs::qcs_call
   out <- system2_call(system2_arg_list, success_status_codes = 0L)
-  # @codedoc_comment_block details(encrqcs::qcs_call)
+  # @codedoc_comment_block encrqcs::qcs_call
+  # - Run `optional_steps[["post_system2_call"]](env = eval_env)`
+  #   if that element of
+  #   `optional_steps` exists.
+  # @codedoc_comment_block encrqcs::qcs_call
+  if ("post_system2_call" %in% names(optional_steps)) {
+    optional_steps[["post_system2_call"]](env = eval_env)
+  }
+  # @codedoc_comment_block encrqcs::qcs_call
   #  - Finally,
   # @codedoc_insert_comment_block return(encrqcs::qcs_call)
-  # @codedoc_comment_block details(encrqcs::qcs_call)
+  # @codedoc_comment_block encrqcs::qcs_call
 
   # @codedoc_comment_block return(encrqcs::qcs_call)
-  #    The output of the `[system2]` call is returned as-is.
+  #    Return a list containing the results of the `[system2]` call.
   # @codedoc_comment_block return(encrqcs::qcs_call)
   return(out)
 }

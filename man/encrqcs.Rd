@@ -30,6 +30,14 @@ Run incidence checks using JRC-ENCR QCS:
 }
 \section{News}{
 
+\subsection{News for version 0.6.0}{
+\subsection{encrqcs::qcs_run}{
+
+\code{encrqcs::qcs_call} gains argument \code{optional_steps}.
+}
+
+}
+
 \subsection{News for version 0.5.0}{
 \subsection{encrqcs::qcs_run}{
 

@@ -9,7 +9,8 @@ qcs_call(
   qcs_dir_path,
   qcs_protocol_id,
   system2_arg_list = NULL,
-  assertion_type = NULL
+  assertion_type = NULL,
+  optional_steps = NULL
 )
 }
 \arguments{
@@ -33,10 +34,53 @@ Path to root directory of the JRC-ENCR QCS.}
 Optional, additional arguments passed to \verb{[system2]} if a list.}
 
 \item{assertion_type}{See e.g. \verb{[dbc::report_to_assertion]}.}
+
+\item{optional_steps}{\verb{[NULL, list]} (default \code{NULL})
+
+Optional steps to perform during run.
+\itemize{
+\item \code{NULL}: No additional steps will be performed.
+\item \code{list}: These will be performed. Each must be function with argument
+\code{env}. See section \strong{Functions} for details.
+}}
 }
 \value{
-The output of the \verb{[system2]} call is returned as-is.
+Return a list containing the results of the \verb{[system2]} call.
 }
 \description{
 Run JRC-ENCR QCS on a file on-disk.
+}
+\details{
+Performs the following steps:
+\itemize{
+\item Run \code{optional_steps[["on_entry"]](env = eval_env)} if that element of
+\code{optional_steps} exists. \code{eval_env} is the evaluation environment of
+\code{encrqcs::qcs_call}.
+\item Run \code{on.exit(optional_steps[["on_exit"]](env = eval_env), add = TRUE)}
+if that element of
+\code{optional_steps} exists.
+\item R working directory is temporarily set via \verb{[setwd]} to \code{qcs_dir_path}.
+Your original working directory is always restored whether the call
+succeeds or not.
+\item Determine arguments for the \verb{[system2]} call. You may supply
+arguments to it via \code{system2_arg_list} and you can even override
+arguments determined by \code{encrqcs::qcs_call} --- any settings you pass
+that way overwrite the defaults determine by \code{encrqcs::qcs_call}.
+For instance, if you don't have the dir containing \code{java.exe} in your
+system \code{PATH} environment variables, the default call will fail,
+because it uses \code{command = "java"} --- but you can replace that with
+a direct path to your \code{java.exe} via \code{system2_arg_list}.
+\item Run \code{optional_steps[["pre_system2_call"]](env = eval_env)}
+if that element of
+\code{optional_steps} exists.
+\item Call \verb{[system2]}.
+If status code other than zero is returned, an error is raised by R.
+E.g. status code 1 is "generic exit code" and means that the call
+failed.
+\item Run \code{optional_steps[["post_system2_call"]](env = eval_env)}
+if that element of
+\code{optional_steps} exists.
+\item Finally,
+Return a list containing the results of the \verb{[system2]} call.
+}
 }

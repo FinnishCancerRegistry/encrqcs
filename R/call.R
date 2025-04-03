@@ -83,23 +83,20 @@ qcs_call <- function(
   #    system `PATH` environment variables, the default call will fail,
   #    because it uses `command = "java"` --- but you can replace that with
   #    a direct path to your `java.exe` via `system2_arg_list`.
+  #  - If status code other than zero is reported, a warning is emitted by R.
+  #    E.g. status code 1 is "generic exit code" and means that the call
+  #    failed.
   # @codedoc_comment_block details(encrqcs::qcs_call)
   jar_file_name <- dir(qcs_dir_path, pattern = "jrc-qcs[0-9.-]+.jar")
   default_system2_arg_list <- list(
     command = "java",
     args = c(
       "-jar",
-      "-Xmx2g",
+      "-Xmx8g",
       jar_file_name,
       "-v", as.character(qcs_protocol_id),
       dataset_file_path
-    ),
-    # @codedoc_comment_block news("encrqcs::qcs_run", "2025-04-03", "0.5.0")
-    # `encrqcs::qcs_call` default for `system2_arg_list` gains
-    # `stdout = TRUE` and `stderr = TRUE`.
-    # @codedoc_comment_block news("encrqcs::qcs_run", "2025-04-03", "0.5.0")
-    stdout = TRUE,
-    stderr = TRUE
+    )
   )
   user_system2_arg_list <- as.list(system2_arg_list)
   system2_arg_list <- default_system2_arg_list
@@ -110,42 +107,7 @@ qcs_call <- function(
          "using argument `system2_arg_list`. See ?encrqcs::qcs_call and ",
          "?system2.")
   }
-  out <- suppressWarnings(withCallingHandlers(
-    do.call(system2, system2_arg_list, quote = TRUE),
-    warning = function(w) w
-  ))
-  # @codedoc_comment_block details(encrqcs::qcs_call)
-  #  - If status code other than zero is reported, a warning is emitted by R.
-  #    E.g. status code 1 is "generic exit code" and means that the call
-  #    failed.
-  # @codedoc_comment_block details(encrqcs::qcs_call)
-  status <- 0L
-  if (is.integer(out)) {
-    status <- out
-  } else if (is.integer(attr(out, "status"))) {
-    status <- attr(out, "status")
-  }
-  had_status_1 <- status > 0L
-  had_status_1 <- had_status_1 || inherits(out, "warning") &&
-    grepl("had status 1", out[["message"]])
-  if (had_status_1) {
-    warn_txt <- paste0(
-      "system2 returneds status ", status, ". ",
-      "Looks like the JRC-ENCR QCS Java ",
-      "programme failed."
-    )
-    warning(warn_txt)
-    if (is.character(out)) {
-      msg_txt <- paste0(
-        "system2 returned status ", status, ". ",
-        "Looks like the JRC-ENCR QCS Java ",
-        "programme failed. ",
-        "Got this from system2:\n",
-        paste0("  ", out, collapse = "\n")
-      )
-      message(msg_txt)
-    }
-  }
+  out <- system2_call(system2_arg_list, success_status_codes = 0L)
   # @codedoc_comment_block details(encrqcs::qcs_call)
   #  - Finally,
   # @codedoc_insert_comment_block return(encrqcs::qcs_call)

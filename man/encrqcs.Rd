@@ -33,12 +33,6 @@ Run incidence checks using JRC-ENCR QCS:
 \subsection{News for version 0.5.0}{
 \subsection{encrqcs::qcs_run}{
 
-\code{encrqcs::qcs_call} default for \code{system2_arg_list} gains
-\code{stdout = TRUE} and \code{stderr = TRUE}.
-}
-
-\subsection{encrqcs::qcs_run}{
-
 Removed override of \code{system2_arg_list} within \code{encrqcs::qcs_run}. So now
 the user can pass \code{system2_arg_list} to the call of \code{encrqcs::qcs_call}.
 }

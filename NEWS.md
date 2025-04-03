@@ -4,11 +4,6 @@
 
 ### encrqcs::qcs_run
 
-`encrqcs::qcs_call` default for `system2_arg_list` gains
-`stdout = TRUE` and `stderr = TRUE`.
-
-### encrqcs::qcs_run
-
 Removed override of `system2_arg_list` within `encrqcs::qcs_run`. So now
 the user can pass `system2_arg_list` to the call of `encrqcs::qcs_call`.
 

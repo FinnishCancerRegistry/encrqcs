@@ -8,6 +8,10 @@
 
 ### encrqcs::qcs_run
 
+`encrqcs::qcs_run` now enforces the correct order of columns in `dataset`.
+
+### encrqcs::qcs_run
+
 Replace output element `run_log` with `qcs_call_output`, the whole output
 object of `encrqcs::qcs_call`.
 

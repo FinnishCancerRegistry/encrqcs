@@ -112,6 +112,8 @@ of \verb{[encrqcs::qcs_run]} depending on arg \code{clean}.
 \section{News for version 0.6.0}{
 
 
+\code{encrqcs::qcs_run} now enforces the correct order of columns in \code{dataset}.
+
 Replace output element \code{run_log} with \code{qcs_call_output}, the whole output
 object of \code{encrqcs::qcs_call}.
 }

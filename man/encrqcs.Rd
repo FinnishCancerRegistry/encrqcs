@@ -38,6 +38,11 @@ Run incidence checks using JRC-ENCR QCS:
 
 \subsection{encrqcs::qcs_run}{
 
+\code{encrqcs::qcs_run} now enforces the correct order of columns in \code{dataset}.
+}
+
+\subsection{encrqcs::qcs_run}{
+
 Replace output element \code{run_log} with \code{qcs_call_output}, the whole output
 object of \code{encrqcs::qcs_call}.
 }

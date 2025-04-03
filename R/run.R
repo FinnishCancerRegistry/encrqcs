@@ -41,6 +41,14 @@ qcs_run <- function(
                                  assertion_type = assertion_type)
   encrqcs::assert_is_qcs_dataset_name(dataset_name,
                                       assertion_type = assertion_type)
+  # @codedoc_comment_block news("encrqcs::qcs_run", "2025-04-03", "0.6.0")
+  # `encrqcs::qcs_run` now enforces the correct order of columns in `dataset`.
+  # @codedoc_comment_block news("encrqcs::qcs_run", "2025-04-03", "0.6.0")
+  dataset <- data.table::setDT(as.list(dataset))
+  data.table::setcolorder(
+    dataset,
+    qcs_dataset_column_names(dataset_name = dataset_name)
+  )
   dbc::assert_dir_exists(qcs_dir_path,
                          assertion_type = assertion_type)
   dbc::assert_has_length(qcs_dir_path,

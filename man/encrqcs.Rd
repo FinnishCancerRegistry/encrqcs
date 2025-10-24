@@ -30,6 +30,17 @@ Run incidence checks using JRC-ENCR QCS:
 }
 \section{News}{
 
+\subsection{News for version 0.7.0}{
+\subsection{encrqcs::qcs_read_results}{
+
+Fixed \code{encrqcs::qcs_read_results}: it now also reads e.g.
+\code{QCS-Incidence-Output-Summary.txt}. The regex used to detect files to read
+in the results dir was \code{"output([.]txt)|([.]csv)"} and is now
+\code{"output.*([.]txt)|([.]csv)"} (added \verb{.*}).
+}
+
+}
+
 \subsection{News for version 0.6.0}{
 \subsection{encrqcs::qcs_run}{
 

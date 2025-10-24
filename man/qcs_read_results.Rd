@@ -54,7 +54,7 @@ Read JRC-ENCR QCS results into R.
 \verb{C:/path/to/qcs/output/incidence} for
 \code{qcs_dir_path = "C:/path/to/qcs/"}, \code{dataset_name = "incidence"}.
 \item Result files in the results dir are those that match case-insensitive
-regex \code{"output([.]txt)|([.]csv)"}.
+regex \code{"output.*([.]txt)|([.]csv)"}.
 \item Each results file is read separately into R. Those ending in
 \code{.txt} are read using \verb{[readLines]}. Those ending in \code{.csv} are read
 using \verb{[data.table::fread]}.

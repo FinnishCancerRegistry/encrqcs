@@ -47,14 +47,23 @@ qcs_read_results <- function(
   }
 
   # output_file_paths ----------------------------------------------------------
+  # @codedoc_comment_block news("encrqcs::qcs_read_results", "2025-10-24", "0.7.0")
+  # Fixed `encrqcs::qcs_read_results`: it now also reads e.g.
+  # `QCS-Incidence-Output-Summary.txt`. The regex used to detect files to read
+  # in the results dir was `"output([.]txt)|([.]csv)"` and is now
+  # `"output.*([.]txt)|([.]csv)"` (added `.*`).
+  # @codedoc_comment_block news("encrqcs::qcs_read_results", "2025-10-24", "0.7.0")
   # @codedoc_comment_block details(encrqcs::qcs_read_results)
   # 2. Result files in the results dir are those that match case-insensitive
-  #    regex `"output([.]txt)|([.]csv)"`.
+  #    regex `"output.*([.]txt)|([.]csv)"`.
   # @codedoc_comment_block details(encrqcs::qcs_read_results)
-  output_file_names <- dir(output_dir_path, pattern = "output([.]txt)|([.]csv)",
-                           ignore.case = TRUE)
-  output_file_paths <- dir(output_dir_path, pattern = "output([.]txt)|([.]csv)",
-                           full.names = TRUE, ignore.case = TRUE)
+  output_file_paths <- dir(
+    output_dir_path,
+    pattern = "output.*([.]txt)|([.]csv)",
+    full.names = TRUE,
+    ignore.case = TRUE
+  )
+  output_file_names <- basename(output_file_paths)
   if (length(output_file_names) == 0L) {
     stop("No .csv nor .txt file in output dir ", deparse(output_dir_path),
          ". Did the previous JRC-ENCR QCS run finish successfully?")

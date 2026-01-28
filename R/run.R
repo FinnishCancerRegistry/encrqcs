@@ -1,3 +1,11 @@
+qcs_clean_output_all <- function(qcs_dir_path) {
+  unlink(
+    paste0(qcs_dir_path, "/", c("output", "temp")),
+    recursive = TRUE,
+    force = TRUE
+  )
+}
+
 qcs_clean_output <- function(
   qcs_protocol_id,
   qcs_dir_path
@@ -8,42 +16,57 @@ qcs_clean_output <- function(
     qcs_protocol_id = qcs_protocol_id,
     output = "table"
   )
+  if (nrow(meta) <= 1) {
+    qcs_clean_output_all(qcs_dir_path)
+    return(invisible(NULL))
+  }
   is_removable_item <- !(
     meta[["PROTOCOL_ID"]] == qcs_protocol_id &
       duplicated(meta[["PROTOCOL_ID"]], fromLast = TRUE)
-  )
-  data.table::fwrite(
-    subset(
-      meta,
-      !is_removable_item
-    ),
-    qcs_read_record_meta_file_path(
-      qcs_dir_path = qcs_dir_path,
-      qcs_protocol_id = qcs_protocol_id
-    ),
-    sep = ";",
-    encoding = "UTF-8"
   )
   rm_paths <- c(
     qcs_read_dir_path(
       qcs_dir_path = qcs_dir_path,
       qcs_protocol_id = qcs_protocol_id,
-      type = "summary"
+      type = "summary",
+      must_exist = FALSE
     ),
     dir(
       qcs_read_dir_path(
         qcs_dir_path = qcs_dir_path,
         qcs_protocol_id = qcs_protocol_id,
-        type = "record"
+        type = "record",
+        must_exist = FALSE
       ),
-      pattern = sprintf("_%i[.]csv$", meta[["RUN_ID"]][is_removable_item])
+      pattern = sprintf("_%i[.]csv$", meta[["RUN_ID"]][is_removable_item]),
+      full.names = TRUE
     )
   )
+  if (nrow(meta) == 1) {
+    unlink(qcs_read_record_meta_file_path(
+      qcs_dir_path = qcs_dir_path,
+      qcs_protocol_id = qcs_protocol_id
+    ))
+  } else {
+    data.table::fwrite(
+      subset(
+        meta,
+        !is_removable_item
+      ),
+      qcs_read_record_meta_file_path(
+        qcs_dir_path = qcs_dir_path,
+        qcs_protocol_id = qcs_protocol_id
+      ),
+      sep = ";",
+      encoding = "UTF-8"
+    )
+  }
   unlink(
     x = rm_paths,
     force = TRUE,
     recursive = TRUE
   )
+  return(invisible(NULL))
 }
 
 

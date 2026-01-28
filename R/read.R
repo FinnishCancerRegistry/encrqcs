@@ -51,9 +51,12 @@ qcs_read_record_meta_read <- function(
   qcs_protocol_id,
   output = c("list", "table")[1]
 ) {
-  meta <- data.table::fread(
-    qcs_read_record_meta_file_path(qcs_dir_path, qcs_protocol_id)
-  )
+  meta_path <- qcs_read_record_meta_file_path(qcs_dir_path, qcs_protocol_id)
+  if (!file.exists(meta_path)) {
+    return(data.table::data.table(NULL))
+  }
+  # dont want to see warning about zero rows
+  meta <- suppressWarnings(data.table::fread(meta_path))
   if (output == "table") {
     return(meta)
   }

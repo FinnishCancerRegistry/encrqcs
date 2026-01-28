@@ -31,6 +31,16 @@ Run incidence checks using JRC-ENCR QCS:
 \section{News}{
 
 \subsection{News for version 0.8.0}{
+\subsection{encrqcs::qcs_clean_output}{
+
+New function \code{encrqcs::qcs_clean_output}.
+}
+
+\subsection{encrqcs::qcs_clean_output_all}{
+
+New function \code{encrqcs::qcs_clean_output_all}.
+}
+
 \subsection{encrqcs::qcs_read_results}{
 
 \code{encrqcs::qcs_read_results} revamp: it now reads a different and more usable

@@ -3,6 +3,8 @@
 export(assert_is_qcs_dataset)
 export(assert_is_qcs_dataset_name)
 export(qcs_call)
+export(qcs_clean_output)
+export(qcs_clean_output_all)
 export(qcs_dataset_column_names)
 export(qcs_dataset_names)
 export(qcs_dataset_template)

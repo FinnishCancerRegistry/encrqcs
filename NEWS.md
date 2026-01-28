@@ -2,6 +2,14 @@
 
 ## News for version 0.8.0
 
+### encrqcs::qcs_clean_output
+
+New function `encrqcs::qcs_clean_output`.
+
+### encrqcs::qcs_clean_output_all
+
+New function `encrqcs::qcs_clean_output_all`.
+
 ### encrqcs::qcs_read_results
 
 `encrqcs::qcs_read_results` revamp: it now reads a different and more usable

@@ -46,6 +46,52 @@ make changes to \code{env} directly.
 See section \strong{Functions} for the functions.
 }}
 }
+\value{
+Return a list containing the results of the \verb{[system2]} call.
+}
 \description{
 Run JRC-ENCR QCS on a file on-disk.
+}
+\details{
+Performs the following steps:
+\itemize{
+\item Run \code{optional_steps[["on_entry"]](env = eval_env)} if that element of
+\code{optional_steps} exists. \code{eval_env} is the evaluation environment of
+\code{encrqcs::qcs_call}.
+\item Run \code{on.exit(optional_steps[["on_exit"]](env = eval_env), add = TRUE)}
+if that element of
+\code{optional_steps} exists. E.g.
+have
+\code{optional_steps[["on_entry"]] = function(env) env$t <- proc.time()}
+and
+\code{optional_steps[["on_entry"]] = message(data.table::timetaken(env$t))}.
+\item R working directory is temporarily set via \verb{[setwd]} to \code{qcs_dir_path}.
+Your original working directory is always restored whether the call
+succeeds or not.
+\item Determine arguments for the \verb{[system2]} call. You may supply
+arguments to it via \code{system2_arg_list} and you can even override
+arguments determined by \code{encrqcs::qcs_call} --- any settings you pass
+that way overwrite the defaults determine by \code{encrqcs::qcs_call}.
+For instance, if you don't have the dir containing \code{java.exe} in your
+system \code{PATH} environment variables, the default call will fail,
+because it uses \code{command = "java"} --- but you can replace that with
+a direct path to your \code{java.exe} via \code{system2_arg_list}.
+The exact default for \code{system2_arg_list} is
+\code{list(command = "java", args = c("-jar", "-Xmx8g", jar_file_name, "-v", as.character(qcs_protocol_id), dataset_file_path))}.
+\item Run \code{optional_steps[["pre_system2_call"]](env = eval_env)}
+if that element of
+\code{optional_steps} exists. E.g. to increase memory use for java to 10GB you
+can have
+\verb{optional_steps[["pre_system2_call"]] =}
+\code{function(env) env$system2_arg_list$args[2] <- "-Xmx10g"}
+\item Call \verb{[system2]}.
+If status code other than zero is returned, an error is raised by R.
+E.g. status code 1 is "generic exit code" and means that the call
+failed.
+\item Run \code{optional_steps[["post_system2_call"]](env = eval_env)}
+if that element of
+\code{optional_steps} exists.
+\item Finally,
+Return a list containing the results of the \verb{[system2]} call.
+}
 }

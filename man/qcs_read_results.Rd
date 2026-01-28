@@ -25,8 +25,63 @@ Path to root directory of the JRC-ENCR QCS.}
 \code{"population"}, and \code{"lifetable"}, respectively.
 }}
 
+\item{fread_arg_list}{\verb{[NULL, list]} (default \code{NULL})
+
+Additional arguments passed to \verb{[data.table::fread]} if a \code{list}.
+Argument \code{file} is determined internally and cannot be changed.}
+
+\item{readlines_arg_list}{\verb{[NULL, list]} (default \code{NULL})
+
+Additional arguments passed to \verb{[readLines]} if a \code{list}.
+Argument \code{con} is determined internally and cannot be changed.}
+
 \item{assertion_type}{See e.g. \verb{[dbc::report_to_assertion]}.}
+
+\item{dataset_name}{\verb{[character]} (no default)
+
+one of the following:
+\itemize{
+\item "incidence"
+\item "mortality"
+\item "population"
+\item "lifetable"
+}}
+}
+\value{
+\itemize{
+\item The output is a list with one
+element for each result file. The name of the element is the name of
+the file in the results dir, stripped of file extension and any run
+number, e.g. \code{qcs_rule_output_1.csv} -> \code{qcs_rule_output}.
+}
 }
 \description{
 Read JRC-ENCR QCS results into R.
+}
+\details{
+\verb{[encrqcs::qcs_read_results]} performs the following steps:
+\itemize{
+\item Directory containing summary results is assumed to look like e.g.
+\verb{C:/path/to/qcs/output/incidence}
+for \code{qcs_dir_path = "C:/path/to/qcs/"}, \code{qcs_protocol_id = "incidence"}.
+\item Directory containing the record-level results is assumed to look like e.g.
+\verb{C:/path/to/qcs/temp/}
+.
+\item Only the file \code{QCS-Incidence-Output-Summary.csv} is read from the
+summary directory.
+\item From the record directory, every .csv belonging to the latest call
+of QCS with the requested \code{qcs_protocol_id} is read, except
+those whose file names match regex \code{"(correct)|(valid)"}.
+\item Each results file is read separately into R. Those ending in
+\code{.txt} are read using \verb{[readLines]}. Those ending in \code{.csv} are read
+using \verb{[data.table::fread]}.
+\item The output is a list with one
+element for each result file. The name of the element is the name of
+the file in the results dir, stripped of file extension and any run
+number, e.g. \code{qcs_rule_output_1.csv} -> \code{qcs_rule_output}.
+\item The output is a list with one
+element for each result file. The name of the element is the name of
+the file in the results dir, stripped of file extension and any run
+number, e.g. \code{qcs_rule_output_1.csv} -> \code{qcs_rule_output}.
+}
 }

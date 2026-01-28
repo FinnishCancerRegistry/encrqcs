@@ -93,9 +93,12 @@ Run JRC-ENCR QCS and read results into R.
 }
 \details{
 \verb{[encrqcs::qcs_run]} performs the following steps:
-\enumerate{
+\itemize{
 \item \verb{[encrqcs::qcs_write_dataset]} is called to write \code{dataset} to disk
 (see arg \code{write_arg_list}).
+\item Input / output files are marked for removal on exit
+(whether successful or not)
+of \verb{[encrqcs::qcs_run]} depending on arg \code{clean}.
 \item \verb{[encrqcs::qcs_call]} is called to run checks on the on-disk dataset
 (see arg \code{call_arg_list}). Its output will be included in the output of
 \code{encrqcs::qcs_run}.
@@ -105,10 +108,14 @@ as element named \code{qcs_call_output}.
 The output of \verb{[encrqcs::qcs_run]} is a list as returned by
 \verb{[encrqcs::qcs_read_results]}
 with the additional element \code{qcs_call_output}.
-\item Input / output files are removed on exit (whether successful or not)
-of \verb{[encrqcs::qcs_run]} depending on arg \code{clean}.
 }
 }
+\section{News for version 0.8.0}{
+
+
+\code{encrqcs::qcs_run} cleaning of output now more thorough.
+}
+
 \section{News for version 0.6.0}{
 
 

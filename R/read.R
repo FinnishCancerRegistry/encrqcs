@@ -1,7 +1,8 @@
 qcs_read_dir_path <- function(
   qcs_dir_path,
   qcs_protocol_id,
-  type
+  type,
+  must_exist = TRUE
 ) {
   output_dir_path <- switch(
     type,
@@ -10,8 +11,9 @@ qcs_read_dir_path <- function(
       # `[encrqcs::qcs_read_results]` performs the following steps:
       #
       # - Directory containing summary results is assumed to look like e.g.
-      #   `${encrqcs:::qcs_read_dir_path("C:/path/to/qcs/", "incidence", "summary")}`
+      #   `${encrqcs:::qcs_read_dir_path("C:/path/to/qcs/", "incidence", "summary", FALSE)}`
       #   for `qcs_dir_path = "C:/path/to/qcs/"`, `qcs_protocol_id = "incidence"`.
+      # @codedoc_comment_block details(encrqcs::qcs_read_results)
       dataset_name <- handle_qcs_protocol_id(
         qcs_protocol_id, output_type = "dataset_name"
       )
@@ -19,7 +21,7 @@ qcs_read_dir_path <- function(
     },
     # @codedoc_comment_block details(encrqcs::qcs_read_results)
     # - Directory containing the record-level results is assumed to look like e.g.
-    #   `${encrqcs:::qcs_read_dir_path("C:/path/to/qcs/", "incidence", "record")}`
+    #   `${encrqcs:::qcs_read_dir_path("C:/path/to/qcs/", "incidence", "record", FALSE)}`
     #   .
     # @codedoc_comment_block details(encrqcs::qcs_read_results)
     record = paste0(qcs_dir_path, "/temp/"),
@@ -27,11 +29,37 @@ qcs_read_dir_path <- function(
   )
   output_dir_path <- normalizePath(output_dir_path, winslash = "/",
                                    mustWork = FALSE)
-  if (!dir.exists(output_dir_path)) {
+  if (must_exist && !dir.exists(output_dir_path)) {
     stop("Could not read QCS results: directory ", output_dir_path, " does ",
          "not exist. Did the QCS call succeed?")
   }
   return(output_dir_path)
+}
+
+qcs_read_record_meta_file_path <- function(qcs_dir_path, qcs_protocol_id) {
+  meta_dir_path <- qcs_read_dir_path(
+    qcs_dir_path = qcs_dir_path,
+    qcs_protocol_id = qcs_protocol_id,
+    type = "record",
+    must_exist = TRUE
+  )
+  return(sprintf("%s/validation_run.csv", meta_dir_path))
+}
+
+qcs_read_record_meta_read <- function(
+  qcs_dir_path,
+  qcs_protocol_id,
+  output = c("list", "table")[1]
+) {
+  meta <- data.table::fread(
+    qcs_read_record_meta_file_path(qcs_dir_path, qcs_protocol_id)
+  )
+  if (output == "table") {
+    return(meta)
+  }
+  meta <- subset(meta, meta[["PROTOCOL_ID"]] == qcs_protocol_id)
+  meta <- as.list(meta[nrow(meta), ])
+  return(meta)
 }
 
 qcs_read_file_paths <- function(
@@ -59,12 +87,10 @@ qcs_read_file_paths <- function(
       #   of QCS with the requested `qcs_protocol_id` is read, except
       #   those whose file names match regex `"(correct)|(valid)"`.
       # @codedoc_comment_block details(encrqcs::qcs_read_results)
-      meta <- data.table::fread(
-        sprintf("%s/validation_run.csv", output_dir_path)
+      meta <- qcs_read_record_meta_read(
+        qcs_dir_path = qcs_dir_path,
+        qcs_protocol_id = qcs_protocol_id
       )
-      meta <- subset(meta, meta[["PROTOCOL_ID"]] == qcs_protocol_id)
-      meta <- as.list(meta[nrow(meta), ])
-
       csv_file_paths <- dir(
         output_dir_path,
         pattern = sprintf("_%i[.]csv$", meta[["RUN_ID"]]),

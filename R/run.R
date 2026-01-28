@@ -1,5 +1,50 @@
-
-
+qcs_clean_output <- function(
+  qcs_protocol_id,
+  qcs_dir_path
+) {
+  qcs_protocol_id <- handle_qcs_protocol_id(qcs_protocol_id)
+  meta <- qcs_read_record_meta_read(
+    qcs_dir_path = qcs_dir_path,
+    qcs_protocol_id = qcs_protocol_id,
+    output = "table"
+  )
+  is_removable_item <- !(
+    meta[["PROTOCOL_ID"]] == qcs_protocol_id &
+      duplicated(meta[["PROTOCOL_ID"]], fromLast = TRUE)
+  )
+  data.table::fwrite(
+    subset(
+      meta,
+      !is_removable_item
+    ),
+    qcs_read_record_meta_file_path(
+      qcs_dir_path = qcs_dir_path,
+      qcs_protocol_id = qcs_protocol_id
+    ),
+    sep = ";",
+    encoding = "UTF-8"
+  )
+  rm_paths <- c(
+    qcs_read_dir_path(
+      qcs_dir_path = qcs_dir_path,
+      qcs_protocol_id = qcs_protocol_id,
+      type = "summary"
+    ),
+    dir(
+      qcs_read_dir_path(
+        qcs_dir_path = qcs_dir_path,
+        qcs_protocol_id = qcs_protocol_id,
+        type = "record"
+      ),
+      pattern = sprintf("_%i[.]csv$", meta[["RUN_ID"]][is_removable_item])
+    )
+  )
+  unlink(
+    x = rm_paths,
+    force = TRUE,
+    recursive = TRUE
+  )
+}
 
 
 #' @title JRC-ENCR QCS
@@ -84,11 +129,12 @@ qcs_run <- function(
   )
   if (is.null(clean)) {
     clean <- "both"
+  } else {
+    dbc::assert_atom_is_in_set(
+      clean, set = c("input", "output", "both", "neither"),
+      assertion_type = assertion_type
+    )
   }
-  dbc::assert_atom_is_in_set(
-    clean, set = c("input", "output", "both", "neither"),
-    assertion_type = assertion_type
-  )
 
   # write ----------------------------------------------------------------------
   # @codedoc_comment_block encrqcs::qcs_run::write_arg_list
@@ -124,12 +170,29 @@ qcs_run <- function(
   # @codedoc_comment_block details(encrqcs::qcs_run)
   # `[encrqcs::qcs_run]` performs the following steps:
   #
-  # 1. `[encrqcs::qcs_write_dataset]` is called to write `dataset` to disk
-  #    (see arg `write_arg_list`).
+  # - `[encrqcs::qcs_write_dataset]` is called to write `dataset` to disk
+  #   (see arg `write_arg_list`).
   # @codedoc_comment_block details(encrqcs::qcs_run)
   do.call(encrqcs::qcs_write_dataset, write_arg_list, quote = TRUE)
+  # @codedoc_comment_block details(encrqcs::qcs_run)
+  # - Input / output files are marked for removal on exit
+  #   (whether successful or not)
+  #   of `[encrqcs::qcs_run]` depending on arg `clean`.
+  # @codedoc_comment_block details(encrqcs::qcs_run)
   if (clean %in% c("input", "both")) {
     on.exit(unlink(dataset_file_path, force = TRUE))
+  }
+  if (clean %in% c("output", "both")) {
+    # @codedoc_comment_block news("encrqcs::qcs_run", "2026-01-28", "0.8.0")
+    # `encrqcs::qcs_run` cleaning of output now more thorough.
+    # @codedoc_comment_block news("encrqcs::qcs_run", "2026-01-28", "0.8.0")
+    on.exit(
+      qcs_clean_output(
+        qcs_protocol_id = dataset_name,
+        qcs_dir_path = qcs_dir_path
+      ),
+      add = TRUE
+    )
   }
 
   # run ------------------------------------------------------------------------
@@ -154,9 +217,9 @@ qcs_run <- function(
   call_arg_list <- as.list(call_arg_list)
   call_arg_list[names(overriding_call_arg_list)] <- overriding_call_arg_list
   # @codedoc_comment_block details(encrqcs::qcs_run)
-  # 2. `[encrqcs::qcs_call]` is called to run checks on the on-disk dataset
-  #    (see arg `call_arg_list`). Its output will be included in the output of
-  #    `encrqcs::qcs_run`.
+  # - `[encrqcs::qcs_call]` is called to run checks on the on-disk dataset
+  #   (see arg `call_arg_list`). Its output will be included in the output of
+  #   `encrqcs::qcs_run`.
   # @codedoc_comment_block details(encrqcs::qcs_run)
   qcs_call_output <- do.call(encrqcs::qcs_call, call_arg_list, quote = TRUE)
 
@@ -176,7 +239,7 @@ qcs_run <- function(
   read_arg_list <- as.list(read_arg_list)
   read_arg_list[names(overriding_read_arg_list)] <- overriding_read_arg_list
   # @codedoc_comment_block details(encrqcs::qcs_run)
-  # 3. `[encrqcs::qcs_read_results]` is called to read results back into R.
+  # - `[encrqcs::qcs_read_results]` is called to read results back into R.
   # @codedoc_comment_block details(encrqcs::qcs_run)
   output <- do.call(encrqcs::qcs_read_results, read_arg_list, quote = TRUE)
 
@@ -186,28 +249,17 @@ qcs_run <- function(
   # object of `encrqcs::qcs_call`.
   # @codedoc_comment_block news("encrqcs::qcs_run", "2025-04-03", "0.6.0")
   # @codedoc_comment_block return(encrqcs::qcs_run)
-  #    The output of `[encrqcs::qcs_run]` is a list as returned by
-  #    `[encrqcs::qcs_read_results]`
-  #    with the additional element `qcs_call_output`.
+  #   The output of `[encrqcs::qcs_run]` is a list as returned by
+  #   `[encrqcs::qcs_read_results]`
+  #   with the additional element `qcs_call_output`.
   # @codedoc_comment_block return(encrqcs::qcs_run)
 
   # @codedoc_comment_block details(encrqcs::qcs_run)
-  # 4. The captured messages alluded to in step 2 are included in the output
-  #    as element named `qcs_call_output`.
+  # - The captured messages alluded to in step 2 are included in the output
+  #   as element named `qcs_call_output`.
   # @codedoc_insert_comment_block return(encrqcs::qcs_run)
   # @codedoc_comment_block details(encrqcs::qcs_run)
   output[["qcs_call_output"]] <- qcs_call_output
-  if (clean %in% c("output", "both")) {
-    output_dir_path <- qcs_read_dir_path(
-      qcs_dir_path = qcs_dir_path, dataset_name = dataset_name
-    )
-    # @codedoc_comment_block details(encrqcs::qcs_run)
-    # 5. Input / output files are removed on exit (whether successful or not)
-    #    of `[encrqcs::qcs_run]` depending on arg `clean`.
-    # @codedoc_comment_block details(encrqcs::qcs_run)
-    on.exit(unlink(output_dir_path, force = TRUE, recursive = TRUE),
-            add = TRUE)
-  }
 
   return(output)
 }

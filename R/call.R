@@ -70,33 +70,8 @@ qcs_call <- function(
     on.exit(optional_steps[["on_exit"]](env = eval_env), add = TRUE)
   }
 
-  # @codedoc_comment_block encrqcs::qcs_call::qcs_protocol_id
-  # @param qcs_protocol_id `[character, integer]` (no default)
-  #
-  # - `integer`: Used as-is. You have to study what the `.jar` does with that.
-  # - `character`: Take 11, 13, 15, or 17 for `"incidence"`, `"mortality"`,
-  #   `"population"`, and `"lifetable"`, respectively.
-  # @codedoc_comment_block encrqcs::qcs_call::qcs_protocol_id
-  dbc::assert_is_one_of(
-    qcs_protocol_id,
-    funs = list(dbc::report_is_integer_nonNA_atom,
-                dbc::report_is_character_nonNA_atom)
-  )
-  if (is.character(qcs_protocol_id)) {
-    dbc::assert_atom_is_in_set(
-      qcs_protocol_id,
-      set = c("incidence", "mortality", "population", "lifetable")
-    )
-    qcs_protocol_id <- switch(
-      qcs_protocol_id,
-      incidence = 11L,
-      mortality = 13L,
-      population = 15L,
-      lifetable = 17L,
-      stop("No protocol id integer defined for qcs_protocol_id = ",
-           deparse(qcs_protocol_id))
-    )
-  }
+  #' @template param_qcs_protocol_id
+  qcs_protocol_id <- handle_qcs_protocol_id(qcs_protocol_id)
 
   dbc::assert_is_one_of(
     system2_arg_list,

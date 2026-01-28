@@ -70,3 +70,19 @@ get_os <- function() {
   }
   unname(tolower(os))
 }
+
+
+
+
+
+regex_extract <- function(x, pattern, perl = TRUE, ...) {
+  arg_list <- list(...)
+  arg_list[["text"]] <- x
+  arg_list[["pattern"]] <- pattern
+  arg_list[["perl"]] <- perl
+  m <- do.call(regexpr, arg_list)
+  out <- rep(NA_character_, length(x))
+  has_match <- !m %in% c(-1L, NA_integer_)
+  out[has_match] <- regmatches(x = x, m = m)
+  out
+}

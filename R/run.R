@@ -170,7 +170,7 @@ qcs_run <- function(
   # @codedoc_comment_block encrqcs::qcs_run::read_arg_list
   overriding_read_arg_list <- list(
     qcs_dir_path = qcs_dir_path,
-    dataset_name = dataset_name,
+    qcs_protocol_id = dataset_name,
     assertion_type = assertion_type
   )
   read_arg_list <- as.list(read_arg_list)

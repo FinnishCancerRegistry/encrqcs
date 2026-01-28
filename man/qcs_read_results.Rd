@@ -6,10 +6,11 @@
 \usage{
 qcs_read_results(
   qcs_dir_path,
-  dataset_name,
+  qcs_protocol_id,
   fread_arg_list = NULL,
   readlines_arg_list = NULL,
-  assertion_type = NULL
+  assertion_type = NULL,
+  dataset_name = NULL
 )
 }
 \arguments{
@@ -17,49 +18,15 @@ qcs_read_results(
 
 Path to root directory of the JRC-ENCR QCS.}
 
-\item{dataset_name}{\verb{[character]} (no default)
-
-one of the following:
+\item{qcs_protocol_id}{\verb{[character, integer]} (no default)
 \itemize{
-\item "incidence"
-\item "mortality"
-\item "population"
-\item "lifetable"
+\item \code{integer}: Used as-is. You have to study what the \code{.jar} does with that.
+\item \code{character}: Take 11, 13, 15, or 17 for \code{"incidence"}, \code{"mortality"},
+\code{"population"}, and \code{"lifetable"}, respectively.
 }}
-
-\item{fread_arg_list}{\verb{[NULL, list]} (default \code{NULL})
-
-Additional arguments passed to \verb{[data.table::fread]} if a \code{list}.
-Argument \code{file} is determined internally and cannot be changed.}
-
-\item{readlines_arg_list}{\verb{[NULL, list]} (default \code{NULL})
-
-Additional arguments passed to \verb{[readLines]} if a \code{list}.
-Argument \code{con} is determined internally and cannot be changed.}
 
 \item{assertion_type}{See e.g. \verb{[dbc::report_to_assertion]}.}
 }
-\value{
-The output will be a list with one
-element for each result file. The name of the element is the name of
-the file in the results dir.
-}
 \description{
 Read JRC-ENCR QCS results into R.
-}
-\details{
-\verb{[encrqcs::qcs_read_results]} performs the following steps:
-\enumerate{
-\item Directory containing results is assumed to look like e.g.
-\verb{C:/path/to/qcs/output/incidence} for
-\code{qcs_dir_path = "C:/path/to/qcs/"}, \code{dataset_name = "incidence"}.
-\item Result files in the results dir are those that match case-insensitive
-regex \code{"output.*([.]txt)|([.]csv)"}.
-\item Each results file is read separately into R. Those ending in
-\code{.txt} are read using \verb{[readLines]}. Those ending in \code{.csv} are read
-using \verb{[data.table::fread]}.
-The output will be a list with one
-element for each result file. The name of the element is the name of
-the file in the results dir.
-}
 }

@@ -30,6 +30,14 @@ Run incidence checks using JRC-ENCR QCS:
 }
 \section{News}{
 
+\subsection{News for version 0.8.1}{
+\subsection{encrqcs}{
+
+New release to trigger github action. No changes in code.
+}
+
+}
+
 \subsection{News for version 0.8.0}{
 \subsection{encrqcs::qcs_clean_output}{
 

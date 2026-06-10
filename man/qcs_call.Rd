@@ -16,7 +16,8 @@ qcs_call(
 \arguments{
 \item{dataset_file_path}{\verb{[character]} (no default)
 
-Path to an existing file. This should be the dataset you want to use.}
+Path to an existing file. This should be the dataset you want to use.
+E.g. \code{"C:/my/dir/mydataset.csv"}.}
 
 \item{qcs_dir_path}{\verb{[character]} (no default)
 
@@ -47,7 +48,9 @@ See section \strong{Functions} for the functions.
 }}
 }
 \value{
-Return a list containing the results of the \verb{[system2]} call.
+Return a list containing the results of the \verb{[system2]} call plus the
+additional element \code{cache = TRUE/FALSE} indicates whether the dataset at
+\code{dataset_file_path} had pre-existing results in the cache.
 }
 \description{
 Run JRC-ENCR QCS on a file on-disk.
@@ -65,6 +68,10 @@ have
 \code{optional_steps[["on_entry"]] = function(env) env$t <- proc.time()}
 and
 \code{optional_steps[["on_entry"]] = message(data.table::timetaken(env$t))}.
+\item See if a result set already exists for the dataset at \code{dataset_file_path}
+by computing its hash and comparing it to the hashes of previous runs.
+If such a result exists, return this early:
+\code{list(status = 0L, stdout = character(0L), stderr = character(0L), cache = TRUE)}.
 \item R working directory is temporarily set via \verb{[setwd]} to \code{qcs_dir_path}.
 Your original working directory is always restored whether the call
 succeeds or not.
@@ -88,10 +95,14 @@ can have
 If status code other than zero is returned, an error is raised by R.
 E.g. status code 1 is "generic exit code" and means that the call
 failed.
+\item Add the hash of the dataset at \code{dataset_file_path} to the list of hashes
+in the cache so the next run on the identical dataset is skipped.
 \item Run \code{optional_steps[["post_system2_call"]](env = eval_env)}
 if that element of
 \code{optional_steps} exists.
 \item Finally,
-Return a list containing the results of the \verb{[system2]} call.
+Return a list containing the results of the \verb{[system2]} call plus the
+additional element \code{cache = TRUE/FALSE} indicates whether the dataset at
+\code{dataset_file_path} had pre-existing results in the cache.
 }
 }

@@ -30,6 +30,57 @@ Run incidence checks using JRC-ENCR QCS:
 }
 \section{News}{
 
+\subsection{News for version 1.0.0}{
+\subsection{encrqcs::qcs_cache_dataset_file_hash}{
+
+New function \code{encrqcs::qcs_cache_dataset_file_hash}.
+}
+
+\subsection{encrqcs::qcs_cache_dir_path}{
+
+New function \code{encrqcs::qcs_cache_dir_path}.
+}
+
+\subsection{encrqcs::qcs_cache_metadata_file_path}{
+
+New function \code{encrqcs::qcs_cache_metadata_file_path}.
+}
+
+\subsection{encrqcs::qcs_cache_metadata_read}{
+
+New function \code{encrqcs::qcs_cache_metadata_read}.
+}
+
+\subsection{encrqcs::qcs_cache_metadata_update}{
+
+New function \code{encrqcs::qcs_cache_metadata_update}.
+}
+
+\subsection{encrqcs::qcs_cache_metadata_write}{
+
+New function \code{encrqcs::qcs_cache_metadata_write}.
+}
+
+\subsection{encrqcs::qcs_read_results}{
+
+\code{encrqcs::qcs_read_results} argument \code{dataset_name} removed.
+}
+
+\subsection{encrqcs::qcs_read_results}{
+
+\code{encrqcs::qcs_read_results} gains arguments \code{hash} and \code{dataset_file_path},
+both \code{NULL} by default.
+}
+
+\subsection{encrqcs::qcs_run}{
+
+\code{encrqcs::qcs_call} gains caching ability. It now saves the hash of every
+dataset it has run through QCS and skips the run if the same dataset has
+already been run previously.
+}
+
+}
+
 \subsection{News for version 0.8.1}{
 \subsection{encrqcs}{
 

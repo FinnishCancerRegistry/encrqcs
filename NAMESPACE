@@ -2,6 +2,12 @@
 
 export(assert_is_qcs_dataset)
 export(assert_is_qcs_dataset_name)
+export(qcs_cache_dataset_file_hash)
+export(qcs_cache_dir_path)
+export(qcs_cache_metadata_file_path)
+export(qcs_cache_metadata_read)
+export(qcs_cache_metadata_update)
+export(qcs_cache_metadata_write)
 export(qcs_call)
 export(qcs_clean_output)
 export(qcs_clean_output_all)

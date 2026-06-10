@@ -7,10 +7,11 @@
 qcs_read_results(
   qcs_dir_path,
   qcs_protocol_id,
+  hash = NULL,
+  dataset_file_path = NULL,
   fread_arg_list = NULL,
   readlines_arg_list = NULL,
-  assertion_type = NULL,
-  dataset_name = NULL
+  assertion_type = NULL
 )
 }
 \arguments{
@@ -25,6 +26,25 @@ Path to root directory of the JRC-ENCR QCS.}
 \code{"population"}, and \code{"lifetable"}, respectively.
 }}
 
+\item{hash}{\verb{[character, NULL]} (default \code{NULL})
+
+Optional hash (checksum) of file at \code{dataset_file_path}. See
+\verb{[qcs_cache_dataset_file_hash]}.
+\itemize{
+\item \code{NULL}: \code{hash} is computed first on \code{dataset_file_path}.
+\item \code{character}: Use this hash.
+}}
+
+\item{dataset_file_path}{\verb{[NULL, character]} (default \code{NULL})
+
+Optional path to your dataset.
+\itemize{
+\item \code{character}: Path to an existing file.
+This should be the dataset you want to use.
+E.g. \code{"C:/my/dir/mydataset.csv"}.
+\item \code{NULL}: This argument is not used.
+}}
+
 \item{fread_arg_list}{\verb{[NULL, list]} (default \code{NULL})
 
 Additional arguments passed to \verb{[data.table::fread]} if a \code{list}.
@@ -36,16 +56,6 @@ Additional arguments passed to \verb{[readLines]} if a \code{list}.
 Argument \code{con} is determined internally and cannot be changed.}
 
 \item{assertion_type}{See e.g. \verb{[dbc::report_to_assertion]}.}
-
-\item{dataset_name}{\verb{[character]} (no default)
-
-one of the following:
-\itemize{
-\item "incidence"
-\item "mortality"
-\item "population"
-\item "lifetable"
-}}
 }
 \value{
 \itemize{
@@ -72,6 +82,11 @@ summary directory.
 \item From the record directory, every .csv belonging to the latest call
 of QCS with the requested \code{qcs_protocol_id} is read, except
 those whose file names match regex \code{"(correct)|(valid)"}.
+\item If \code{is.null(hash)} but \code{dataset_file_path} was supplied, compute the hash
+on it.
+\item If we have a \code{hash} value at this point, we make use of that to determine
+which results are read into R. Otherwise we read the latest results for
+the supplied \code{qcs_protocol_id}.
 \item Each results file is read separately into R. Those ending in
 \code{.txt} are read using \verb{[readLines]}. Those ending in \code{.csv} are read
 using \verb{[data.table::fread]}.

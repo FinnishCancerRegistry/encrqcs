@@ -49,6 +49,7 @@ qcs_read_record_meta_file_path <- function(qcs_dir_path, qcs_protocol_id) {
 qcs_read_record_meta_read <- function(
   qcs_dir_path,
   qcs_protocol_id,
+  hash = NULL,
   output = c("list", "table")[1]
 ) {
   meta_path <- qcs_read_record_meta_file_path(qcs_dir_path, qcs_protocol_id)
@@ -60,7 +61,24 @@ qcs_read_record_meta_read <- function(
   if (output == "table") {
     return(meta)
   }
-  meta <- subset(meta, meta[["PROTOCOL_ID"]] == qcs_protocol_id)
+  if (!is.null(hash)) {
+    dataset_meta <- qcs_cache_metadata_for_dataset__(
+      qcs_dir_path = qcs_dir_path,
+      hash = hash
+    )
+    meta_subset <- meta[["RUN_ID"]] == dataset_meta[["run_id"]]
+    if (sum(meta_subset) != 1L) {
+      stop(
+        "Internal error: ",
+        "Attempted to read cached results for `hash = ", hash, "`, but ",
+        "there are no results for that hash. If you see this error, please ",
+        "complain to the package maintainer."
+      )
+    }
+  } else {
+    meta_subset <- meta[["PROTOCOL_ID"]] == qcs_protocol_id
+  }
+  meta <- subset(meta, meta_subset)
   meta <- as.list(meta[nrow(meta), ])
   return(meta)
 }
@@ -68,7 +86,8 @@ qcs_read_record_meta_read <- function(
 qcs_read_file_paths <- function(
   qcs_dir_path,
   qcs_protocol_id,
-  type
+  type,
+  hash = NULL
 ) {
   if (type != "all") {
     output_dir_path <- qcs_read_dir_path(
@@ -92,7 +111,8 @@ qcs_read_file_paths <- function(
       # @codedoc_comment_block details(encrqcs::qcs_read_results)
       meta <- qcs_read_record_meta_read(
         qcs_dir_path = qcs_dir_path,
-        qcs_protocol_id = qcs_protocol_id
+        qcs_protocol_id = qcs_protocol_id,
+        hash = hash
       )
       csv_file_paths <- dir(
         output_dir_path,
@@ -130,7 +150,6 @@ qcs_read_file_paths <- function(
 #' @description
 #' Read JRC-ENCR QCS results into R.
 #' @eval c(
-#'   arg_dataset_name_docs(),
 #'   codedoc::codedoc_lines("encrqcs::qcs_read_results::", "R/read.R"),
 #'   "@details",
 #'   codedoc::codedoc_lines("^\\Qdetails(encrqcs::qcs_read_results)\\E$", "R/read.R"),
@@ -142,20 +161,20 @@ qcs_read_file_paths <- function(
 qcs_read_results <- function(
   qcs_dir_path,
   qcs_protocol_id,
+  hash = NULL,
+  dataset_file_path = NULL,
   fread_arg_list = NULL,
   readlines_arg_list = NULL,
-  assertion_type = NULL,
-  dataset_name = NULL
+  assertion_type = NULL
 ) {
   # @codedoc_comment_block news("encrqcs::qcs_read_results", "2026-01-28", "0.8.0")
   # `encrqcs::qcs_read_results` revamp: it now reads a different and more usable
   # set of results than before.
   # @codedoc_comment_block news("encrqcs::qcs_read_results", "2026-01-28", "0.8.0")
+  # @codedoc_comment_block news("encrqcs::qcs_read_results", "2025-06-10", "1.0.0")
+  # `encrqcs::qcs_read_results` argument `dataset_name` removed.
+  # @codedoc_comment_block news("encrqcs::qcs_read_results", "2025-06-10", "1.0.0")
   # assertions -----------------------------------------------------------------
-  if (!is.null(dataset_name)) {
-    stop("Argument `dataset_name` has been deprecated. Use argument ",
-         "`qcs_protocol_id` instead.")
-  }
   #' @template param_qcs_dir_path
   dbc::assert_dir_exists(qcs_dir_path, assertion_type = assertion_type)
   #' @template param_qcs_protocol_id
@@ -169,10 +188,27 @@ qcs_read_results <- function(
   # `"output.*([.]txt)|([.]csv)"` (added `.*`).
   # @codedoc_comment_block news("encrqcs::qcs_read_results", "2025-10-24", "0.7.0")
 
+  # @codedoc_comment_block news("encrqcs::qcs_read_results", "2025-06-10", "1.0.0")
+  # `encrqcs::qcs_read_results` gains arguments `hash` and `dataset_file_path`,
+  # both `NULL` by default.
+  # @codedoc_comment_block news("encrqcs::qcs_read_results", "2025-06-10", "1.0.0")
+  # @codedoc_comment_block details(encrqcs::qcs_read_results)
+  # - If `is.null(hash)` but `dataset_file_path` was supplied, compute the hash
+  #   on it.
+  # - If we have a `hash` value at this point, we make use of that to determine
+  #   which results are read into R. Otherwise we read the latest results for
+  #   the supplied `qcs_protocol_id`.
+  # @codedoc_comment_block details(encrqcs::qcs_read_results)
+  #' @template param_optional_dataset_file_path
+  #' @template param_optional_hash
+  if (is.null(hash) && !is.null(dataset_file_path)) {
+    hash <- qcs_cache_dataset_file_hash(dataset_file_path)
+  }
   output_file_paths <- qcs_read_file_paths(
     qcs_dir_path = qcs_dir_path,
     qcs_protocol_id = qcs_protocol_id,
-    type = "all"
+    type = "all",
+    hash = hash
   )
   output_file_names <- basename(output_file_paths)
   output_file_names <- gsub("(_[0-9]+)?[.][a-zA-Z0-9]+$", "", output_file_names)

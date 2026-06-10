@@ -1,11 +1,56 @@
+handle_arg_dataset_file_path__ <- function(
+  dataset_file_path,
+  must_exist = TRUE,
+  assertion_type = NULL
+) {
+  if (must_exist) {
+    dbc::assert_is_character_nonNA_atom(
+      dataset_file_path,
+      assertion_type = assertion_type
+    )
+    dbc::assert_file_exists(
+      dataset_file_path,
+      assertion_type = assertion_type
+    )
+  } else {
+    dbc::assert_is_one_of(
+      dataset_file_path,
+      funs = list(dbc::report_is_NULL,
+                  dbc::report_is_character_nonNA_atom),
+      assertion_type = assertion_type
+    )
+  }
+  if (!is.null(dataset_file_path)) {
+    dataset_file_path <- normalizePath(
+      dataset_file_path,
+      winslash = "/",
+      mustWork = FALSE
+    )
+  }
+  return(dataset_file_path)
+}
 
+handle_arg_qcs_dir_path__ <- function(
+  qcs_dir_path,
+  assertion_type = NULL
+) {
+  dbc::assert_is_character_nonNA_atom(
+    qcs_dir_path,
+    assertion_type = assertion_type
+  )
+  dbc::assert_dir_exists(qcs_dir_path, assertion_type = assertion_type)
+  if (length(dir(qcs_dir_path, pattern = "[.]jar$")) == 0) {
+    stop("Supplied argument `qcs_dir_path` contains no .jar files: ",
+         qcs_dir_path)
+  }
+  qcs_dir_path <- normalizePath(path = qcs_dir_path, winslash = "/")
+  return(qcs_dir_path)
+}
 
 #' @title Run JRC-ENCR QCS
 #' @description
 #' Run JRC-ENCR QCS on a file on-disk.
-#' @param dataset_file_path `[character]` (no default)
-#'
-#' Path to an existing file. This should be the dataset you want to use.
+#' @template param_mandatory_dataset_file_path
 #' @template param_qcs_dir_path
 #' @param system2_arg_list `[NULL, list]` (default `NULL`)
 #'
@@ -32,12 +77,10 @@ qcs_call <- function(
     optional_steps[["on_entry"]](env = eval_env)
   }
   # assertions -----------------------------------------------------------------
-  dbc::assert_file_exists(dataset_file_path, assertion_type = assertion_type)
-  dataset_file_path <- normalizePath(dataset_file_path, winslash = "/")
-  dbc::assert_dir_exists(qcs_dir_path, assertion_type = assertion_type)
-  dbc::assert_has_length(qcs_dir_path, expected_length = 1L,
-                         assertion_type = assertion_type)
-  qcs_dir_path <- normalizePath(path = qcs_dir_path, winslash = "/")
+  dataset_file_path <- handle_arg_dataset_file_path__(
+    dataset_file_path,
+    assertion_type = assertion_type
+  )
 
   # @codedoc_comment_block news("encrqcs::qcs_run", "2025-04-03", "0.6.0")
   # `encrqcs::qcs_call` gains argument `optional_steps`.
@@ -77,6 +120,25 @@ qcs_call <- function(
     system2_arg_list,
     funs = list(dbc::report_is_NULL, dbc::report_is_list)
   )
+
+  # hash -----------------------------------------------------------------------
+  # @codedoc_comment_block news("encrqcs::qcs_run", "2025-06-10", "1.0.0")
+  # `encrqcs::qcs_call` gains caching ability. It now saves the hash of every
+  # dataset it has run through QCS and skips the run if the same dataset has
+  # already been run previously.
+  # @codedoc_comment_block news("encrqcs::qcs_run", "2025-06-10", "1.0.0")
+  # @codedoc_comment_block encrqcs::qcs_call
+  #  - See if a result set already exists for the dataset at `dataset_file_path`
+  #    by computing its hash and comparing it to the hashes of previous runs.
+  #    If such a result exists, return this early:
+  #    `list(status = 0L, stdout = character(0L), stderr = character(0L), cache = TRUE)`.
+  # @codedoc_comment_block encrqcs::qcs_call
+  hash <- encrqcs::qcs_cache_dataset_file_hash(dataset_file_path)
+  if (qcs_cache_has_results_for_dataset__(qcs_dir_path, hash)) {
+    return(list(
+      status = 0L, stdout = character(0L), stderr = character(0L), cache = TRUE
+    ))
+  }
 
   # system2 --------------------------------------------------------------------
   # @codedoc_comment_block encrqcs::qcs_call
@@ -138,8 +200,21 @@ qcs_call <- function(
   #   If status code other than zero is returned, an error is raised by R.
   #   E.g. status code 1 is "generic exit code" and means that the call
   #   failed.
+  # - Add the hash of the dataset at `dataset_file_path` to the list of hashes
+  #   in the cache so the next run on the identical dataset is skipped.
   # @codedoc_comment_block encrqcs::qcs_call
+  vr_dt_pre <- qcs_cache_validation_run_file_read__(qcs_dir_path)
   out <- system2_call(system2_arg_list, success_status_codes = 0L)
+  vr_dt_post <- qcs_cache_validation_run_file_read__(qcs_dir_path)
+  new_run_id <- setdiff(vr_dt_post[["RUN_ID"]], vr_dt_pre[["RUN_ID"]])
+  encrqcs::qcs_cache_metadata_update(
+    qcs_dir_path = qcs_dir_path,
+    hash = hash,
+    qcs_protocol_id = qcs_protocol_id,
+    run_id = new_run_id
+  )
+  out[["cache"]] <- FALSE
+
   # @codedoc_comment_block encrqcs::qcs_call
   # - Run `optional_steps[["post_system2_call"]](env = eval_env)`
   #   if that element of
@@ -154,7 +229,9 @@ qcs_call <- function(
   # @codedoc_comment_block encrqcs::qcs_call
 
   # @codedoc_comment_block return(encrqcs::qcs_call)
-  #    Return a list containing the results of the `[system2]` call.
+  #    Return a list containing the results of the `[system2]` call plus the
+  #    additional element `cache = TRUE/FALSE` indicates whether the dataset at
+  #    `dataset_file_path` had pre-existing results in the cache.
   # @codedoc_comment_block return(encrqcs::qcs_call)
   return(out)
 }

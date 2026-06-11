@@ -15,8 +15,7 @@ handle_arg_dataset_file_path__ <- function(
   } else {
     dbc::assert_is_one_of(
       dataset_file_path,
-      funs = list(dbc::report_is_NULL,
-                  dbc::report_is_character_nonNA_atom),
+      funs = list(dbc::report_is_NULL, dbc::report_is_character_nonNA_atom),
       assertion_type = assertion_type
     )
   }
@@ -40,8 +39,10 @@ handle_arg_qcs_dir_path__ <- function(
   )
   dbc::assert_dir_exists(qcs_dir_path, assertion_type = assertion_type)
   if (length(dir(qcs_dir_path, pattern = "[.]jar$")) == 0) {
-    stop("Supplied argument `qcs_dir_path` contains no .jar files: ",
-         qcs_dir_path)
+    stop(
+      "Supplied argument `qcs_dir_path` contains no .jar files: ",
+      qcs_dir_path
+    )
   }
   qcs_dir_path <- normalizePath(path = qcs_dir_path, winslash = "/")
   return(qcs_dir_path)
@@ -96,8 +97,7 @@ qcs_call <- function(
   #'   See section **Functions** for the functions.
   dbc::assert_is_one_of(
     optional_steps,
-    funs = list(dbc::report_is_NULL,
-                dbc::report_is_uniquely_named_list)
+    funs = list(dbc::report_is_NULL, dbc::report_is_uniquely_named_list)
   )
   eval_env <- environment()
   # @codedoc_comment_block encrqcs::qcs_call
@@ -136,7 +136,10 @@ qcs_call <- function(
   hash <- encrqcs::qcs_cache_dataset_file_hash(dataset_file_path)
   if (qcs_cache_has_results_for_dataset__(qcs_dir_path, hash)) {
     return(list(
-      status = 0L, stdout = character(0L), stderr = character(0L), cache = TRUE
+      status = 0L,
+      stdout = character(0L),
+      stderr = character(0L),
+      cache = TRUE
     ))
   }
 
@@ -179,10 +182,12 @@ qcs_call <- function(
   system2_arg_list <- default_system2_arg_list
   system2_arg_list[names(user_system2_arg_list)] <- user_system2_arg_list
   if (identical(system2_arg_list[["command"]], "java") && !has_java_cmd()) {
-    stop("Command `java` not available on your system. ",
-         "Either add it to your PATH or refer to the java executable directly ",
-         "using argument `system2_arg_list`. See ?encrqcs::qcs_call and ",
-         "?system2.")
+    stop(
+      "Command `java` not available on your system. ",
+      "Either add it to your PATH or refer to the java executable directly ",
+      "using argument `system2_arg_list`. See ?encrqcs::qcs_call and ",
+      "?system2."
+    )
   }
   # @codedoc_comment_block encrqcs::qcs_call
   # - Run `optional_steps[["pre_system2_call"]](env = eval_env)`
@@ -249,7 +254,8 @@ qcs_call_default_system2_arg_list_expr__ <- function() {
       "-jar",
       "-Xmx8g",
       jar_file_name,
-      "-v", as.character(qcs_protocol_id),
+      "-v",
+      as.character(qcs_protocol_id),
       dataset_file_path
     )
   ))

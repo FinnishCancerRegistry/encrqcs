@@ -19,8 +19,10 @@ assert_is_qcs_protocol_id <- function(
     x_nm = x_nm,
     call = call,
     assertion_type = assertion_type,
-    funs = list(dbc::report_is_integer_nonNA_atom,
-                dbc::report_is_character_nonNA_atom)
+    funs = list(
+      dbc::report_is_integer_nonNA_atom,
+      dbc::report_is_character_nonNA_atom
+    )
   )
   if (is.character(x)) {
     dbc::assert_atom_is_in_set(

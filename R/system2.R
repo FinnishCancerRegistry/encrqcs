@@ -5,17 +5,18 @@ system2_call <- function(
   dbc::assert_prod_input_is_uniquely_named_list(arg_list)
   dbc::assert_prod_input_is_one_of(
     success_status_codes,
-    funs = list(dbc::report_is_NULL,
-                dbc::report_is_integer_nonNA_vector)
+    funs = list(dbc::report_is_NULL, dbc::report_is_integer_nonNA_vector)
   )
   tmp_out <- normalizePath(
     tempfile(pattern = "system2_stdout_", fileext = ".txt"),
-    winslash = "/", mustWork = FALSE
+    winslash = "/",
+    mustWork = FALSE
   )
   writeLines(character(0L), tmp_out)
   tmp_err <- normalizePath(
     tempfile(pattern = "system2_stderr_", fileext = ".txt"),
-    winslash = "/", mustWork = FALSE
+    winslash = "/",
+    mustWork = FALSE
   )
   writeLines(character(0L), tmp_err)
   on.exit({
@@ -35,15 +36,19 @@ system2_call <- function(
     stdout = tryCatch(
       readLines(tmp_out, warn = FALSE),
       error = function(e) {
-        paste0("encrqcs:::system2_call failed to read stdout: ",
-               deparse1(e[["message"]]))
+        paste0(
+          "encrqcs:::system2_call failed to read stdout: ",
+          deparse1(e[["message"]])
+        )
       }
     ),
     stderr = tryCatch(
       readLines(tmp_err, warn = FALSE),
       error = function(e) {
-        paste0("encrqcs:::system2_call failed to read stderr: ",
-               deparse1(e[["message"]]))
+        paste0(
+          "encrqcs:::system2_call failed to read stderr: ",
+          deparse1(e[["message"]])
+        )
       }
     )
   ))

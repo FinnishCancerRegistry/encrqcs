@@ -1,8 +1,3 @@
-
-
-
-
-
 #' @title JRC-ENCR QCS Input and Output
 #' @description
 #' Read and write .csv files for / created by the JRC-ENCR QCS.
@@ -33,7 +28,8 @@ qcs_write_dataset <- function(
   #' @template param_qcs_protocol_id
   qcs_protocol_id <- handle_arg_qcs_protocol_id__(qcs_protocol_id)
   encrqcs::assert_is_qcs_dataset(
-    dataset, assertion_type = assertion_type,
+    dataset,
+    assertion_type = assertion_type,
     qcs_protocol_id = qcs_protocol_id
   )
   # @codedoc_comment_block news("encrqcs::qcs_write_dataset", "2025-04-03", "0.6.0")
@@ -58,7 +54,9 @@ qcs_write_dataset <- function(
   # @codedoc_comment_block encrqcs::qcs_write_dataset::fwrite_arg_list
   fwrite_arg_list <- as.list(fwrite_arg_list)
   fwrite_arg_list[c("x", "file", "sep")] <- list(
-    x = dataset, file = file_path, sep = ";"
+    x = dataset,
+    file = file_path,
+    sep = ";"
   )
   # @codedoc_comment_block details(encrqcs::qcs_write_dataset)
   # `[encrqcs::qcs_write_dataset]` performs simple checks on its input and

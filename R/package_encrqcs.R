@@ -1,4 +1,3 @@
-
 #' encrqcs
 #'
 #' @name encrqcs

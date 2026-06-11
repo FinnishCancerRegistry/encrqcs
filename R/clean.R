@@ -33,10 +33,8 @@ qcs_clean_output <- function(
   # @codedoc_comment_block encrqcs::qcs_clean_output
   # - Detect the latest run in the metadata with the correct `qcs_protocol_id`.
   # @codedoc_comment_block encrqcs::qcs_clean_output
-  is_removable_item <- !(
-    meta[["PROTOCOL_ID"]] == qcs_protocol_id &
-      duplicated(meta[["PROTOCOL_ID"]], fromLast = TRUE)
-  )
+  is_removable_item <- !(meta[["PROTOCOL_ID"]] == qcs_protocol_id &
+    duplicated(meta[["PROTOCOL_ID"]], fromLast = TRUE))
   # @codedoc_comment_block encrqcs::qcs_clean_output
   # - Delete the entire directory containing summary data, e.g.
   #   `C:/path/to/qcs/output/incidence`.

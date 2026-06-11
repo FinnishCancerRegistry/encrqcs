@@ -15,9 +15,11 @@ qcs_read_dir_path <- function(
       #   for `qcs_dir_path = "C:/path/to/qcs/"`, `qcs_protocol_id = "incidence"`.
       # @codedoc_comment_block details(encrqcs::qcs_read_results)
       paste0(
-        qcs_dir_path, "/output/",
+        qcs_dir_path,
+        "/output/",
         handle_arg_qcs_protocol_id__(
-          qcs_protocol_id, output_type = "dataset_name"
+          qcs_protocol_id,
+          output_type = "dataset_name"
         )
       )
     },
@@ -29,11 +31,18 @@ qcs_read_dir_path <- function(
     record = paste0(qcs_dir_path, "/temp/"),
     stop("Internal error: unknown type = ", deparse1(type))
   )
-  output_dir_path <- normalizePath(output_dir_path, winslash = "/",
-                                   mustWork = FALSE)
+  output_dir_path <- normalizePath(
+    output_dir_path,
+    winslash = "/",
+    mustWork = FALSE
+  )
   if (must_exist && !dir.exists(output_dir_path)) {
-    stop("Could not read QCS results: directory ", output_dir_path, " does ",
-         "not exist. Did the QCS call succeed?")
+    stop(
+      "Could not read QCS results: directory ",
+      output_dir_path,
+      " does ",
+      "not exist. Did the QCS call succeed?"
+    )
   }
   return(output_dir_path)
 }
@@ -72,7 +81,9 @@ qcs_read_record_meta_read <- function(
     if (sum(meta_subset) != 1L) {
       stop(
         "Internal error: ",
-        "Attempted to read cached results for `hash = ", hash, "`, but ",
+        "Attempted to read cached results for `hash = ",
+        hash,
+        "`, but ",
         "there are no results for that hash. If you see this error, please ",
         "complain to the package maintainer."
       )

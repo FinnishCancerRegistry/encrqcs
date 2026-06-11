@@ -1,4 +1,3 @@
-
 #' @title JRC-ENCR QCS Metadata
 #' @description
 #' Tools to access metadata such as dataset names and column names of a dataset.
@@ -141,9 +140,12 @@ assert_is_qcs_dataset <- function(
   )
   dataset_template <- encrqcs::qcs_dataset_template(qcs_protocol_id)
   lapply(encrqcs::qcs_dataset_column_names(qcs_protocol_id), function(col_nm) {
-    dbc::assert_inherits(x = x[[col_nm]], x_nm = paste0(x_nm, "$", col_nm),
-                         call = call,
-                         required_class = class(dataset_template[[col_nm]])[1L])
+    dbc::assert_inherits(
+      x = x[[col_nm]],
+      x_nm = paste0(x_nm, "$", col_nm),
+      call = call,
+      required_class = class(dataset_template[[col_nm]])[1L]
+    )
   })
   invisible(NULL)
 }

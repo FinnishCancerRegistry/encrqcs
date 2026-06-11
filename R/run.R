@@ -16,11 +16,11 @@ qcs_run <- function(
   qcs_protocol_id,
   qcs_dir_path,
   dataset_file_path = NULL,
-  clean             = NULL,
-  write_arg_list    = NULL,
-  call_arg_list     = NULL,
-  read_arg_list     = NULL,
-  assertion_type    = "input"
+  clean = NULL,
+  write_arg_list = NULL,
+  call_arg_list = NULL,
+  read_arg_list = NULL,
+  assertion_type = "input"
 ) {
   # @codedoc_comment_block news("encrqcs::qcs_run", "2022-03-03", "0.2.2")
   # `[encrqcs::qcs_run]` works for the incidence dataset, but the Java
@@ -34,8 +34,11 @@ qcs_run <- function(
   # assertions -----------------------------------------------------------------
   #' @template param_dataset
   #' @template param_assertion_type
-  encrqcs::assert_is_qcs_dataset(dataset, qcs_protocol_id = qcs_protocol_id,
-                                 assertion_type = assertion_type)
+  encrqcs::assert_is_qcs_dataset(
+    dataset,
+    qcs_protocol_id = qcs_protocol_id,
+    assertion_type = assertion_type
+  )
   #' @template param_qcs_protocol_id
   qcs_protocol_id <- handle_arg_qcs_protocol_id__(qcs_protocol_id)
 
@@ -78,7 +81,8 @@ qcs_run <- function(
     clean <- "both"
   } else {
     dbc::assert_atom_is_in_set(
-      clean, set = c("input", "output", "both", "neither"),
+      clean,
+      set = c("input", "output", "both", "neither"),
       assertion_type = assertion_type
     )
   }

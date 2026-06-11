@@ -13,7 +13,7 @@ qcs_clean_output <- function(
   # New function `encrqcs::qcs_clean_output`.
   # @codedoc_comment_block news("encrqcs::qcs_clean_output", "2026-01-28", "0.8.0")
   #' @template param_qcs_protocol_id
-  qcs_protocol_id <- handle_qcs_protocol_id(qcs_protocol_id)
+  qcs_protocol_id <- handle_arg_qcs_protocol_id__(qcs_protocol_id)
   #' @template param_qcs_dir_path
   # @codedoc_comment_block encrqcs::qcs_clean_output
   # `encrqcs::qcs_clean_output` performs the following steps:

@@ -6,7 +6,7 @@
 \usage{
 qcs_run(
   dataset,
-  dataset_name,
+  qcs_protocol_id,
   qcs_dir_path,
   dataset_file_path = NULL,
   clean = NULL,
@@ -19,17 +19,14 @@ qcs_run(
 \arguments{
 \item{dataset}{\verb{[data.frame]} (mandatory)
 
-Column requirements vary depending on \code{dataset_name}.
+Column requirements vary depending on \code{qcs_protocol_id}.
 Refer to the JRC-ENCR QCS User Compendium.}
 
-\item{dataset_name}{\verb{[character]} (no default)
-
-one of the following:
+\item{qcs_protocol_id}{\verb{[character, integer]} (no default)
 \itemize{
-\item "incidence"
-\item "mortality"
-\item "population"
-\item "lifetable"
+\item \code{integer}: Used as-is. You have to study what the \code{.jar} does with that.
+\item \code{character}: Take 11, 13, 15, or 17 for \code{"incidence"}, \code{"mortality"},
+\code{"population"}, and \code{"lifetable"}, respectively.
 }}
 
 \item{qcs_dir_path}{\verb{[character]} (no default)
@@ -38,13 +35,12 @@ Path to root directory of the JRC-ENCR QCS.}
 
 \item{dataset_file_path}{\verb{[NULL, character]} (default \code{NULL})
 
-\code{dataset} needs to be written to hard drive for use by JRC-ENCR QCS.
-You can (optionally) specify the path where to write \code{dataset} via this
-arg.
+Optional path to your dataset.
 \itemize{
-\item \code{NULL}: \code{dataset} will be written into a temporary file given by
-\code{tempfile(fileext = ".csv")}.
-\item \code{character}: \code{dataset} will be written here.
+\item \code{character}: Path to an existing file.
+This should be the dataset you want to use.
+E.g. \code{"C:/my/dir/mydataset.csv"}.
+\item \code{NULL}: This argument is not used.
 }}
 
 \item{clean}{\verb{[NULL, logical]} (default \code{NULL})
@@ -56,7 +52,7 @@ One of the following:
 no longer needs it.
 \item \code{"output"} : Delete output files when this function no longer need them.
 Specifically, the whole output directory for the given
-\code{dataset_name} is removed, e.g. \code{output/incidence},
+\code{qcs_protocol_id} is removed, e.g. \code{output/incidence},
 in \code{qcs_dir_path}.
 \item \code{"both"}   : Delete both input and output files/dirs.
 \item \code{"neither"}: Don't delete anything.
@@ -65,7 +61,7 @@ in \code{qcs_dir_path}.
 \item{write_arg_list}{\verb{[NULL, list]} (default \code{NULL})
 
 Optional, additional arguments passed to \verb{[encrqcs::qcs_write_dataset]}
-if a list. Arguments \code{dataset}, \code{dataset_name}, \code{file_path}, and
+if a list. Arguments \code{dataset}, \code{qcs_protocol_id}, \code{file_path}, and
 \code{assertion} type are determined internally and cannot be changed.}
 
 \item{call_arg_list}{\verb{[NULL, list]} (default \code{NULL})
@@ -77,7 +73,7 @@ cannot be changed. \code{system2_arg_list} has a default which can be overridden
 
 \item{read_arg_list}{\verb{[NULL, list]} (default \code{NULL})
 Optional, additional arguments passed to \verb{[encrqcs::qcs_read_results]}
-if a list. Arguments \code{qcs_dir_path}, \code{dataset_name}, and
+if a list. Arguments \code{qcs_dir_path}, \code{qcs_protocol_id}, and
 \code{assertion_type} are determined internally and
 cannot be changed.}
 
@@ -110,6 +106,12 @@ The output of \verb{[encrqcs::qcs_run]} is a list as returned by
 with the additional element \code{qcs_call_output}.
 }
 }
+\section{News for version 1.0.0}{
+
+
+Replaced argument \code{dataset_name} with \code{qcs_protocol_id}.
+}
+
 \section{News for version 0.8.0}{
 
 

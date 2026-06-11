@@ -61,9 +61,15 @@ New function \code{encrqcs::qcs_cache_metadata_update}.
 New function \code{encrqcs::qcs_cache_metadata_write}.
 }
 
+\subsection{encrqcs::qcs_dataset_template}{
+
+Replaced argument \code{dataset_name} with \code{qcs_protocol_id}.
+}
+
 \subsection{encrqcs::qcs_read_results}{
 
-\code{encrqcs::qcs_read_results} argument \code{dataset_name} removed.
+\code{encrqcs::qcs_read_results} argument \code{dataset_name} removed. Use
+\code{qcs_protocol_id}.
 }
 
 \subsection{encrqcs::qcs_read_results}{
@@ -77,6 +83,21 @@ both \code{NULL} by default.
 \code{encrqcs::qcs_call} gains caching ability. It now saves the hash of every
 dataset it has run through QCS and skips the run if the same dataset has
 already been run previously.
+}
+
+\subsection{encrqcs::qcs_run}{
+
+Removed functions \code{assert_is_qcs_dataset_name} and \code{qcs_dataset_names}.
+}
+
+\subsection{encrqcs::qcs_run}{
+
+Replaced argument \code{dataset_name} with \code{qcs_protocol_id}.
+}
+
+\subsection{encrqcs::qcs_write_dataset}{
+
+Replaced argument \code{dataset_name} with \code{qcs_protocol_id}.
 }
 
 }

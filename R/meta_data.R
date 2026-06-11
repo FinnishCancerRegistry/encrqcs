@@ -9,26 +9,6 @@
 #' )
 NULL
 
-#' @rdname metadata
-#' @export
-qcs_dataset_names <- function() {
-  # @codedoc_comment_block encrqcs::qcs_run_dataset_names
-  # `[ecnrqcs::qcs_dataset_names]` returns the set of allowed dataset names
-  # as a character string vector.
-  # @codedoc_comment_block encrqcs::qcs_run_dataset_names
-  names(.__QCS_DATASET_TEMPLATES)
-}
-
-arg_dataset_name_docs <- function() {
-  lines <- c(
-    "@param dataset_name `[character]` (no default)",
-    "",
-    "one of the following:",
-    paste0(" - \"", encrqcs::qcs_dataset_names(), "\"")
-  )
-  return(lines)
-}
-
 .__QCS_DATASET_TEMPLATES <- list(
   incidence = data.table::data.table(
     PAT = "pat0000001",
@@ -103,53 +83,33 @@ arg_dataset_name_docs <- function() {
 #' @rdname metadata
 #' @export
 #' @template param_assertion_type
-#' @eval arg_dataset_name_docs()
-qcs_dataset_template <- function(dataset_name, assertion_type = NULL) {
-  encrqcs::assert_is_qcs_dataset_name(
-    dataset_name,
-    assertion_type = assertion_type
-  )
-
+qcs_dataset_template <- function(qcs_protocol_id, assertion_type = NULL) {
   # @codedoc_comment_block encrqcs::qcs_run_dataset_template
   # `[ecnrqcs::qcs_dataset_template]` returns a `data.table` with one row which
   # has the required columns in their required format for the given
   # `dataset_name`. Column names and classes taken from JRC-ENCR User
   # Compendium 2.0.
   # @codedoc_comment_block encrqcs::qcs_run_dataset_template
-  .__QCS_DATASET_TEMPLATES[[dataset_name]]
+  # @codedoc_comment_block news("encrqcs::qcs_dataset_template", "2025-06-10", "1.0.0")
+  # Replaced argument `dataset_name` with `qcs_protocol_id`.
+  # @codedoc_comment_block news("encrqcs::qcs_dataset_template", "2025-06-10", "1.0.0")
+  .__QCS_DATASET_TEMPLATES[[
+    handle_arg_qcs_protocol_id__(qcs_protocol_id, output_type = "dataset_name")
+  ]]
 }
 
 #' @rdname metadata
 #' @export
-qcs_dataset_column_names <- function(dataset_name, assertion_type = NULL) {
+qcs_dataset_column_names <- function(qcs_protocol_id) {
   # @codedoc_comment_block encrqcs::qcs_run_dataset_column_names
   # `[ecnrqcs::qcs_dataset_column_names]` returns a character string vector
-  # of column names for the given `dataset_name`. This function wraps
+  # of column names for the given `qcs_protocol_id`. This function wraps
   # `[ecnrqcs::qcs_dataset_template]`.
   # @codedoc_comment_block encrqcs::qcs_run_dataset_column_names
-  encrqcs::assert_is_qcs_dataset_name(
-    dataset_name,
-    assertion_type = assertion_type
+  qcs_protocol_id <- handle_arg_qcs_protocol_id__(
+    qcs_protocol_id
   )
-  return(names(encrqcs::qcs_dataset_template(dataset_name)))
-}
-
-#' @rdname metadata
-#' @export
-#' @param x Assertion is performed on this object.
-#' @param x_nm See e.g. `[dbc::dbc::assert_is_integer]`.
-#' @param call See e.g. `[dbc::dbc::assert_is_integer]`.
-assert_is_qcs_dataset_name <- function(
-  x,
-  x_nm = NULL,
-  call = NULL,
-  assertion_type = NULL
-) {
-  x_nm <- dbc::handle_arg_x_nm(x_nm)
-  call <- dbc::handle_arg_call(call)
-  dbc::assert_is_character_nonNA_atom(x, x_nm = x_nm, call = call)
-  dbc::assert_atom_is_in_set(x, set = encrqcs::qcs_dataset_names(),
-                             x_nm = x_nm, call = call)
+  return(names(encrqcs::qcs_dataset_template(qcs_protocol_id)))
 }
 
 #' @rdname metadata
@@ -159,19 +119,28 @@ assert_is_qcs_dataset <- function(
   x_nm = NULL,
   call = NULL,
   assertion_type = NULL,
-  dataset_name
+  qcs_protocol_id
 ) {
+  #' @param x `[any class]` (no default)
+  #'
+  #' R object to perform assertion on.
+  #' @param x_nm See `[dbc::handle_arg_x_nm]`
   x_nm <- dbc::handle_arg_x_nm(x_nm)
+  #' @param call See `[dbc::handle_arg_call]`
   call <- dbc::handle_arg_call(call)
+  #' @param assertion_type See `[dbc::handle_arg_assertion_type]`
+  assertion_type <- dbc::handle_arg_assertion_type(assertion_type)
+  #' @template param_qcs_protocol_id
+  qcs_protocol_id <- handle_arg_qcs_protocol_id__(qcs_protocol_id)
   dbc::assert_is_data_frame_with_required_names(
     x = x,
     x_nm = x_nm,
     call = call,
     assertion_type = assertion_type,
-    required_names = encrqcs::qcs_dataset_column_names(dataset_name)
+    required_names = encrqcs::qcs_dataset_column_names(qcs_protocol_id)
   )
-  dataset_template <- encrqcs::qcs_dataset_template(dataset_name)
-  lapply(encrqcs::qcs_dataset_column_names(dataset_name), function(col_nm) {
+  dataset_template <- encrqcs::qcs_dataset_template(qcs_protocol_id)
+  lapply(encrqcs::qcs_dataset_column_names(qcs_protocol_id), function(col_nm) {
     dbc::assert_inherits(x = x[[col_nm]], x_nm = paste0(x_nm, "$", col_nm),
                          call = call,
                          required_class = class(dataset_template[[col_nm]])[1L])

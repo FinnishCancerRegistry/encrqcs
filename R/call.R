@@ -114,7 +114,7 @@ qcs_call <- function(
   }
 
   #' @template param_qcs_protocol_id
-  qcs_protocol_id <- handle_qcs_protocol_id(qcs_protocol_id)
+  qcs_protocol_id <- handle_arg_qcs_protocol_id__(qcs_protocol_id)
 
   dbc::assert_is_one_of(
     system2_arg_list,

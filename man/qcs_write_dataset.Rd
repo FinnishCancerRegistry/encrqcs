@@ -6,7 +6,7 @@
 \usage{
 qcs_write_dataset(
   dataset,
-  dataset_name,
+  qcs_protocol_id,
   file_path,
   fwrite_arg_list = NULL,
   assertion_type = NULL
@@ -15,17 +15,14 @@ qcs_write_dataset(
 \arguments{
 \item{dataset}{\verb{[data.frame]} (mandatory)
 
-Column requirements vary depending on \code{dataset_name}.
+Column requirements vary depending on \code{qcs_protocol_id}.
 Refer to the JRC-ENCR QCS User Compendium.}
 
-\item{dataset_name}{\verb{[character]} (no default)
-
-one of the following:
+\item{qcs_protocol_id}{\verb{[character, integer]} (no default)
 \itemize{
-\item "incidence"
-\item "mortality"
-\item "population"
-\item "lifetable"
+\item \code{integer}: Used as-is. You have to study what the \code{.jar} does with that.
+\item \code{character}: Take 11, 13, 15, or 17 for \code{"incidence"}, \code{"mortality"},
+\code{"population"}, and \code{"lifetable"}, respectively.
 }}
 
 \item{file_path}{\verb{[character]} (no default)

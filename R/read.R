@@ -14,10 +14,12 @@ qcs_read_dir_path <- function(
       #   `${encrqcs:::qcs_read_dir_path("C:/path/to/qcs/", "incidence", "summary", FALSE)}`
       #   for `qcs_dir_path = "C:/path/to/qcs/"`, `qcs_protocol_id = "incidence"`.
       # @codedoc_comment_block details(encrqcs::qcs_read_results)
-      dataset_name <- handle_qcs_protocol_id(
-        qcs_protocol_id, output_type = "dataset_name"
+      paste0(
+        qcs_dir_path, "/output/",
+        handle_arg_qcs_protocol_id__(
+          qcs_protocol_id, output_type = "dataset_name"
+        )
       )
-      paste0(qcs_dir_path, "/output/", dataset_name)
     },
     # @codedoc_comment_block details(encrqcs::qcs_read_results)
     # - Directory containing the record-level results is assumed to look like e.g.
@@ -172,13 +174,14 @@ qcs_read_results <- function(
   # set of results than before.
   # @codedoc_comment_block news("encrqcs::qcs_read_results", "2026-01-28", "0.8.0")
   # @codedoc_comment_block news("encrqcs::qcs_read_results", "2025-06-10", "1.0.0")
-  # `encrqcs::qcs_read_results` argument `dataset_name` removed.
+  # `encrqcs::qcs_read_results` argument `dataset_name` removed. Use
+  # `qcs_protocol_id`.
   # @codedoc_comment_block news("encrqcs::qcs_read_results", "2025-06-10", "1.0.0")
   # assertions -----------------------------------------------------------------
   #' @template param_qcs_dir_path
   dbc::assert_dir_exists(qcs_dir_path, assertion_type = assertion_type)
   #' @template param_qcs_protocol_id
-  qcs_protocol_id <- handle_qcs_protocol_id(qcs_protocol_id)
+  qcs_protocol_id <- handle_arg_qcs_protocol_id__(qcs_protocol_id)
 
   # output_file_paths ----------------------------------------------------------
   # @codedoc_comment_block news("encrqcs::qcs_read_results", "2025-10-24", "0.7.0")

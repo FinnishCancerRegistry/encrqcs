@@ -47,3 +47,7 @@
 # @codedoc_comment_block news("encrqcs", "2026-05-25", "0.8.1")
 # New release to trigger github action. No changes in code.
 # @codedoc_comment_block news("encrqcs", "2026-05-25", "0.8.1")
+
+# @codedoc_comment_block news("encrqcs::qcs_run", "2025-06-10", "1.0.0")
+# Removed functions `assert_is_qcs_dataset_name` and `qcs_dataset_names`.
+# @codedoc_comment_block news("encrqcs::qcs_run", "2025-06-10", "1.0.0")

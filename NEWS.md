@@ -26,9 +26,14 @@ New function `encrqcs::qcs_cache_metadata_update`.
 
 New function `encrqcs::qcs_cache_metadata_write`.
 
+### encrqcs::qcs_dataset_template
+
+Replaced argument `dataset_name` with `qcs_protocol_id`.
+
 ### encrqcs::qcs_read_results
 
-`encrqcs::qcs_read_results` argument `dataset_name` removed.
+`encrqcs::qcs_read_results` argument `dataset_name` removed. Use
+`qcs_protocol_id`.
 
 ### encrqcs::qcs_read_results
 
@@ -40,6 +45,18 @@ both `NULL` by default.
 `encrqcs::qcs_call` gains caching ability. It now saves the hash of every
 dataset it has run through QCS and skips the run if the same dataset has
 already been run previously.
+
+### encrqcs::qcs_run
+
+Removed functions `assert_is_qcs_dataset_name` and `qcs_dataset_names`.
+
+### encrqcs::qcs_run
+
+Replaced argument `dataset_name` with `qcs_protocol_id`.
+
+### encrqcs::qcs_write_dataset
+
+Replaced argument `dataset_name` with `qcs_protocol_id`.
 
 
 ## News for version 0.8.1

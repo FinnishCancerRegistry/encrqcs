@@ -8,7 +8,6 @@
 #' Read and write .csv files for / created by the JRC-ENCR QCS.
 #' @template param_dataset
 #' @eval c(
-#'   arg_dataset_name_docs(),
 #'   codedoc::codedoc_lines("^encrqcs::qcs_write_dataset::", "R/write.R"),
 #'   "@details",
 #'   codedoc::codedoc_lines("^\\Qdetails(encrqcs::qcs_write_dataset)\\E$", "R/write.R"),
@@ -22,19 +21,20 @@
 #' @export
 qcs_write_dataset <- function(
   dataset,
-  dataset_name,
+  qcs_protocol_id,
   file_path,
   fwrite_arg_list = NULL,
   assertion_type = NULL
 ) {
   # assertions -----------------------------------------------------------------
-  encrqcs::assert_is_qcs_dataset_name(
-    dataset_name,
-    assertion_type = assertion_type
-  )
+  # @codedoc_comment_block news("encrqcs::qcs_write_dataset", "2025-06-10", "1.0.0")
+  # Replaced argument `dataset_name` with `qcs_protocol_id`.
+  # @codedoc_comment_block news("encrqcs::qcs_write_dataset", "2025-06-10", "1.0.0")
+  #' @template param_qcs_protocol_id
+  qcs_protocol_id <- handle_arg_qcs_protocol_id__(qcs_protocol_id)
   encrqcs::assert_is_qcs_dataset(
     dataset, assertion_type = assertion_type,
-    dataset_name = dataset_name
+    qcs_protocol_id = qcs_protocol_id
   )
   # @codedoc_comment_block news("encrqcs::qcs_write_dataset", "2025-04-03", "0.6.0")
   # `encrqcs::qcs_write` now enforces the correct order of columns in `dataset`.
@@ -42,7 +42,7 @@ qcs_write_dataset <- function(
   dataset <- data.table::setDT(as.list(dataset))
   data.table::setcolorder(
     dataset,
-    qcs_dataset_column_names(dataset_name = dataset_name)
+    neworder = qcs_dataset_column_names(qcs_protocol_id = qcs_protocol_id)
   )
   dbc::assert_is_one_of(
     fwrite_arg_list,

@@ -5,6 +5,8 @@ dataset_name_to_qcs_protocol_id_map__ <- c(
   lifetable = 17L
 )
 
+#' @rdname metadata
+#' @export
 assert_is_qcs_protocol_id <- function(
   x,
   x_nm = NULL,
@@ -39,7 +41,7 @@ assert_is_qcs_protocol_id <- function(
   }
 }
 
-handle_qcs_protocol_id <- function(
+handle_arg_qcs_protocol_id__ <- function(
   qcs_protocol_id,
   output_type = "id"
 ) {

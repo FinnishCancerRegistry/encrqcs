@@ -1,9 +1,7 @@
 #' @title JRC-ENCR QCS
 #' @description
 #' Run JRC-ENCR QCS and read results into R.
-#' @template param_dataset
 #' @eval c(
-#'   arg_dataset_name_docs(),
 #'   codedoc::codedoc_roxygen_news_by_version("encrqcs::qcs_run", "R/run.R"),
 #'   "@details",
 #'   codedoc::codedoc_lines("^\\Qdetails(encrqcs::qcs_run)\\E$", "R/run.R"),
@@ -12,12 +10,10 @@
 #'
 #'   codedoc::codedoc_lines("^encrqcs::qcs_run::", "R/run.R")
 #' )
-#' @template param_qcs_dir_path
-#' @template param_assertion_type
 #' @export
 qcs_run <- function(
   dataset,
-  dataset_name,
+  qcs_protocol_id,
   qcs_dir_path,
   dataset_file_path = NULL,
   clean             = NULL,
@@ -31,34 +27,34 @@ qcs_run <- function(
   # programme seems to fail for the other datasets at this time.
   # Potentially a protocol id problem.
   # @codedoc_comment_block news("encrqcs::qcs_run", "2022-03-03", "0.2.2")
+  # @codedoc_comment_block news("encrqcs::qcs_run", "2025-06-10", "1.0.0")
+  # Replaced argument `dataset_name` with `qcs_protocol_id`.
+  # @codedoc_comment_block news("encrqcs::qcs_run", "2025-06-10", "1.0.0")
 
   # assertions -----------------------------------------------------------------
-  encrqcs::assert_is_qcs_dataset(dataset, dataset_name = dataset_name,
+  #' @template param_dataset
+  #' @template param_assertion_type
+  encrqcs::assert_is_qcs_dataset(dataset, qcs_protocol_id = qcs_protocol_id,
                                  assertion_type = assertion_type)
-  encrqcs::assert_is_qcs_dataset_name(dataset_name,
-                                      assertion_type = assertion_type)
+  #' @template param_qcs_protocol_id
+  qcs_protocol_id <- handle_arg_qcs_protocol_id__(qcs_protocol_id)
+
   # @codedoc_comment_block news("encrqcs::qcs_run", "2025-04-03", "0.6.0")
   # `encrqcs::qcs_run` now enforces the correct order of columns in `dataset`.
   # @codedoc_comment_block news("encrqcs::qcs_run", "2025-04-03", "0.6.0")
   dataset <- data.table::setDT(as.list(dataset))
   data.table::setcolorder(
     dataset,
-    qcs_dataset_column_names(dataset_name = dataset_name)
+    qcs_dataset_column_names(qcs_protocol_id = qcs_protocol_id)
   )
-  dbc::assert_dir_exists(qcs_dir_path,
-                         assertion_type = assertion_type)
-  dbc::assert_has_length(qcs_dir_path,
-                         assertion_type = assertion_type,
-                         expected_length = 1L)
-  qcs_dir_path <- normalizePath(path = qcs_dir_path, winslash = "/")
-  dbc::assert_is_one_of(
+  #' @template param_qcs_dir_path
+  qcs_dir_path <- handle_arg_qcs_dir_path__(qcs_dir_path)
+  #' @template param_optional_dataset_file_path
+  dataset_file_path <- handle_arg_dataset_file_path__(
     dataset_file_path,
-    funs = list(
-      dbc::report_is_NULL,
-      dbc::report_is_character_nonNA_atom
-    ),
-    assertion_type = assertion_type
+    must_exist = FALSE
   )
+
   # @codedoc_comment_block encrqcs::qcs_run::clean
   # @param clean `[NULL, logical]` (default `NULL`)
   #
@@ -68,7 +64,7 @@ qcs_run <- function(
   #                no longer needs it.
   # - `"output"` : Delete output files when this function no longer need them.
   #                Specifically, the whole output directory for the given
-  #                `dataset_name` is removed, e.g. `output/incidence`,
+  #                `qcs_protocol_id` is removed, e.g. `output/incidence`,
   #                in `qcs_dir_path`.
   # - `"both"`   : Delete both input and output files/dirs.
   # - `"neither"`: Don't delete anything.
@@ -92,7 +88,7 @@ qcs_run <- function(
   # @param write_arg_list `[NULL, list]` (default `NULL`)
   #
   # Optional, additional arguments passed to `[encrqcs::qcs_write_dataset]`
-  # if a list. Arguments `dataset`, `dataset_name`, `file_path`, and
+  # if a list. Arguments `dataset`, `qcs_protocol_id`, `file_path`, and
   # `assertion` type are determined internally and cannot be changed.
   # @codedoc_comment_block encrqcs::qcs_run::write_arg_list
 
@@ -112,7 +108,7 @@ qcs_run <- function(
   }
   overriding_write_arg_list <- list(
     dataset = dataset,
-    dataset_name = dataset_name,
+    qcs_protocol_id = qcs_protocol_id,
     file_path = dataset_file_path,
     assertion_type = assertion_type
   )
@@ -139,7 +135,7 @@ qcs_run <- function(
     # @codedoc_comment_block news("encrqcs::qcs_run", "2026-01-28", "0.8.0")
     on.exit(
       qcs_clean_output(
-        qcs_protocol_id = dataset_name,
+        qcs_protocol_id = qcs_protocol_id,
         qcs_dir_path = qcs_dir_path
       ),
       add = TRUE
@@ -163,7 +159,7 @@ qcs_run <- function(
     dataset_file_path = dataset_file_path,
     qcs_dir_path = qcs_dir_path,
     assertion_type = assertion_type,
-    qcs_protocol_id = dataset_name
+    qcs_protocol_id = qcs_protocol_id
   )
   call_arg_list <- as.list(call_arg_list)
   call_arg_list[names(overriding_call_arg_list)] <- overriding_call_arg_list
@@ -178,13 +174,13 @@ qcs_run <- function(
   # @codedoc_comment_block encrqcs::qcs_run::read_arg_list
   # @param read_arg_list `[NULL, list]` (default `NULL`)
   # Optional, additional arguments passed to `[encrqcs::qcs_read_results]`
-  # if a list. Arguments `qcs_dir_path`, `dataset_name`, and
+  # if a list. Arguments `qcs_dir_path`, `qcs_protocol_id`, and
   # `assertion_type` are determined internally and
   # cannot be changed.
   # @codedoc_comment_block encrqcs::qcs_run::read_arg_list
   overriding_read_arg_list <- list(
     qcs_dir_path = qcs_dir_path,
-    qcs_protocol_id = dataset_name,
+    qcs_protocol_id = qcs_protocol_id,
     assertion_type = assertion_type
   )
   read_arg_list <- as.list(read_arg_list)

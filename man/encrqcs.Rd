@@ -30,6 +30,15 @@ Run incidence checks using JRC-ENCR QCS:
 }
 \section{News}{
 
+\subsection{News for version 1.0.1}{
+\subsection{encrqcs::qcs_read_results}{
+
+\code{encrqcs::qcs_read_results} gains argument \code{filter} for reading only some
+of the results files.
+}
+
+}
+
 \subsection{News for version 1.0.0}{
 \subsection{encrqcs::qcs_cache_dataset_file_hash}{
 

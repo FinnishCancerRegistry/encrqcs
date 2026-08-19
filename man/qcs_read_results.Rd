@@ -9,6 +9,7 @@ qcs_read_results(
   qcs_protocol_id,
   hash = NULL,
   dataset_file_path = NULL,
+  filter = NULL,
   fread_arg_list = NULL,
   readlines_arg_list = NULL,
   assertion_type = NULL
@@ -43,6 +44,21 @@ Optional path to your dataset.
 This should be the dataset you want to use.
 E.g. \code{"C:/my/dir/mydataset.csv"}.
 \item \code{NULL}: This argument is not used.
+}}
+
+\item{filter}{\verb{[NULL, character, function]} (default \code{NULL})
+
+Optional argument for reading only some of the results files.
+\itemize{
+\item \code{NULL}: No filtering, so every result file is read into R.
+\item \code{character}: Only those result files are read into R whose file names
+(without the directory path, e.g. \code{"result_file.csv"})
+match this regular expression. E.g. \code{filter = "qcs_rule_output"}.
+This regular expression is passed to \verb{[grepl]} which is called with
+\code{perl = TRUE}.
+\item \code{function}: Must have argument \code{x}. The names of the result files are
+supplied to this argument \code{x} and it must return a \code{logical} vector
+of the same length indicating which files are read.
 }}
 
 \item{fread_arg_list}{\verb{[NULL, list]} (default \code{NULL})

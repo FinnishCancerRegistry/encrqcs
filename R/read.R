@@ -176,6 +176,7 @@ qcs_read_results <- function(
   qcs_protocol_id,
   hash = NULL,
   dataset_file_path = NULL,
+  filter = NULL,
   fread_arg_list = NULL,
   readlines_arg_list = NULL,
   assertion_type = NULL
@@ -193,6 +194,28 @@ qcs_read_results <- function(
   dbc::assert_dir_exists(qcs_dir_path, assertion_type = assertion_type)
   #' @template param_qcs_protocol_id
   qcs_protocol_id <- handle_arg_qcs_protocol_id__(qcs_protocol_id)
+
+  #' @param filter `[NULL, character, function]` (default `NULL`)
+  #'
+  #' Optional argument for reading only some of the results files.
+  #'
+  #' - `NULL`: No filtering, so every result file is read into R.
+  #' - `character`: Only those result files are read into R whose file names
+  #'   (without the directory path, e.g. `"result_file.csv"`)
+  #'   match this regular expression. E.g. `filter = "qcs_rule_output"`.
+  #'   This regular expression is passed to `[grepl]` which is called with
+  #'   `perl = TRUE`.
+  #' - `function`: Must have argument `x`. The names of the result files are
+  #'   supplied to this argument `x` and it must return a `logical` vector
+  #'   of the same length indicating which files are read.
+  dbc::assert_is_one_of(
+    x = filter,
+    funs = list(
+      dbc::report_is_NULL,
+      dbc::report_is_function,
+      dbc::report_is_character_nonNA_atom
+    )
+  )
 
   # output_file_paths ----------------------------------------------------------
   # @codedoc_comment_block news("encrqcs::qcs_read_results", "2025-10-24", "0.7.0")
@@ -224,6 +247,19 @@ qcs_read_results <- function(
     type = "all",
     hash = hash
   )
+  # @codedoc_comment_block news("encrqcs::qcs_read_results", "2026-08-19", "1.0.1")
+  # `encrqcs::qcs_read_results` gains argument `filter` for reading only some
+  # of the results files.
+  # @codedoc_comment_block news("encrqcs::qcs_read_results", "2026-08-19", "1.0.1")
+  if (is.character(filter)) {
+    output_file_paths <- output_file_paths[
+      grepl(filter, basename(output_file_paths), perl = TRUE)
+    ]
+  } else if (is.function(filter)) {
+    output_file_paths <- output_file_paths[
+      filter(x = basename(output_file_paths))
+    ]
+  }
   output_file_names <- basename(output_file_paths)
   output_file_names <- gsub("(_[0-9]+)?[.][a-zA-Z0-9]+$", "", output_file_names)
   names(output_file_paths) <- output_file_names

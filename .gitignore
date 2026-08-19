@@ -5,5 +5,5 @@
 *.code-workspace
 *.Rproj
 tmp/
-sandbox.R
+sandbox*
 .radian_history

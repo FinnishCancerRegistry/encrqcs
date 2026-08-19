@@ -10,5 +10,5 @@
 ^dev$
 ^.*\.code-workspace$
 ^tmp$
-^sandbox\.R$
+^sandbox.*$
 ^\.radian_history$

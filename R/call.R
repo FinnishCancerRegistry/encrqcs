@@ -211,7 +211,14 @@ qcs_call <- function(
   vr_dt_pre <- qcs_cache_validation_run_file_read__(qcs_dir_path)
   out <- system2_call(system2_arg_list, success_status_codes = 0L)
   vr_dt_post <- qcs_cache_validation_run_file_read__(qcs_dir_path)
-  new_run_id <- setdiff(vr_dt_post[["RUN_ID"]], vr_dt_pre[["RUN_ID"]])
+  # @codedoc_comment_block news("encrqcs::qcs_run", "2026-09-01", "1.0.2")
+  # `encrqcs::qcs_call` robustified in case the same dataset is run more than
+  # once at the same time.
+  # @codedoc_comment_block news("encrqcs::qcs_run", "2026-09-01", "1.0.2")
+  new_run_id <- utils::tail(
+    setdiff(vr_dt_post[["RUN_ID"]], vr_dt_pre[["RUN_ID"]]),
+    1L
+  )
   encrqcs::qcs_cache_metadata_update(
     qcs_dir_path = qcs_dir_path,
     hash = hash,

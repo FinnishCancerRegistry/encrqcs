@@ -30,6 +30,15 @@ Run incidence checks using JRC-ENCR QCS:
 }
 \section{News}{
 
+\subsection{News for version 1.0.2}{
+\subsection{encrqcs::qcs_run}{
+
+\code{encrqcs::qcs_call} robustified in case the same dataset is run more than
+once at the same time.
+}
+
+}
+
 \subsection{News for version 1.0.1}{
 \subsection{encrqcs::qcs_read_results}{
 

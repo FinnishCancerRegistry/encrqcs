@@ -30,6 +30,15 @@ Run incidence checks using JRC-ENCR QCS:
 }
 \section{News}{
 
+\subsection{News for version 1.0.3}{
+\subsection{qcs}{
+
+\code{encrqcs} can now also read the \code{validation_run.csv} correctly for
+QCS >= 2.4.0 where column \code{RUN_ID} -> \code{ID}.
+}
+
+}
+
 \subsection{News for version 1.0.2}{
 \subsection{encrqcs::qcs_run}{
 

@@ -135,6 +135,10 @@ qcs_cache_validation_run_file_read__ <- function(qcs_dir_path) {
     vr_dt <- data.table::data.table(ID = integer(0L))
   } else {
     vr_dt <- data.table::fread(file = vr_file_path)
+    # @codedoc_comment_block news("qcs", "2026-09-10", "1.0.3")
+    # `encrqcs` can now also read the `validation_run.csv` correctly for
+    # QCS >= 2.4.0 where column `RUN_ID` -> `ID`.
+    # @codedoc_comment_block news("qcs", "2026-09-10", "1.0.3")
     if ("RUN_ID" %in% names(vr_dt)) {
       # pre-2.4.0: RUN_ID. post: ID.
       data.table::setnames(vr_dt, "RUN_ID", "ID")

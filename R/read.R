@@ -69,6 +69,8 @@ qcs_read_record_meta_read <- function(
   }
   # dont want to see warning about zero rows
   meta <- suppressWarnings(data.table::fread(meta_path))
+  # RUN_ID in pre-2.4.0 of QCS, thereafter ID.
+  data.table::setnames(meta, "RUN_ID", "ID", skip_absent = TRUE)
   if (output == "table") {
     return(meta)
   }
@@ -77,7 +79,7 @@ qcs_read_record_meta_read <- function(
       qcs_dir_path = qcs_dir_path,
       hash = hash
     )
-    meta_subset <- meta[["RUN_ID"]] == dataset_meta[["run_id"]]
+    meta_subset <- meta[["ID"]] == dataset_meta[["run_id"]]
     if (sum(meta_subset) != 1L) {
       stop(
         "Internal error: ",
@@ -129,7 +131,7 @@ qcs_read_file_paths <- function(
       )
       csv_file_paths <- dir(
         output_dir_path,
-        pattern = sprintf("_%i[.]csv$", meta[["RUN_ID"]]),
+        pattern = sprintf("_%i[.]csv$", meta[["ID"]]),
         full.names = TRUE
       )
       csv_file_paths <- csv_file_paths[

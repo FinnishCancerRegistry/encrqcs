@@ -59,6 +59,8 @@ system2_call <- function(
     stop(
       "`system2` call of `command = ",
       deparse1(unname(arg_list[["command"]])),
+      "` with `args = ",
+      deparse1(unname(arg_list[["args"]])),
       "` failed with status ",
       "code ",
       out[["status"]],

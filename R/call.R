@@ -223,7 +223,7 @@ qcs_call <- function(
   # once at the same time.
   # @codedoc_comment_block news("encrqcs::qcs_run", "2026-09-01", "1.0.2")
   new_run_id <- utils::tail(
-    setdiff(vr_dt_post[["RUN_ID"]], vr_dt_pre[["RUN_ID"]]),
+    setdiff(vr_dt_post[["ID"]], vr_dt_pre[["ID"]]),
     1L
   )
   encrqcs::qcs_cache_metadata_update(

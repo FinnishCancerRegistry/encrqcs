@@ -77,7 +77,7 @@ qcs_cache_metadata_read <- function(
   # the file at `encrqcs::qcs_cache_metadata_file_path(qcs_dir_path)`. If it
   # does not exist, an empty `data.table` is returned. Currently
   # the metadata file maps `hash` to `run_id`, where the former is computed on
-  # a dataset and `run_id` corresponds to column `RUN_ID` in
+  # a dataset and `run_id` corresponds to column `ID` in
   # `temp/validation_run.csv`. This maps a dataset to a previous run reliably.
   # @codedoc_comment_block encrqcs::qcs_cache_metadata_read
   path <- encrqcs::qcs_cache_metadata_file_path(qcs_dir_path)
@@ -132,9 +132,13 @@ qcs_cache_validation_run_file_path__ <- function(qcs_dir_path) {
 qcs_cache_validation_run_file_read__ <- function(qcs_dir_path) {
   vr_file_path <- qcs_cache_validation_run_file_path__(qcs_dir_path)
   if (!file.exists(vr_file_path)) {
-    vr_dt <- data.table::data.table(RUN_ID = integer(0L))
+    vr_dt <- data.table::data.table(ID = integer(0L))
   } else {
     vr_dt <- data.table::fread(file = vr_file_path)
+    if ("RUN_ID" %in% names(vr_dt)) {
+      # pre-2.4.0: RUN_ID. post: ID.
+      data.table::setnames(vr_dt, "RUN_ID", "ID")
+    }
   }
   return(vr_dt[])
 }
@@ -164,11 +168,11 @@ qcs_cache_metadata_update <- function(
   vr_dt <- qcs_cache_validation_run_file_read__(qcs_dir_path = qcs_dir_path)
   #' @param run_id `[integer]` (no default)
   #'
-  #' One of the values of column `RUN_ID` in `temp/validation_run.csv` under
+  #' One of the values of column `ID` in `temp/validation_run.csv` under
   #' the `qcs_dir_path`.
   dbc::assert_is_integer_nonNA_gtezero_atom(run_id)
   cache_metadata_dt <- cache_metadata_dt[
-    cache_metadata_dt[["run_id"]] %in% vr_dt[["RUN_ID"]]
+    cache_metadata_dt[["run_id"]] %in% vr_dt[["ID"]]
   ]
   #' @template param_optional_hash
   if (is.null(hash)) {
@@ -221,7 +225,7 @@ qcs_cache_metadata_for_dataset__ <- function(
   }
   out <- as.list(md_dt[idx, ])
   vr_dt <- qcs_cache_validation_run_file_read__(qcs_dir_path = qcs_dir_path)
-  vr_dt_idx <- match(out[["run_id"]], vr_dt[["RUN_ID"]])
+  vr_dt_idx <- match(out[["run_id"]], vr_dt[["ID"]])
   out[["run_data"]] <- as.list(vr_dt[vr_dt_idx, ])
   return(out)
 }

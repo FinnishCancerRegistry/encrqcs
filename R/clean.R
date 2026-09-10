@@ -57,7 +57,7 @@ qcs_clean_output <- function(
         type = "record",
         must_exist = FALSE
       ),
-      pattern = sprintf("_%i[.]csv$", meta[["RUN_ID"]][is_removable_item]),
+      pattern = sprintf("_%i[.]csv$", meta[["ID"]][is_removable_item]),
       full.names = TRUE
     )
   )

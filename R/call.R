@@ -168,7 +168,14 @@ qcs_call <- function(
   #    The exact default for `system2_arg_list` is
   #    `${deparse1(encrqcs:::qcs_call_default_system2_arg_list_expr__())}`.
   # @codedoc_comment_block encrqcs::qcs_call
-  jar_file_name <- dir(qcs_dir_path, pattern = "jrc-qcs[0-9.-]+.jar")
+  jar_file_name <- dir(qcs_dir_path, pattern = "[.]jar$")
+  if (length(jar_file_name) != 1) {
+    stop(
+      "Expected to find exactly one .jar file in `qcs_dir_path = ",
+      deparse1(unname(qcs_dir_path)), "`, but found ",
+      length(jar_file_name), ". Have you supplied the correct `qcs_dir_path`?"
+    )
+  }
   default_system2_arg_list <- eval(
     qcs_call_default_system2_arg_list_expr__(),
     envir = list(

@@ -289,7 +289,16 @@ qcs_read_results <- function(
       # Argument `file` is determined internally and cannot be changed.
       # @codedoc_comment_block encrqcs::qcs_read_results::fread_arg_list
       fread_arg_list[["file"]] <- file_path
-      do.call(data.table::fread, fread_arg_list, quote = TRUE)
+      test_dt <- suppressWarnings(data.table::fread(
+        file = file_path,
+        select = 1L,
+        nrows = 1L
+      ))
+      if (ncol(test_dt) == 0) {
+        test_dt
+      } else {
+        do.call(data.table::fread, fread_arg_list, quote = TRUE)
+      }
     }
   })
   # @codedoc_comment_block return(encrqcs::qcs_read_results)

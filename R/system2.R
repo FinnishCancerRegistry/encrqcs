@@ -7,6 +7,9 @@ system2_call <- function(
     success_status_codes,
     funs = list(dbc::report_is_NULL, dbc::report_is_integer_nonNA_vector)
   )
+  if (is.null(success_status_codes)) {
+    success_status_codes <- 0L
+  }
   tmp_out <- normalizePath(
     tempfile(pattern = "system2_stdout_", fileext = ".txt"),
     winslash = "/",
@@ -30,7 +33,7 @@ system2_call <- function(
     arg_list[names(override_arg_list)] <- override_arg_list
     arg_list
   })
-  status <- do.call(system2, arg_list, quote = TRUE)
+  status <- suppressWarnings(do.call(system2, arg_list, quote = TRUE))
   out <- suppressWarnings(list(
     status = status,
     stdout = tryCatch(
@@ -52,5 +55,24 @@ system2_call <- function(
       }
     )
   ))
+  if (!out[["status"]] %in% success_status_codes) {
+    stop(
+      "`system2` call of `command = ",
+      deparse1(unname(arg_list[["command"]])),
+      "` failed with status ",
+      "code ",
+      out[["status"]],
+      ". ",
+      "`stdout = ",
+      paste0(out[["stdout"]], collapse = " "),
+      "`. ",
+      "`stderr = ",
+      paste0(out[["stderr"]], collapse = " "),
+      "`. We allowed for this set of status codes to indicate success: ",
+      "`",
+      deparse1(unname(success_status_codes)),
+      "`."
+    )
+  }
   return(out)
 }

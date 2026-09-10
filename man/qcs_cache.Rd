@@ -47,7 +47,7 @@ Table of metadata to write into cache. Must have these columns:
 
 \item{run_id}{\verb{[integer]} (no default)
 
-One of the values of column \code{RUN_ID} in \code{temp/validation_run.csv} under
+One of the values of column \code{ID} in \code{temp/validation_run.csv} under
 the \code{qcs_dir_path}.}
 
 \item{hash}{\verb{[character, NULL]} (default \code{NULL})
@@ -94,7 +94,7 @@ It is simply \code{sprintf("\%s/metadata.csv", qcs_cache_dir_path(qcs_dir_path))
 the file at \code{encrqcs::qcs_cache_metadata_file_path(qcs_dir_path)}. If it
 does not exist, an empty \code{data.table} is returned. Currently
 the metadata file maps \code{hash} to \code{run_id}, where the former is computed on
-a dataset and \code{run_id} corresponds to column \code{RUN_ID} in
+a dataset and \code{run_id} corresponds to column \code{ID} in
 \code{temp/validation_run.csv}. This maps a dataset to a previous run reliably.
 
 

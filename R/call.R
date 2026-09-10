@@ -172,8 +172,10 @@ qcs_call <- function(
   if (length(jar_file_name) != 1) {
     stop(
       "Expected to find exactly one .jar file in `qcs_dir_path = ",
-      deparse1(unname(qcs_dir_path)), "`, but found ",
-      length(jar_file_name), ". Have you supplied the correct `qcs_dir_path`?"
+      deparse1(unname(qcs_dir_path)),
+      "`, but found ",
+      length(jar_file_name),
+      ". Have you supplied the correct `qcs_dir_path`?"
     )
   }
   default_system2_arg_list <- eval(

@@ -30,6 +30,14 @@ Run incidence checks using JRC-ENCR QCS:
 }
 \section{News}{
 
+\subsection{News for version 1.0.4}{
+\subsection{encrqcs}{
+
+\code{qcs_protocol_id} can now be any integer larger than zero.
+}
+
+}
+
 \subsection{News for version 1.0.3}{
 \subsection{qcs}{
 

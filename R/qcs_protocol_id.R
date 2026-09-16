@@ -33,6 +33,9 @@ assert_is_qcs_protocol_id <- function(
       set = names(dataset_name_to_qcs_protocol_id_map__)
     )
   } else {
+    # @codedoc_comment_block news("encrqcs", "2026-09-16", "1.0.4")
+    # `qcs_protocol_id` can now be any integer larger than zero.
+    # @codedoc_comment_block news("encrqcs", "2026-09-16", "1.0.4")
     dbc::assert_is_integer_nonNA_gtzero_atom(
       x = x,
       x_nm = x_nm,

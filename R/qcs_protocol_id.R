@@ -33,12 +33,11 @@ assert_is_qcs_protocol_id <- function(
       set = names(dataset_name_to_qcs_protocol_id_map__)
     )
   } else {
-    dbc::assert_atom_is_in_set(
+    dbc::assert_is_integer_nonNA_gtzero_atom(
       x = x,
       x_nm = x_nm,
       call = call,
-      assertion_type = assertion_type,
-      set = dataset_name_to_qcs_protocol_id_map__
+      assertion_type = assertion_type
     )
   }
 }

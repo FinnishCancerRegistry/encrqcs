@@ -31,6 +31,13 @@ Run incidence checks using JRC-ENCR QCS:
 \section{News}{
 
 \subsection{News for version 1.1.0}{
+\subsection{encrqcs::qcs_cache_dir_path}{
+
+\code{encrqcs::qcs_cache_dir_path} now points to dir \code{encrqcs} at the root of
+the QCS dir instead of \verb{temp/encrqcs/} because \code{temp} is being cleaned
+by QCS itself.
+}
+
 \subsection{encrqcs::qcs_cache_metadata_update}{
 
 Used to overwrite the metadata with a new table with one row always.

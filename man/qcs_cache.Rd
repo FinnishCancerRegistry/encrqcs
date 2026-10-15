@@ -78,7 +78,7 @@ Functions to make use of the cache used by \code{encrqcs}.
 
 \code{encrqcs::qcs_cache_dir_path} returns the path to the cache dir used by
 \code{encrqcs} given \code{qcs_dir_path} where the JRC-ENCR QCS is located.
-It is simply \code{sprintf("\%s/temp/encrqcs/", qcs_dir_path)}.
+It is simply \code{sprintf("\%s/encrqcs/", qcs_dir_path)}.
 
 
 \strong{encrqcs::qcs_cache_metadata_file_path}
@@ -119,6 +119,19 @@ and re-writes the metadata with \code{encrqcs::qcs_cache_metadata_write}.
 \code{algo = "md5"}.
 }
 
+\section{News for version 1.1.0}{
+
+
+\code{encrqcs::qcs_cache_dir_path} now points to dir \code{encrqcs} at the root of
+the QCS dir instead of \verb{temp/encrqcs/} because \code{temp} is being cleaned
+by QCS itself.
+
+
+
+Used to overwrite the metadata with a new table with one row always.
+Now retains the old metadata.
+}
+
 \section{News for version 1.0.0}{
 
 
@@ -143,12 +156,5 @@ New function \code{encrqcs::qcs_cache_metadata_update}.
 
 
 New function \code{encrqcs::qcs_cache_dataset_file_hash}.
-}
-
-\section{News for version 1.1.0}{
-
-
-Used to overwrite the metadata with a new table with one row always.
-Now retains the old metadata.
 }
 

@@ -2,6 +2,12 @@
 
 ## News for version 1.1.0
 
+### encrqcs::qcs_cache_dir_path
+
+`encrqcs::qcs_cache_dir_path` now points to dir `encrqcs` at the root of
+the QCS dir instead of `temp/encrqcs/` because `temp` is being cleaned
+by QCS itself.
+
 ### encrqcs::qcs_cache_metadata_update
 
 Used to overwrite the metadata with a new table with one row always.

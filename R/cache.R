@@ -19,12 +19,17 @@ qcs_cache_dir_path <- function(
   dbc::assert_has_length(qcs_dir_path, expected_length = 1L)
   qcs_dir_path <- normalizePath(path = qcs_dir_path, winslash = "/")
 
+  # @codedoc_comment_block news("encrqcs::qcs_cache_dir_path", "2026-10-15", "1.1.0")
+  # `encrqcs::qcs_cache_dir_path` now points to dir `encrqcs` at the root of
+  # the QCS dir instead of `temp/encrqcs/` because `temp` is being cleaned
+  # by QCS itself.
+  # @codedoc_comment_block news("encrqcs::qcs_cache_dir_path", "2026-10-15", "1.1.0")
   # @codedoc_comment_block encrqcs::qcs_cache_dir_path
   # `encrqcs::qcs_cache_dir_path` returns the path to the cache dir used by
   # `encrqcs` given `qcs_dir_path` where the JRC-ENCR QCS is located.
-  # It is simply `sprintf("%s/temp/encrqcs/", qcs_dir_path)`.
+  # It is simply `sprintf("%s/encrqcs/", qcs_dir_path)`.
   # @codedoc_comment_block encrqcs::qcs_cache_dir_path
-  qcs_cache_dir_path <- sprintf("%s/temp/encrqcs/", qcs_dir_path)
+  qcs_cache_dir_path <- sprintf("%s/encrqcs/", qcs_dir_path)
   if (!dir.exists(qcs_cache_dir_path)) {
     dir.create(qcs_cache_dir_path, recursive = TRUE)
   }

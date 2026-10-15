@@ -176,14 +176,19 @@ qcs_cache_metadata_update <- function(
   #' the `qcs_dir_path`.
   dbc::assert_is_integer_nonNA_gtezero_atom(run_id)
   cache_metadata_dt <- cache_metadata_dt[
-    cache_metadata_dt[["run_id"]] %in% vr_dt[["ID"]]
+    cache_metadata_dt[["run_id"]] %in% vr_dt[["ID"]],
   ]
   #' @template param_optional_hash
   if (is.null(hash)) {
     #' @template param_optional_dataset_file_path
     hash <- qcs_cache_dataset_file_hash(dataset_file_path)
   }
+  # @codedoc_comment_block news("encrqcs::qcs_cache_metadata_update", "2026-10-15", "1.1.0")
+  # Used to overwrite the metadata with a new table with one row always.
+  # Now retains the old metadata.
+  # @codedoc_comment_block news("encrqcs::qcs_cache_metadata_update", "2026-10-15", "1.1.0")
   cache_metadata_dt <- rbind(
+    cache_metadata_dt,
     data.table::data.table(
       metadata_datetime = Sys.time(),
       hash = hash,
@@ -191,6 +196,7 @@ qcs_cache_metadata_update <- function(
       run_id = run_id
     )
   )
+  data.table::setkeyv(cache_metadata_dt, "metadata_datetime")
   encrqcs::qcs_cache_metadata_write(
     cache_metadata_dt = cache_metadata_dt,
     qcs_dir_path = qcs_dir_path

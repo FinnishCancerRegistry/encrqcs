@@ -30,6 +30,15 @@ Run incidence checks using JRC-ENCR QCS:
 }
 \section{News}{
 
+\subsection{News for version 1.1.0}{
+\subsection{encrqcs::qcs_cache_metadata_update}{
+
+Used to overwrite the metadata with a new table with one row always.
+Now retains the old metadata.
+}
+
+}
+
 \subsection{News for version 1.0.4}{
 \subsection{encrqcs}{
 

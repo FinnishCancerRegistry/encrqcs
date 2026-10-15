@@ -145,3 +145,10 @@ New function \code{encrqcs::qcs_cache_metadata_update}.
 New function \code{encrqcs::qcs_cache_dataset_file_hash}.
 }
 
+\section{News for version 1.1.0}{
+
+
+Used to overwrite the metadata with a new table with one row always.
+Now retains the old metadata.
+}
+

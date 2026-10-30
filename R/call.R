@@ -214,8 +214,6 @@ qcs_call <- function(
   #   If status code other than zero is returned, an error is raised by R.
   #   E.g. status code 1 is "generic exit code" and means that the call
   #   failed.
-  # - Add the hash of the dataset at `dataset_file_path` to the list of hashes
-  #   in the cache so the next run on the identical dataset is skipped.
   # @codedoc_comment_block encrqcs::qcs_call
   vr_dt_pre <- qcs_cache_validation_run_file_read__(qcs_dir_path)
   out <- system2_call(system2_arg_list, success_status_codes = 0L)
@@ -228,6 +226,10 @@ qcs_call <- function(
     setdiff(vr_dt_post[["ID"]], vr_dt_pre[["ID"]]),
     1L
   )
+  # @codedoc_comment_block encrqcs::qcs_call
+  # - Add the hash of the dataset at `dataset_file_path` to the list of hashes
+  #   in the cache so the next run on the identical dataset is skipped.
+  # @codedoc_comment_block encrqcs::qcs_call
   encrqcs::qcs_cache_metadata_update(
     qcs_dir_path = qcs_dir_path,
     hash = hash,

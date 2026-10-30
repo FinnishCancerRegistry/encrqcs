@@ -30,6 +30,15 @@ Run incidence checks using JRC-ENCR QCS:
 }
 \section{News}{
 
+\subsection{News for version 1.1.1}{
+\subsection{encrqcs::qcs_call}{
+
+Protect \code{dataset_file_path} with quotes so that paths with whitespaces
+in them are passed correctly to QCS.
+}
+
+}
+
 \subsection{News for version 1.1.0}{
 \subsection{encrqcs::qcs_cache_dir_path}{
 

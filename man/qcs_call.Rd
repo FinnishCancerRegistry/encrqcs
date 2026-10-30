@@ -84,7 +84,7 @@ system \code{PATH} environment variables, the default call will fail,
 because it uses \code{command = "java"} --- but you can replace that with
 a direct path to your \code{java.exe} via \code{system2_arg_list}.
 The exact default for \code{system2_arg_list} is
-\code{list(command = "java", args = c("-jar", "-Xmx8g", jar_file_name, "-v", as.character(qcs_protocol_id), dataset_file_path))}.
+\verb{list(command = "java", args = c("-jar", "-Xmx8g", jar_file_name, "-v", qcs_protocol_id, sprintf("\\"\%s\\"", dataset_file_path)))}.
 \item Run \code{optional_steps[["pre_system2_call"]](env = eval_env)}
 if that element of
 \code{optional_steps} exists. E.g. to increase memory use for java to 10GB you
@@ -106,3 +106,10 @@ additional element \code{cache = TRUE/FALSE} indicates whether the dataset at
 \code{dataset_file_path} had pre-existing results in the cache.
 }
 }
+\section{News for version 1.1.1}{
+
+
+Protect \code{dataset_file_path} with quotes so that paths with whitespaces
+in them are passed correctly to QCS.
+}
+

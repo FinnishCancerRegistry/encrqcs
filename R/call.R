@@ -266,6 +266,10 @@ has_java_cmd <- function() {
 }
 
 qcs_call_default_system2_arg_list_expr__ <- function() {
+  # @codedoc_comment_block news("encrqcs::qcs_call", "2026-10-30", "1.1.1")
+  # Protect `dataset_file_path` with quotes so that paths with whitespaces
+  # in them are passed correctly to QCS.
+  # @codedoc_comment_block news("encrqcs::qcs_call", "2026-10-30", "1.1.1")
   quote(list(
     command = "java",
     args = c(
@@ -273,8 +277,8 @@ qcs_call_default_system2_arg_list_expr__ <- function() {
       "-Xmx8g",
       jar_file_name,
       "-v",
-      as.character(qcs_protocol_id),
-      dataset_file_path
+      qcs_protocol_id,
+      sprintf("\"%s\"", dataset_file_path)
     )
   ))
 }

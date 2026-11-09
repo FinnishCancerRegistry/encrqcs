@@ -222,10 +222,42 @@ qcs_call <- function(
   # `encrqcs::qcs_call` robustified in case the same dataset is run more than
   # once at the same time.
   # @codedoc_comment_block news("encrqcs::qcs_run", "2026-09-01", "1.0.2")
-  new_run_id <- utils::tail(
-    setdiff(vr_dt_post[["ID"]], vr_dt_pre[["ID"]]),
-    1L
-  )
+  # @codedoc_comment_block news("encrqcs::qcs_call", "2026-11-09", "1.1.2")
+  # `encrqcs::qcs_call` now raises an informative error if it cannot
+  # determine exactly one new run ID after the QCS run. This can happen e.g.
+  # when multiple QCS sessions are run simultaneously in the same
+  # `qcs_dir_path`. Previously the last new run ID was silently used, which
+  # could associate the dataset with the wrong results.
+  # @codedoc_comment_block news("encrqcs::qcs_call", "2026-11-09", "1.1.2")
+  # @codedoc_comment_block encrqcs::qcs_call
+  # - Determine the run ID of the new run by comparing the QCS validation run
+  #   table before and after the `[system2]` call. If not exactly one new
+  #   run ID is found (e.g. because multiple QCS sessions were run at the same
+  #   time in the same `qcs_dir_path`), an error is raised.
+  # @codedoc_comment_block encrqcs::qcs_call
+  new_run_id <- setdiff(vr_dt_post[["ID"]], vr_dt_pre[["ID"]])
+  if (length(new_run_id) != 1L) {
+    stop(
+      "Expected exactly one new run ID in the QCS validation run table ",
+      "after running QCS on `dataset_file_path = ",
+      deparse1(unname(dataset_file_path)), "`, but found ",
+      length(new_run_id),
+      if (length(new_run_id) > 0L) {
+        paste0(" (", paste0(new_run_id, collapse = ", "), ")")
+      },
+      ". ",
+      if (length(new_run_id) > 1L) {
+        paste0(
+          "This can happen when multiple QCS sessions are run ",
+          "simultaneously in the same `qcs_dir_path = ",
+          deparse1(unname(qcs_dir_path)), "`. "
+        )
+      },
+      "Cannot reliably determine which results belong to this dataset, so ",
+      "the cache was not updated. Please run QCS sessions one at a time ",
+      "(or in separate QCS directories) and try again."
+    )
+  }
   # @codedoc_comment_block encrqcs::qcs_call
   # - Add the hash of the dataset at `dataset_file_path` to the list of hashes
   #   in the cache so the next run on the identical dataset is skipped.

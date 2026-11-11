@@ -30,6 +30,18 @@ Run incidence checks using JRC-ENCR QCS:
 }
 \section{News}{
 
+\subsection{News for version 1.1.2}{
+\subsection{encrqcs::qcs_call}{
+
+\code{encrqcs::qcs_call} now raises an informative error if it cannot
+determine exactly one new run ID after the QCS run. This can happen e.g.
+when multiple QCS sessions are run simultaneously in the same
+\code{qcs_dir_path}. Previously the last new run ID was silently used, which
+could associate the dataset with the wrong results.
+}
+
+}
+
 \subsection{News for version 1.1.1}{
 \subsection{encrqcs::qcs_call}{
 

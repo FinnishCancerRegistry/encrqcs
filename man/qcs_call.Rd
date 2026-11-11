@@ -95,6 +95,10 @@ can have
 If status code other than zero is returned, an error is raised by R.
 E.g. status code 1 is "generic exit code" and means that the call
 failed.
+\item Determine the run ID of the new run by comparing the QCS validation run
+table before and after the \verb{[system2]} call. If not exactly one new
+run ID is found (e.g. because multiple QCS sessions were run at the same
+time in the same \code{qcs_dir_path}), an error is raised.
 \item Add the hash of the dataset at \code{dataset_file_path} to the list of hashes
 in the cache so the next run on the identical dataset is skipped.
 \item Run \code{optional_steps[["post_system2_call"]](env = eval_env)}
@@ -106,6 +110,16 @@ additional element \code{cache = TRUE/FALSE} indicates whether the dataset at
 \code{dataset_file_path} had pre-existing results in the cache.
 }
 }
+\section{News for version 1.1.2}{
+
+
+\code{encrqcs::qcs_call} now raises an informative error if it cannot
+determine exactly one new run ID after the QCS run. This can happen e.g.
+when multiple QCS sessions are run simultaneously in the same
+\code{qcs_dir_path}. Previously the last new run ID was silently used, which
+could associate the dataset with the wrong results.
+}
+
 \section{News for version 1.1.1}{
 
 

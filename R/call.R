@@ -129,12 +129,17 @@ qcs_call <- function(
   # @codedoc_comment_block news("encrqcs::qcs_run", "2025-06-10", "1.0.0")
   # @codedoc_comment_block encrqcs::qcs_call
   #  - See if a result set already exists for the dataset at `dataset_file_path`
-  #    by computing its hash and comparing it to the hashes of previous runs.
+  #    and `qcs_protocol_id` by computing the dataset's hash and comparing it
+  #    and `qcs_protocol_id` to those of previous runs.
   #    If such a result exists, return this early:
   #    `list(status = 0L, stdout = character(0L), stderr = character(0L), cache = TRUE)`.
   # @codedoc_comment_block encrqcs::qcs_call
   hash <- encrqcs::qcs_cache_dataset_file_hash(dataset_file_path)
-  if (qcs_cache_has_results_for_dataset__(qcs_dir_path, hash)) {
+  if (qcs_cache_has_results_for_dataset__(
+    qcs_dir_path = qcs_dir_path,
+    hash = hash,
+    qcs_protocol_id = qcs_protocol_id
+  )) {
     return(list(
       status = 0L,
       stdout = character(0L),
@@ -222,13 +227,13 @@ qcs_call <- function(
   # `encrqcs::qcs_call` robustified in case the same dataset is run more than
   # once at the same time.
   # @codedoc_comment_block news("encrqcs::qcs_run", "2026-09-01", "1.0.2")
-  # @codedoc_comment_block news("encrqcs::qcs_call", "2026-11-09", "1.1.2")
+  # @codedoc_comment_block news("encrqcs::qcs_call", "2026-11-11", "1.1.2")
   # `encrqcs::qcs_call` now raises an informative error if it cannot
   # determine exactly one new run ID after the QCS run. This can happen e.g.
   # when multiple QCS sessions are run simultaneously in the same
   # `qcs_dir_path`. Previously the last new run ID was silently used, which
   # could associate the dataset with the wrong results.
-  # @codedoc_comment_block news("encrqcs::qcs_call", "2026-11-09", "1.1.2")
+  # @codedoc_comment_block news("encrqcs::qcs_call", "2026-11-11", "1.1.2")
   # @codedoc_comment_block encrqcs::qcs_call
   # - Determine the run ID of the new run by comparing the QCS validation run
   #   table before and after the `[system2]` call. If not exactly one new

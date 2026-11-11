@@ -93,9 +93,10 @@ It is simply \code{sprintf("\%s/metadata.csv", qcs_cache_dir_path(qcs_dir_path))
 \code{encrqcs::qcs_cache_metadata_read} reads (with \verb{[data.table::fread]})
 the file at \code{encrqcs::qcs_cache_metadata_file_path(qcs_dir_path)}. If it
 does not exist, an empty \code{data.table} is returned. Currently
-the metadata file maps \code{hash} to \code{run_id}, where the former is computed on
-a dataset and \code{run_id} corresponds to column \code{ID} in
-\code{temp/validation_run.csv}. This maps a dataset to a previous run reliably.
+the metadata file maps the combination of \code{hash} and \code{qcs_protocol_id} to
+\code{run_id}, where \code{hash} is computed on a dataset and \code{run_id} corresponds
+to column \code{ID} in \code{temp/validation_run.csv}. This maps a dataset run with
+a specific protocol to a previous run reliably.
 
 
 \strong{encrqcs::qcs_cache_metadata_write}

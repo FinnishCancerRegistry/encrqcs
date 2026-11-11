@@ -4,6 +4,15 @@
 
 ### encrqcs::qcs_call
 
+Cached results are now only re-used if both the dataset hash and
+`qcs_protocol_id` match those of a previous run. Previously only the hash
+was compared, so e.g. running the same dataset with a different
+`qcs_protocol_id` was wrongly skipped. Also the latest matching run is now
+used (previously the first) and only runs that still exist in
+`temp/validation_run.csv` are considered.
+
+### encrqcs::qcs_call
+
 `encrqcs::qcs_call` now raises an informative error if it cannot
 determine exactly one new run ID after the QCS run. This can happen e.g.
 when multiple QCS sessions are run simultaneously in the same

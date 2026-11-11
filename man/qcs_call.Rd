@@ -69,7 +69,8 @@ have
 and
 \code{optional_steps[["on_entry"]] = message(data.table::timetaken(env$t))}.
 \item See if a result set already exists for the dataset at \code{dataset_file_path}
-by computing its hash and comparing it to the hashes of previous runs.
+and \code{qcs_protocol_id} by computing the dataset's hash and comparing it
+and \code{qcs_protocol_id} to those of previous runs.
 If such a result exists, return this early:
 \code{list(status = 0L, stdout = character(0L), stderr = character(0L), cache = TRUE)}.
 \item R working directory is temporarily set via \verb{[setwd]} to \code{qcs_dir_path}.
@@ -112,6 +113,13 @@ additional element \code{cache = TRUE/FALSE} indicates whether the dataset at
 }
 \section{News for version 1.1.2}{
 
+
+Cached results are now only re-used if both the dataset hash and
+\code{qcs_protocol_id} match those of a previous run. Previously only the hash
+was compared, so e.g. running the same dataset with a different
+\code{qcs_protocol_id} was wrongly skipped. Also the latest matching run is now
+used (previously the first) and only runs that still exist in
+\code{temp/validation_run.csv} are considered.
 
 \code{encrqcs::qcs_call} now raises an informative error if it cannot
 determine exactly one new run ID after the QCS run. This can happen e.g.

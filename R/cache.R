@@ -81,9 +81,10 @@ qcs_cache_metadata_read <- function(
   # `encrqcs::qcs_cache_metadata_read` reads (with `[data.table::fread]`)
   # the file at `encrqcs::qcs_cache_metadata_file_path(qcs_dir_path)`. If it
   # does not exist, an empty `data.table` is returned. Currently
-  # the metadata file maps `hash` to `run_id`, where the former is computed on
-  # a dataset and `run_id` corresponds to column `ID` in
-  # `temp/validation_run.csv`. This maps a dataset to a previous run reliably.
+  # the metadata file maps the combination of `hash` and `qcs_protocol_id` to
+  # `run_id`, where `hash` is computed on a dataset and `run_id` corresponds
+  # to column `ID` in `temp/validation_run.csv`. This maps a dataset run with
+  # a specific protocol to a previous run reliably.
   # @codedoc_comment_block encrqcs::qcs_cache_metadata_read
   path <- encrqcs::qcs_cache_metadata_file_path(qcs_dir_path)
   if (!file.exists(path)) {
@@ -230,16 +231,32 @@ qcs_cache_dataset_file_hash <- function(dataset_file_path) {
 
 qcs_cache_metadata_for_dataset__ <- function(
   qcs_dir_path,
-  hash
+  hash,
+  qcs_protocol_id
 ) {
   dbc::assert_is_character_nonNA_atom(hash)
+  qcs_protocol_id <- handle_arg_qcs_protocol_id__(qcs_protocol_id)
+  # @codedoc_comment_block news("encrqcs::qcs_call", "2026-11-11", "1.1.2")
+  # Cached results are now only re-used if both the dataset hash and
+  # `qcs_protocol_id` match those of a previous run. Previously only the hash
+  # was compared, so e.g. running the same dataset with a different
+  # `qcs_protocol_id` was wrongly skipped. Also the latest matching run is now
+  # used (previously the first) and only runs that still exist in
+  # `temp/validation_run.csv` are considered.
+  # @codedoc_comment_block news("encrqcs::qcs_call", "2026-11-11", "1.1.2")
   md_dt <- qcs_cache_metadata_read(qcs_dir_path)
-  idx <- data.table::chmatch(hash, md_dt[["hash"]])
-  if (is.na(idx)) {
+  vr_dt <- qcs_cache_validation_run_file_read__(qcs_dir_path = qcs_dir_path)
+  idx <- which(
+    md_dt[["hash"]] == hash &
+      md_dt[["qcs_protocol_id"]] == qcs_protocol_id &
+      md_dt[["run_id"]] %in% vr_dt[["ID"]]
+  )
+  if (length(idx) == 0L) {
     return(list())
   }
+  # metadata rows are ordered by `metadata_datetime`; use the latest run.
+  idx <- idx[length(idx)]
   out <- as.list(md_dt[idx, ])
-  vr_dt <- qcs_cache_validation_run_file_read__(qcs_dir_path = qcs_dir_path)
   vr_dt_idx <- match(out[["run_id"]], vr_dt[["ID"]])
   out[["run_data"]] <- as.list(vr_dt[vr_dt_idx, ])
   return(out)
@@ -247,7 +264,12 @@ qcs_cache_metadata_for_dataset__ <- function(
 
 qcs_cache_has_results_for_dataset__ <- function(
   qcs_dir_path,
-  hash
+  hash,
+  qcs_protocol_id
 ) {
-  return(length(qcs_cache_metadata_for_dataset__(qcs_dir_path, hash)) > 0)
+  return(length(qcs_cache_metadata_for_dataset__(
+    qcs_dir_path = qcs_dir_path,
+    hash = hash,
+    qcs_protocol_id = qcs_protocol_id
+  )) > 0)
 }

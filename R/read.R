@@ -77,17 +77,18 @@ qcs_read_record_meta_read <- function(
   if (!is.null(hash)) {
     dataset_meta <- qcs_cache_metadata_for_dataset__(
       qcs_dir_path = qcs_dir_path,
-      hash = hash
+      hash = hash,
+      qcs_protocol_id = qcs_protocol_id
     )
     meta_subset <- meta[["ID"]] == dataset_meta[["run_id"]]
     if (sum(meta_subset) != 1L) {
       stop(
-        "Internal error: ",
         "Attempted to read cached results for `hash = ",
-        hash,
-        "`, but ",
-        "there are no results for that hash. If you see this error, please ",
-        "complain to the package maintainer."
+        deparse1(hash),
+        "` and `qcs_protocol_id = ",
+        deparse1(qcs_protocol_id),
+        "`, but there are no results for that combination. ",
+        "Has the dataset been run through QCS with that `qcs_protocol_id`?"
       )
     }
   } else {

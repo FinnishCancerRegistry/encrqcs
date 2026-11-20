@@ -24,6 +24,12 @@ Metadata cached by earlier versions under `qcs_dir_path` is not used.
 optional and is used to keep only the records of that QCS directory.
 The metadata has a new column `qcs_dir_path`.
 
+### encrqcs::qcs_cache_metadata_read
+
+`encrqcs::qcs_cache_metadata_read` now removes records whose `run_id`
+no longer exists in `temp/validation_run.csv` of their `qcs_dir_path`,
+both from the returned table and from the metadata file.
+
 ### encrqcs::qcs_cache_metadata_write
 
 `encrqcs::qcs_cache_metadata_write` no longer has argument

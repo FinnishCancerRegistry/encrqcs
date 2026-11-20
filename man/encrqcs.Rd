@@ -56,6 +56,13 @@ optional and is used to keep only the records of that QCS directory.
 The metadata has a new column \code{qcs_dir_path}.
 }
 
+\subsection{encrqcs::qcs_cache_metadata_read}{
+
+\code{encrqcs::qcs_cache_metadata_read} now removes records whose \code{run_id}
+no longer exists in \code{temp/validation_run.csv} of their \code{qcs_dir_path},
+both from the returned table and from the metadata file.
+}
+
 \subsection{encrqcs::qcs_cache_metadata_write}{
 
 \code{encrqcs::qcs_cache_metadata_write} no longer has argument

@@ -98,6 +98,14 @@ the metadata file maps the combination of \code{qcs_dir_path}, \code{hash} and
 \code{run_id} corresponds to column \code{ID} in \code{temp/validation_run.csv} under
 \code{qcs_dir_path}. This maps a dataset run with a specific protocol in a
 specific QCS directory to a previous run reliably.
+
+Records whose \code{run_id} no longer exists in \code{temp/validation_run.csv}
+under their \code{qcs_dir_path} are removed from the returned table and from
+the metadata file. Only QCS directories that are checked are pruned:
+if \code{qcs_dir_path} is not \code{NULL}, only that directory; otherwise every
+\code{qcs_dir_path} in the metadata that currently exists (so e.g. an
+unavailable network drive does not wipe its records).
+
 If \code{qcs_dir_path} is not \code{NULL}, only records with that (normalised)
 \code{qcs_dir_path} are returned.
 
@@ -149,6 +157,10 @@ Metadata cached by earlier versions under \code{qcs_dir_path} is not used.
 \code{encrqcs::qcs_cache_metadata_file_path()}. Argument \code{qcs_dir_path} is now
 optional and is used to keep only the records of that QCS directory.
 The metadata has a new column \code{qcs_dir_path}.
+
+\code{encrqcs::qcs_cache_metadata_read} now removes records whose \code{run_id}
+no longer exists in \code{temp/validation_run.csv} of their \code{qcs_dir_path},
+both from the returned table and from the metadata file.
 
 
 

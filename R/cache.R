@@ -111,9 +111,22 @@ qcs_cache_metadata_read <- function(
   # `run_id` corresponds to column `ID` in `temp/validation_run.csv` under
   # `qcs_dir_path`. This maps a dataset run with a specific protocol in a
   # specific QCS directory to a previous run reliably.
+  #
+  # Records whose `run_id` no longer exists in `temp/validation_run.csv`
+  # under their `qcs_dir_path` are removed from the returned table and from
+  # the metadata file. Only QCS directories that are checked are pruned:
+  # if `qcs_dir_path` is not `NULL`, only that directory; otherwise every
+  # `qcs_dir_path` in the metadata that currently exists (so e.g. an
+  # unavailable network drive does not wipe its records).
+  #
   # If `qcs_dir_path` is not `NULL`, only records with that (normalised)
   # `qcs_dir_path` are returned.
   # @codedoc_comment_block encrqcs::qcs_cache_metadata_read
+  # @codedoc_comment_block news("encrqcs::qcs_cache_metadata_read", "2026-11-20", "1.2.0")
+  # `encrqcs::qcs_cache_metadata_read` now removes records whose `run_id`
+  # no longer exists in `temp/validation_run.csv` of their `qcs_dir_path`,
+  # both from the returned table and from the metadata file.
+  # @codedoc_comment_block news("encrqcs::qcs_cache_metadata_read", "2026-11-20", "1.2.0")
   path <- encrqcs::qcs_cache_metadata_file_path()
   if (!file.exists(path)) {
     dt <- qcs_cache_metadata_empty__()
@@ -126,6 +139,24 @@ qcs_cache_metadata_read <- function(
   }
   if (!is.null(qcs_dir_path)) {
     qcs_dir_path <- normalize_qcs_dir_path__(qcs_dir_path)
+    check_dir_paths <- qcs_dir_path
+  } else {
+    check_dir_paths <- unique(dt[["qcs_dir_path"]])
+    check_dir_paths <- check_dir_paths[dir.exists(check_dir_paths)]
+  }
+  keep <- rep(TRUE, nrow(dt))
+  for (check_dir_path in check_dir_paths) {
+    vr_dt <- qcs_cache_validation_run_file_read__(
+      qcs_dir_path = check_dir_path
+    )
+    is_dir <- dt[["qcs_dir_path"]] %in% check_dir_path
+    keep[is_dir] <- dt[["run_id"]][is_dir] %in% vr_dt[["ID"]]
+  }
+  if (!all(keep)) {
+    dt <- dt[keep, ]
+    encrqcs::qcs_cache_metadata_write(cache_metadata_dt = dt)
+  }
+  if (!is.null(qcs_dir_path)) {
     dt <- dt[dt[["qcs_dir_path"]] %in% qcs_dir_path, ]
   }
   return(dt[])
@@ -217,19 +248,14 @@ qcs_cache_metadata_update <- function(
   # `temp/validation_run.csv` are dropped.
   # @codedoc_comment_block encrqcs::qcs_cache_metadata_update
   qcs_dir_path <- normalize_qcs_dir_path__(qcs_dir_path)
+  # reading prunes stale records of every existing QCS dir (incl. this one)
+  # while retaining records of other dirs.
   cache_metadata_dt <- encrqcs::qcs_cache_metadata_read()
-  vr_dt <- qcs_cache_validation_run_file_read__(qcs_dir_path = qcs_dir_path)
   #' @param run_id `[integer]` (no default)
   #'
   #' One of the values of column `ID` in `temp/validation_run.csv` under
   #' the `qcs_dir_path`.
   dbc::assert_is_integer_nonNA_gtezero_atom(run_id)
-  # drop records of this QCS dir whose runs no longer exist; keep records of
-  # other QCS dirs as-is.
-  cache_metadata_dt <- cache_metadata_dt[
-    !cache_metadata_dt[["qcs_dir_path"]] %in% qcs_dir_path |
-      cache_metadata_dt[["run_id"]] %in% vr_dt[["ID"]],
-  ]
   #' @template param_optional_hash
   if (is.null(hash)) {
     #' @template param_optional_dataset_file_path

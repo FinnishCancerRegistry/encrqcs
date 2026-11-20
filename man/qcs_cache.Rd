@@ -10,13 +10,13 @@
 \alias{qcs_cache_dataset_file_hash}
 \title{\code{encrqcs} Cache}
 \usage{
-qcs_cache_dir_path(qcs_dir_path)
+qcs_cache_dir_path()
 
-qcs_cache_metadata_file_path(qcs_dir_path)
+qcs_cache_metadata_file_path()
 
-qcs_cache_metadata_read(qcs_dir_path)
+qcs_cache_metadata_read(qcs_dir_path = NULL)
 
-qcs_cache_metadata_write(cache_metadata_dt, qcs_dir_path)
+qcs_cache_metadata_write(cache_metadata_dt)
 
 qcs_cache_metadata_update(
   qcs_dir_path,
@@ -36,7 +36,7 @@ Path to root directory of the JRC-ENCR QCS.}
 \item{cache_metadata_dt}{\verb{[data.table]} (no default)
 
 Table of metadata to write into cache. Must have these columns:
-\code{c("metadata_datetime", "hash", "qcs_protocol_id", "run_id")}.}
+\code{c("metadata_datetime", "qcs_dir_path", "hash", "qcs_protocol_id", "run_id")}.}
 
 \item{qcs_protocol_id}{\verb{[character, integer]} (no default)
 \itemize{
@@ -77,33 +77,37 @@ Functions to make use of the cache used by \code{encrqcs}.
 \strong{encrqcs::qcs_cache_dir_path}
 
 \code{encrqcs::qcs_cache_dir_path} returns the path to the cache dir used by
-\code{encrqcs} given \code{qcs_dir_path} where the JRC-ENCR QCS is located.
-It is simply \code{sprintf("\%s/encrqcs/", qcs_dir_path)}.
+\code{encrqcs}. It is simply \code{tools::R_user_dir("encrqcs", "cache")}.
+The directory is created if it does not exist.
 
 
 \strong{encrqcs::qcs_cache_metadata_file_path}
 
 \code{encrqcs::qcs_cache_metadata_file_path} returns the path to metadata file
 in the cache.
-It is simply \code{sprintf("\%s/metadata.csv", qcs_cache_dir_path(qcs_dir_path))}.
+It is simply \code{sprintf("\%s/metadata.csv", qcs_cache_dir_path())}.
 
 
 \strong{encrqcs::qcs_cache_metadata_read}
 
 \code{encrqcs::qcs_cache_metadata_read} reads (with \verb{[data.table::fread]})
-the file at \code{encrqcs::qcs_cache_metadata_file_path(qcs_dir_path)}. If it
+the file at \code{encrqcs::qcs_cache_metadata_file_path()}. If it
 does not exist, an empty \code{data.table} is returned. Currently
-the metadata file maps the combination of \code{hash} and \code{qcs_protocol_id} to
-\code{run_id}, where \code{hash} is computed on a dataset and \code{run_id} corresponds
-to column \code{ID} in \code{temp/validation_run.csv}. This maps a dataset run with
-a specific protocol to a previous run reliably.
+the metadata file maps the combination of \code{qcs_dir_path}, \code{hash} and
+\code{qcs_protocol_id} to \code{run_id}, where \code{hash} is computed on a dataset and
+\code{run_id} corresponds to column \code{ID} in \code{temp/validation_run.csv} under
+\code{qcs_dir_path}. This maps a dataset run with a specific protocol in a
+specific QCS directory to a previous run reliably.
+If \code{qcs_dir_path} is not \code{NULL}, only records with that (normalised)
+\code{qcs_dir_path} are returned.
 
 
 \strong{encrqcs::qcs_cache_metadata_write}
 
 \code{encrqcs::qcs_cache_metadata_write} writes \code{cache_metadata_dt} with
 \verb{[data.table::fwrite]} into
-\code{encrqcs::qcs_cache_metadata_file_path(qcs_dir_path)}.
+\code{encrqcs::qcs_cache_metadata_file_path()}. This replaces the whole
+metadata file, i.e. the metadata of all QCS directories.
 
 
 \strong{encrqcs::qcs_cache_metadata_update}
@@ -111,6 +115,9 @@ a specific protocol to a previous run reliably.
 \code{encrqcs::qcs_cache_metadata_update} the metadata file with
 \code{encrqcs::qcs_cache_metadata_read}, adds a new record into it,
 and re-writes the metadata with \code{encrqcs::qcs_cache_metadata_write}.
+The new record includes the normalised \code{qcs_dir_path}. Records of
+\code{qcs_dir_path} whose \code{run_id} no longer exists in
+\code{temp/validation_run.csv} are dropped.
 
 
 \strong{encrqcs::qcs_cache_dataset_file_hash}
@@ -118,6 +125,36 @@ and re-writes the metadata with \code{encrqcs::qcs_cache_metadata_write}.
 \code{encrqcs::qcs_cache_dataset_file_hash} computes the hash using
 \verb{[digest::digest]} on an on-disk dataset. It uses
 \code{algo = "md5"}.
+}
+
+\section{News for version 1.2.0}{
+
+
+\code{encrqcs::qcs_cache_dir_path} now points to
+\code{tools::R_user_dir("encrqcs", "cache")} instead of a directory under
+\code{qcs_dir_path}, and therefore no longer has argument \code{qcs_dir_path}.
+The cache is thus shared by all QCS directories; each record in the
+cache metadata now stores the \code{qcs_dir_path} it belongs to.
+Metadata cached by earlier versions under \code{qcs_dir_path} is not used.
+
+
+
+\code{encrqcs::qcs_cache_metadata_file_path} no longer has argument
+\code{qcs_dir_path} because the cache now lives in
+\code{encrqcs::qcs_cache_dir_path()}.
+
+
+
+\code{encrqcs::qcs_cache_metadata_read} now reads the metadata from
+\code{encrqcs::qcs_cache_metadata_file_path()}. Argument \code{qcs_dir_path} is now
+optional and is used to keep only the records of that QCS directory.
+The metadata has a new column \code{qcs_dir_path}.
+
+
+
+\code{encrqcs::qcs_cache_metadata_write} no longer has argument
+\code{qcs_dir_path}. \code{cache_metadata_dt} must now contain column
+\code{qcs_dir_path} and it replaces the whole metadata file.
 }
 
 \section{News for version 1.1.0}{

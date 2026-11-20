@@ -30,6 +30,41 @@ Run incidence checks using JRC-ENCR QCS:
 }
 \section{News}{
 
+\subsection{News for version 1.2.0}{
+\subsection{encrqcs::qcs_cache_dir_path}{
+
+\code{encrqcs::qcs_cache_dir_path} now points to
+\code{tools::R_user_dir("encrqcs", "cache")} instead of a directory under
+\code{qcs_dir_path}, and therefore no longer has argument \code{qcs_dir_path}.
+The cache is thus shared by all QCS directories; each record in the
+cache metadata now stores the \code{qcs_dir_path} it belongs to.
+Metadata cached by earlier versions under \code{qcs_dir_path} is not used.
+}
+
+\subsection{encrqcs::qcs_cache_metadata_file_path}{
+
+\code{encrqcs::qcs_cache_metadata_file_path} no longer has argument
+\code{qcs_dir_path} because the cache now lives in
+\code{encrqcs::qcs_cache_dir_path()}.
+}
+
+\subsection{encrqcs::qcs_cache_metadata_read}{
+
+\code{encrqcs::qcs_cache_metadata_read} now reads the metadata from
+\code{encrqcs::qcs_cache_metadata_file_path()}. Argument \code{qcs_dir_path} is now
+optional and is used to keep only the records of that QCS directory.
+The metadata has a new column \code{qcs_dir_path}.
+}
+
+\subsection{encrqcs::qcs_cache_metadata_write}{
+
+\code{encrqcs::qcs_cache_metadata_write} no longer has argument
+\code{qcs_dir_path}. \code{cache_metadata_dt} must now contain column
+\code{qcs_dir_path} and it replaces the whole metadata file.
+}
+
+}
+
 \subsection{News for version 1.1.2}{
 \subsection{encrqcs::qcs_call}{
 
